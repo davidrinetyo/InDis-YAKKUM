@@ -1177,7 +1177,7 @@ function generateNarasiHTML(dom, sec, pcts) {
 
     <div class="narr-section" style="background:linear-gradient(135deg,#F9FFF9,#E8F5E9);border-color:#C8E6C9;">
       <h4>🎯 Nilai-Nilai Inti</h4>
-      <ul>${dn.core_values.map(v => `<li>${v}</li>`).join('')}</ul>
+      <ul>${dn.core_values.map(function(v){return '<li>'+v+'</li>';}).join('')}</ul>
     </div>
 
     <div class="narr-section">
@@ -1205,11 +1205,11 @@ function generateNarasiHTML(dom, sec, pcts) {
       <div class="interaction-grid">
         <div class="int-box" style="border-top:3px solid #2E7D32;">
           <h5>✅ Yang Harus Dilakukan</h5>
-          <ul style="padding-left:16px;">${dn.interaction_do.map(v=>`<li style="font-size:13px;line-height:1.6;margin-bottom:3px;">${v}</li>`).join('')}</ul>
+          <ul style="padding-left:16px;">${dn.interaction_do.map(function(v){return '<li style="font-size:13px;line-height:1.6;margin-bottom:3px;">'+v+'</li>';}).join('')}</ul>
         </div>
         <div class="int-box" style="border-top:3px solid #C62828;">
           <h5>❌ Yang Harus Dihindari</h5>
-          <ul style="padding-left:16px;">${dn.interaction_dont.map(v=>`<li style="font-size:13px;line-height:1.6;margin-bottom:3px;">${v}</li>`).join('')}</ul>
+          <ul style="padding-left:16px;">${dn.interaction_dont.map(function(v){return '<li style="font-size:13px;line-height:1.6;margin-bottom:3px;">'+v+'</li>';}).join('')}</ul>
         </div>
       </div>
     </div>
@@ -1651,91 +1651,98 @@ function saveEmailConfig() {
 }
 
 function buildEmailBody() {
-  const { pcts } = state.results;
-  const sorted = ['F','S','E','C'].sort((a,b)=>pcts[b]-pcts[a]);
-  const dom = sorted[0], sec = sorted[1];
-  const dc = COLOR_DATA[dom], sc = COLOR_DATA[sec];
-  const p = state.profile;
-  const elapsed = state.timerElapsed || 0;
-  const em = Math.floor(elapsed/60), es = elapsed%60;
-  const reco = RECO_BY_MODE[state.mode];
-  const dn = NARASI[dom];
+  var pcts = state.results.pcts;
+  var sorted = ['F','S','E','C'].sort(function(a,b){return pcts[b]-pcts[a];});
+  var dom = sorted[0], sec = sorted[1];
+  var dc = COLOR_DATA[dom], sc = COLOR_DATA[sec];
+  var p = state.profile;
+  var elapsed = state.timerElapsed || 0;
+  var em = Math.floor(elapsed/60), es = elapsed%60;
+  var reco = RECO_BY_MODE[state.mode];
+  var dn = NARASI[dom];
+  var sep1 = '=======================================================';
+  var sep2 = '-------------------------------------------------------';
 
-  return `
-LAPORAN HASIL DISCOVERY INSIGHTS ASSESSMENT
-YAKKUM — Yayasan Kristen Untuk Kesehatan Umum
-${'='.repeat(55)}
+  var coreVals = dn.core_values.map(function(v,i){ return '  '+(i+1)+'. '+v; }).join('\n');
+  var strengths = COLOR_DATA[dom].strengths.map(function(v,i){ return '  '+(i+1)+'. '+v; }).join('\n');
+  var challenges = COLOR_DATA[dom].challenges.map(function(v,i){ return '  '+(i+1)+'. '+v; }).join('\n');
+  var intDo = dn.interaction_do.map(function(v){ return '  \u2713 '+v; }).join('\n');
+  var intDont = dn.interaction_dont.map(function(v){ return '  \u2717 '+v; }).join('\n');
+  var recoTitle = reco.title.replace(/[\uD83C-\uDBFF\uDC00-\uDFFF\u2600-\u26FF\u2700-\u27BF]/g,'').trim().toUpperCase();
+  var elapsedLabel = (em > 0 ? em+' menit ' : '') + es + ' detik';
+  var now = new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-TANGGAL ASSESSMENT : ${new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}
-WAKTU PENGERJAAN   : ${em > 0 ? em + ' menit ' : ''}${es} detik
-TUJUAN ASSESSMENT  : ${getModeLabel(state.mode)}
-
-DATA PESERTA
-${'─'.repeat(55)}
-Nama              : ${p.nama}
-NIP / No. Peserta : ${p.nip || '—'}
-Direktorat        : ${p.direktorat}
-Unit Kerja        : ${p.unit}
-Level / Grade     : ${p.level}
-Jabatan           : ${p.jabatan || '—'}
-Email Peserta     : ${p.email || '—'}
-
-HASIL DISTRIBUSI WARNA KEPRIBADIAN
-${'─'.repeat(55)}
-🔴 Fiery Red       : ${pcts.F}%  ${'█'.repeat(Math.round(pcts.F/5))}
-🟡 Sunshine Yellow : ${pcts.S}%  ${'█'.repeat(Math.round(pcts.S/5))}
-🟢 Earth Green     : ${pcts.E}%  ${'█'.repeat(Math.round(pcts.E/5))}
-🔵 Cool Blue       : ${pcts.C}%  ${'█'.repeat(Math.round(pcts.C/5))}
-
-Warna DOMINAN    : ${dc.emoji} ${dc.name} (${pcts[dom]}%)
-Warna SEKUNDER   : ${sc.emoji} ${sc.name} (${pcts[sec]}%)
-
-PROFIL KEPRIBADIAN: ${dc.title.toUpperCase()}
-${'─'.repeat(55)}
-${dn.overview}
-
-NILAI-NILAI INTI:
-${dc.class === dc.class ? dn.core_values.map((v,i)=>`  ${i+1}. ${v}`).join('
-') : ''}
-
-KEKUATAN UTAMA:
-${COLOR_DATA[dom].strengths.map((v,i)=>`  ${i+1}. ${v}`).join('
-')}
-
-AREA PENGEMBANGAN:
-${COLOR_DATA[dom].challenges.map((v,i)=>`  ${i+1}. ${v}`).join('
-')}
-
-PERILAKU DI BAWAH TEKANAN:
-${dn.under_pressure}
-
-RELEVANSI DENGAN YAKKUM:
-${COLOR_DATA[dom].yakkum}
-
-${reco.title.replace(/[🎯🌱🏆📊]/g,'').trim().toUpperCase()}
-${'─'.repeat(55)}
-${reco[dom]}
-
-REKOMENDASI PENGEMBANGAN:
-${dn.development}
-
-PANDUAN INTERAKSI
-${'─'.repeat(55)}
-Yang perlu dilakukan saat berinteraksi:
-${dn.interaction_do.map((v,i)=>`  ✓ ${v}`).join('
-')}
-
-Yang perlu dihindari:
-${dn.interaction_dont.map((v,i)=>`  ✗ ${v}`).join('
-')}
-
-${'='.repeat(55)}
-Laporan ini dibuat secara otomatis oleh
-YAKKUM Discovery Insights Assessment System
-${localStorage.getItem('yakkumOrgName') || 'YAKKUM Assessment System'}
-${'='.repeat(55)}
-  `.trim();
+  return [
+    'LAPORAN HASIL DISCOVERY INSIGHTS ASSESSMENT',
+    'YAKKUM \u2014 Yayasan Kristen Untuk Kesehatan Umum',
+    sep1,
+    '',
+    'TANGGAL ASSESSMENT : '+now,
+    'WAKTU PENGERJAAN   : '+elapsedLabel,
+    'TUJUAN ASSESSMENT  : '+getModeLabel(state.mode),
+    '',
+    'DATA PESERTA',
+    sep2,
+    'Nama              : '+p.nama,
+    'NIP / No. Peserta : '+(p.nip||'\u2014'),
+    'Direktorat        : '+p.direktorat,
+    'Unit Kerja        : '+p.unit,
+    'Level / Grade     : '+p.level,
+    'Jabatan           : '+(p.jabatan||'\u2014'),
+    'Email Peserta     : '+(p.email||'\u2014'),
+    '',
+    'HASIL DISTRIBUSI WARNA KEPRIBADIAN',
+    sep2,
+    '\uD83D\uDD34 Fiery Red       : '+pcts.F+'%  '+'\u2588'.repeat(Math.round(pcts.F/5)),
+    '\uD83D\uDFE1 Sunshine Yellow : '+pcts.S+'%  '+'\u2588'.repeat(Math.round(pcts.S/5)),
+    '\uD83D\uDFE2 Earth Green     : '+pcts.E+'%  '+'\u2588'.repeat(Math.round(pcts.E/5)),
+    '\uD83D\uDD35 Cool Blue       : '+pcts.C+'%  '+'\u2588'.repeat(Math.round(pcts.C/5)),
+    '',
+    'Warna DOMINAN    : '+dc.name+' ('+pcts[dom]+'%)',
+    'Warna SEKUNDER   : '+sc.name+' ('+pcts[sec]+'%)',
+    '',
+    'PROFIL KEPRIBADIAN: '+dc.title.toUpperCase(),
+    sep2,
+    dn.overview,
+    '',
+    'NILAI-NILAI INTI:',
+    coreVals,
+    '',
+    'KEKUATAN UTAMA:',
+    strengths,
+    '',
+    'AREA PENGEMBANGAN:',
+    challenges,
+    '',
+    'PERILAKU DI BAWAH TEKANAN:',
+    dn.under_pressure,
+    '',
+    'RELEVANSI DENGAN YAKKUM:',
+    COLOR_DATA[dom].yakkum,
+    '',
+    recoTitle,
+    sep2,
+    reco[dom],
+    '',
+    'REKOMENDASI PENGEMBANGAN:',
+    dn.development,
+    '',
+    'PANDUAN INTERAKSI',
+    sep2,
+    'Yang perlu dilakukan saat berinteraksi:',
+    intDo,
+    '',
+    'Yang perlu dihindari:',
+    intDont,
+    '',
+    sep1,
+    'Laporan ini dibuat secara otomatis oleh',
+    'YAKKUM Discovery Insights Assessment System',
+    (localStorage.getItem('yakkumOrgName')||'YAKKUM Assessment System'),
+    sep1
+  ].join('\n');
 }
+
 
 function sendToHRD() {
   const hrd1 = localStorage.getItem('yakkumHRD1');
