@@ -268,6 +268,47 @@
   /* ── SEND BUTTON STATES ── */
   .btn-email { background:linear-gradient(135deg,#00897B,#00ACC1); color:#fff; }
   .btn-email:hover { box-shadow:0 8px 24px rgba(0,137,123,0.3); transform:translateY(-1px); }
+
+  /* ── THANK YOU ── */
+  .thankyou-card {
+    background: var(--card); border-radius: 24px; padding: 56px 48px;
+    box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);
+    max-width: 640px; margin: 0 auto;
+  }
+  .ty-icon-wrap {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, #2E7D32, #43A047);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px; box-shadow: 0 8px 24px rgba(46,125,50,0.3);
+  }
+  .ty-icon { color: #fff; font-size: 40px; font-weight: 700; line-height: 1; }
+  .thankyou-card h2 {
+    font-family: 'Playfair Display', serif; font-size: 32px;
+    color: #1A2744; margin-bottom: 2px;
+  }
+  .ty-en { font-size: 13px; color: var(--sub); font-style: italic; margin-bottom: 20px; display: block; }
+  .ty-main { font-size: 16px; color: #444; line-height: 1.8; margin-bottom: 28px; }
+  .ty-main .ty-en { font-size: 13px; margin-top: 6px; margin-bottom: 0; }
+  .ty-info-box {
+    background: #F4F6FA; border-radius: 14px; padding: 20px 24px;
+    margin-bottom: 24px; text-align: left; border: 1px solid var(--border);
+  }
+  .ty-info-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    gap: 12px; flex-wrap: wrap;
+  }
+  .ty-info-row:last-child { border-bottom: none; }
+  .ty-label { font-size: 13px; color: var(--sub); min-width: 160px; }
+  .ty-label .ty-en { display: inline; font-size: 11px; }
+  .ty-value { font-size: 14px; font-weight: 600; color: #1A2744; text-align: right; }
+  .ty-note {
+    font-size: 13px; color: var(--sub); line-height: 1.8;
+    background: #FFF8E1; border-radius: 10px; padding: 14px 18px;
+    border-left: 4px solid var(--sunny); text-align: left; margin-bottom: 8px;
+  }
+  .ty-note .ty-en { display: inline; font-size: 12px; }
+  .ty-status { font-size: 13px; margin-top: 12px; color: var(--sub); min-height: 20px; }
   @media (max-width: 640px) {
     header { padding: 16px 20px; }
     .container { padding: 20px 12px; }
@@ -286,7 +327,7 @@
     <div class="logo-circle">Y</div>
     <div class="logo-text">
       <h1>YAKKUM</h1>
-      <span>Discovery Insights Assessment</span>
+      <span>Discovery Insights Assessment <em style="font-size:10px;font-style:italic;opacity:.7;">(<i>Assessment Tool</i>)</em></span>
     </div>
   </div>
   <div class="header-badge">Discovery Insights®</div>
@@ -295,7 +336,7 @@
 <!-- CONFIG MODAL -->
 <div class="modal-overlay" id="configModal">
   <div class="modal">
-    <h3>⚙️ Konfigurasi Google Sheets</h3>
+    <h3>⚙️ Konfigurasi Google Sheets <em style="font-size:13px;font-style:italic;font-weight:400;color:#888;">(<i>Google Sheets Configuration</i>)</em></h3>
     <p>Masukkan URL Google Apps Script Web App Anda untuk menyimpan data hasil assessment ke Google Sheets.</p>
     <div class="form-group" style="margin-bottom:16px">
       <label>Google Apps Script Web App URL</label>
@@ -343,7 +384,7 @@ function doPost(e) {<br>
     <div class="welcome-card">
       <div style="font-size:48px; margin-bottom:16px;">🌈</div>
       <h2>Discovery Insights Assessment</h2>
-      <p>Kenali diri Anda melalui 4 warna kepribadian. Assessment ini membantu YAKKUM memahami gaya kerja, komunikasi, dan potensi kepemimpinan setiap individu.</p>
+      <p>Kenali diri Anda melalui 4 warna kepribadian. Assessment ini membantu YAKKUM memahami gaya kerja, komunikasi, dan potensi kepemimpinan setiap individu.<br><em style="font-size:13px;color:#888;">(<i>Discover yourself through 4 personality colours. This assessment helps YAKKUM understand each individual's work style, communication, and leadership potential.</i>)</em></p>
       <div style="display:flex; gap:16px; justify-content:center; margin-bottom:36px; flex-wrap:wrap;">
         <span class="badge fiery" style="font-size:13px; padding:8px 18px;">🔴 Fiery Red</span>
         <span class="badge sunny" style="font-size:13px; padding:8px 18px;">🟡 Sunshine Yellow</span>
@@ -352,55 +393,55 @@ function doPost(e) {<br>
       </div>
       <!-- Estimasi Waktu -->
       <div class="est-row">
-        <div class="est-chip">⏱️ Estimasi waktu: <strong>15–20 menit</strong></div>
-        <div class="est-chip">📝 Jumlah pertanyaan: <strong>60 soal</strong></div>
-        <div class="est-chip">🔖 4 bagian: <strong>~4–5 menit/bagian</strong></div>
+        <div class="est-chip">⏱️ Estimasi waktu: <strong>15–20 menit</strong><br><em style="font-size:11px;color:#888;">(<i>Estimated time: 15–20 minutes</i>)</em></div>
+        <div class="est-chip">📝 Jumlah pertanyaan: <strong>60 soal</strong><br><em style="font-size:11px;color:#888;">(<i>Total questions: 60 items</i>)</em></div>
+        <div class="est-chip">🔖 4 bagian: <strong>~4–5 menit/bagian</strong><br><em style="font-size:11px;color:#888;">(<i>4 sections: ~4–5 min each</i>)</em></div>
       </div>
-      <p style="font-size:14px;">Pilih tujuan assessment Anda:</p>
+      <p style="font-size:14px;">Pilih tujuan assessment Anda: <em style="font-size:12px;color:#888;">(<i>Select your assessment purpose:</i>)</em></p>
       <div class="mode-grid" style="text-align:left; margin-top:20px; margin-bottom:32px;">
         <div class="mode-card" onclick="selectMode('rekrutmen',this)">
           <div class="mode-icon">🎯</div>
-          <h3>Rekrutmen Karyawan</h3>
-          <p>Untuk calon karyawan baru YAKKUM — menilai kecocokan budaya dan potensi peran.</p>
+          <h3>Rekrutmen Karyawan <em style="font-size:11px;font-style:italic;color:#888;">(<i>Recruitment</i>)</em></h3>
+          <p>Untuk calon karyawan baru YAKKUM — menilai kecocokan budaya dan potensi peran.<br><em style="font-size:11px;color:#888;">(<i>For new YAKKUM candidates — assessing cultural fit and role potential.</i>)</em></p>
         </div>
         <div class="mode-card" onclick="selectMode('development',this)">
           <div class="mode-icon">🌱</div>
-          <h3>Development Karyawan</h3>
-          <p>Untuk karyawan aktif — pengembangan diri, potensi karir, dan rencana pelatihan.</p>
+          <h3>Development Karyawan <em style="font-size:11px;font-style:italic;color:#888;">(<i>Employee Development</i>)</em></h3>
+          <p>Untuk karyawan aktif — pengembangan diri, potensi karir, dan rencana pelatihan.<br><em style="font-size:11px;color:#888;">(<i>For active employees — self-development, career potential, and training plans.</i>)</em></p>
         </div>
         <div class="mode-card" onclick="selectMode('leadership',this)">
           <div class="mode-icon">🏆</div>
-          <h3>Leadership Assessment</h3>
-          <p>Menilai gaya kepemimpinan dan efektivitas manajerial karyawan.</p>
+          <h3>Leadership Assessment <em style="font-size:11px;font-style:italic;color:#888;">(<i>Leadership</i>)</em></h3>
+          <p>Menilai gaya kepemimpinan dan efektivitas manajerial karyawan.<br><em style="font-size:11px;color:#888;">(<i>Evaluating leadership style and managerial effectiveness.</i>)</em></p>
         </div>
         <div class="mode-card" onclick="selectMode('performance',this)">
           <div class="mode-icon">📊</div>
-          <h3>Performance Review</h3>
-          <p>Mengidentifikasi kekuatan karyawan dan area yang perlu ditingkatkan.</p>
+          <h3>Performance Review <em style="font-size:11px;font-style:italic;color:#888;">(<i>Performance</i>)</em></h3>
+          <p>Mengidentifikasi kekuatan karyawan dan area yang perlu ditingkatkan.<br><em style="font-size:11px;color:#888;">(<i>Identifying employee strengths and areas for improvement.</i>)</em></p>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="goToProfile()">Mulai Assessment →</button>
-      <button class="btn btn-secondary" style="margin-left:12px;" onclick="openConfig()">⚙️ Setup Google Sheets</button>
+      <button class="btn btn-primary" onclick="goToProfile()">Mulai Assessment <em style="font-size:12px;font-style:italic;">(<i>Start Assessment</i>)</em> →</button>
+      <button class="btn btn-secondary" style="margin-left:12px;" onclick="openConfig()">⚙️ Setup Google Sheets <em style="font-size:11px;font-style:italic;">(<i>Configure</i>)</em></button>
     </div>
   </div>
 
   <!-- SCREEN 2: PROFILE -->
   <div class="screen" id="screen-profile">
     <div class="form-section">
-      <h3>📋 Data Peserta</h3>
+      <h3>📋 Data Peserta <em style="font-size:13px;font-style:italic;font-weight:400;color:#888;">(<i>Participant Data</i>)</em></h3>
       <div class="form-row">
         <div class="form-group">
-          <label>Nama Lengkap <span class="req">*</span></label>
+          <label>Nama Lengkap <em style="font-size:11px;font-style:italic;color:#888;">(<i>Full Name</i>)</em> <span class="req">*</span></label>
           <input type="text" id="p_nama" placeholder="Masukkan nama lengkap">
         </div>
         <div class="form-group">
-          <label id="nip-label">NIP / Nomor Peserta</label>
+          <label id="nip-label">NIP / Nomor Peserta <em style="font-size:11px;font-style:italic;color:#888;">(<i>Employee ID / Participant No.</i>)</em></label>
           <input type="text" id="p_nip" placeholder="Opsional">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Direktorat <span class="req">*</span></label>
+          <label>Direktorat <em style="font-size:11px;font-style:italic;color:#888;">(<i>Directorate</i>)</em> <span class="req">*</span></label>
           <select id="p_direktorat" onchange="updateUnit()">
             <option value="">-- Pilih Direktorat --</option>
             <option value="Akademik">Akademik</option>
@@ -410,7 +451,7 @@ function doPost(e) {<br>
           </select>
         </div>
         <div class="form-group">
-          <label>Unit Kerja <span class="req">*</span></label>
+          <label>Unit Kerja <em style="font-size:11px;font-style:italic;color:#888;">(<i>Work Unit</i>)</em> <span class="req">*</span></label>
           <select id="p_unit">
             <option value="">-- Pilih Direktorat Dulu --</option>
           </select>
@@ -418,7 +459,7 @@ function doPost(e) {<br>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Level / Grade <span class="req">*</span></label>
+          <label>Level / Grade <em style="font-size:11px;font-style:italic;color:#888;">(<i>Employment Level</i>)</em> <span class="req">*</span></label>
           <select id="p_level">
             <option value="">-- Pilih Level --</option>
             <option value="1-2">Level 1-2 (Pelaksana)</option>
@@ -432,20 +473,20 @@ function doPost(e) {<br>
           </select>
         </div>
         <div class="form-group">
-          <label>Jabatan / Posisi</label>
+          <label>Jabatan / Posisi <em style="font-size:11px;font-style:italic;color:#888;">(<i>Position / Title</i>)</em></label>
           <input type="text" id="p_jabatan" placeholder="Masukkan jabatan Anda">
         </div>
       </div>
       <div class="form-row single">
         <div class="form-group">
-          <label>Email</label>
+          <label>Email <em style="font-size:11px;font-style:italic;color:#888;">(<i>Email Address</i>)</em></label>
           <input type="email" id="p_email" placeholder="email@yakkum.or.id">
         </div>
       </div>
     </div>
     <div style="display:flex; gap:12px;">
-      <button class="btn btn-secondary" onclick="goTo('screen-welcome')">← Kembali</button>
-      <button class="btn btn-primary" onclick="startAssessment()">Mulai Tes →</button>
+      <button class="btn btn-secondary" onclick="goTo('screen-welcome')">← Kembali <em style="font-size:11px;font-style:italic;">(<i>Back</i>)</em></button>
+      <button class="btn btn-primary" onclick="startAssessment()">Mulai Tes <em style="font-size:11px;font-style:italic;">(<i>Start Test</i>)</em> →</button>
     </div>
   </div>
 
@@ -463,13 +504,13 @@ function doPost(e) {<br>
           <span class="timer-icon">⏱️</span>
           <span id="timer-display">00:00</span>
         </div>
-        <div class="eta-box">⚡ Estimasi selesai: <span id="eta-display">± 20 menit</span></div>
-        <div class="eta-box">📈 Kecepatan: <span id="speed-display">—</span></div>
+        <div class="eta-box">⚡ Estimasi selesai <em style="font-size:10px;font-style:italic;">(Est. remaining)</em>: <span id="eta-display">± 20 menit</span></div>
+        <div class="eta-box">📈 Kecepatan <em style="font-size:10px;font-style:italic;">(Speed)</em>: <span id="speed-display">—</span></div>
       </div>
     </div>
     <div id="question-area"></div>
     <div class="q-nav">
-      <button class="btn btn-secondary" id="btn-prev" onclick="prevQ()">← Sebelumnya</button>
+      <button class="btn btn-secondary" id="btn-prev" onclick="prevQ()">← Sebelumnya <em style="font-size:11px;font-style:italic;">(<i>Previous</i>)</em></button>
       <button class="btn btn-primary" id="btn-next" onclick="nextQ()">Berikutnya →</button>
     </div>
   </div>
@@ -478,84 +519,53 @@ function doPost(e) {<br>
   <div class="screen" id="screen-loading">
     <div class="loading">
       <div class="spinner"></div>
-      <h3 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:8px;">Menganalisis Profil Anda...</h3>
-      <p style="color:var(--sub);">Sistem sedang memproses 60 jawaban Anda</p>
+      <h3 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:8px;">Menganalisis Profil Anda...<br><em style="font-size:14px;font-weight:400;font-style:italic;color:rgba(255,255,255,0.7);">(<i>Analysing Your Profile...</i>)</em></h3>
+      <p style="color:var(--sub);">Sistem sedang memproses 60 jawaban Anda<br><em style="font-size:12px;font-style:italic;">(<i>The system is processing your 60 responses</i>)</em></p>
     </div>
   </div>
 
-  <!-- SCREEN 5: RESULTS -->
+  <!-- SCREEN 5: TERIMA KASIH -->
   <div class="screen" id="screen-results">
-    <div class="result-header">
-      <div style="font-size:40px; margin-bottom:12px;" id="res-emoji">🎉</div>
-      <h2 id="res-name">Nama Peserta</h2>
-      <div class="result-meta" id="res-meta">Unit | Level | Mode</div>
-    </div>
-
-    <!-- DOMINANT COLOR -->
-    <div id="dominant-block" style="margin-bottom:24px;"></div>
-
-    <!-- 4 COLOR BARS -->
-    <div class="form-section">
-      <h3>📊 Distribusi Warna Kepribadian</h3>
-      <div id="color-bars"></div>
-      <div class="colors-grid" id="colors-grid" style="margin-top:24px;"></div>
-    </div>
-
-    <!-- INSIGHTS -->
-    <div class="form-section">
-      <h3>🔍 Insight Mendalam</h3>
-      <div id="insights-area"></div>
-    </div>
-
-    <!-- RECOMMENDATIONS -->
-    <div class="form-section" id="reco-section">
-      <h3 id="reco-title">💼 Rekomendasi</h3>
-      <div id="reco-area"></div>
-    </div>
-
-    <!-- NARASI SECTION -->
-    <div class="form-section">
-      <h3>📖 Narasi Discovery Insights</h3>
-      <div id="narasi-area"></div>
-    </div>
-
-    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-      <button class="btn btn-primary" onclick="saveToSheets()">💾 Simpan ke Google Sheets</button>
-      <button class="btn btn-email" onclick="sendToHRD()">📧 Kirim ke HRD</button>
-      <button class="btn btn-secondary" onclick="printResult()">🖨️ Cetak / PDF</button>
-      <button class="btn btn-secondary" onclick="restartAll()">↺ Mulai Ulang</button>
-      <button class="btn btn-secondary" onclick="openEmailConfig()" style="font-size:12px;padding:10px 16px;">⚙️ Setting Email HRD</button>
-    </div>
-    <div id="save-status" style="margin-top:12px; font-size:13px; color:var(--sub);"></div>
-  </div>
-
-
-<!-- EMAIL CONFIG MODAL -->
-<div class="modal-overlay" id="emailConfigModal">
-  <div class="modal" style="max-width:520px;">
-    <h3>📧 Pengaturan Email HRD</h3>
-    <p>Masukkan alamat email HRD/Admin yang akan menerima laporan hasil assessment secara otomatis.</p>
-    <div class="form-group" style="margin-bottom:12px">
-      <label>Email HRD Utama <span class="req">*</span></label>
-      <input type="email" id="cfg_hrd1" placeholder="hrd@yakkum.or.id">
-    </div>
-    <div class="form-group" style="margin-bottom:12px">
-      <label>Email HRD CC (opsional)</label>
-      <input type="email" id="cfg_hrd2" placeholder="hrd2@yakkum.or.id">
-    </div>
-    <div class="form-group" style="margin-bottom:20px">
-      <label>Nama Pengirim / Organisasi</label>
-      <input type="text" id="cfg_orgname" placeholder="YAKKUM Assessment System" value="YAKKUM Assessment System">
-    </div>
-    <p style="font-size:12px;color:#888;background:#f5f5f5;padding:10px;border-radius:8px;margin-bottom:18px;">
-      💡 <strong>Catatan:</strong> Email dikirim via Google Apps Script yang sudah dikonfigurasi di pengaturan Google Sheets. Pastikan fungsi <code>sendEmail()</code> sudah ditambahkan di script Anda.
-    </p>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveEmailConfig()">💾 Simpan</button>
-      <button class="btn btn-secondary" onclick="closeEmailConfig()">Tutup</button>
+    <div class="thankyou-card">
+      <div class="ty-icon-wrap">
+        <div class="ty-icon">✓</div>
+      </div>
+      <h2>Terima Kasih!</h2>
+      <p class="ty-en"><em>(Thank You!)</em></p>
+      <p class="ty-main">
+        Jawaban Anda telah berhasil diterima dan sedang diproses oleh tim HRD YAKKUM.
+        <br><em class="ty-en">(Your responses have been received and are being processed by the YAKKUM HR team.)</em>
+      </p>
+      <div class="ty-info-box">
+        <div class="ty-info-row">
+          <span class="ty-label">Peserta <em class="ty-en">(Participant)</em></span>
+          <span class="ty-value" id="ty-nama">—</span>
+        </div>
+        <div class="ty-info-row">
+          <span class="ty-label">Unit Kerja <em class="ty-en">(Work Unit)</em></span>
+          <span class="ty-value" id="ty-unit">—</span>
+        </div>
+        <div class="ty-info-row">
+          <span class="ty-label">Tujuan Assessment <em class="ty-en">(Assessment Purpose)</em></span>
+          <span class="ty-value" id="ty-mode">—</span>
+        </div>
+        <div class="ty-info-row">
+          <span class="ty-label">Waktu Pengerjaan <em class="ty-en">(Time Taken)</em></span>
+          <span class="ty-value" id="ty-time">—</span>
+        </div>
+      </div>
+      <p class="ty-note">
+        Hasil assessment ini bersifat <strong>rahasia</strong> dan hanya digunakan untuk keperluan internal YAKKUM. 
+        Anda akan mendapat informasi lebih lanjut melalui HRD unit Anda.
+        <br><em class="ty-en">(The assessment results are <strong>confidential</strong> and for internal YAKKUM use only. 
+        Further information will be communicated through your HR unit.)</em>
+      </p>
+      <div id="ty-send-status" class="ty-status"></div>
+      <button class="btn btn-secondary" style="margin-top:24px;" onclick="restartAll()">
+        Isi Assessment Lagi <em class="ty-en">(Fill Again)</em>
+      </button>
     </div>
   </div>
-</div>
 
 </div><!-- /container -->
 
@@ -1306,13 +1316,19 @@ function renderQuestion() {
   const total = QUESTIONS.length;
   const pct = Math.round((state.currentQ / total) * 100);
 
-  document.getElementById('q-section-label').textContent = q.part;
-  document.getElementById('prog-text').textContent = `Pertanyaan ${state.currentQ+1} dari ${total}`;
+  var partMap = {
+    'Bagian 1: Gaya Kerja & Orientasi': 'Bagian 1: Gaya Kerja & Orientasi <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 1: Work Style &amp; Orientation)</em>',
+    'Bagian 2: Komunikasi & Interaksi': 'Bagian 2: Komunikasi & Interaksi <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 2: Communication &amp; Interaction)</em>',
+    'Bagian 3: Nilai & Motivasi': 'Bagian 3: Nilai & Motivasi <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 3: Values &amp; Motivation)</em>',
+    'Bagian 4: Kepemimpinan & Pengembangan': 'Bagian 4: Kepemimpinan & Pengembangan <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 4: Leadership &amp; Development)</em>'
+  };
+  document.getElementById('q-section-label').innerHTML = partMap[q.part] || q.part;
+  document.getElementById('prog-text').innerHTML = 'Pertanyaan '+(state.currentQ+1)+' dari '+total+' <em style="font-size:11px;font-style:italic;color:var(--sub);">(Question '+(state.currentQ+1)+' of '+total+')</em>';
   document.getElementById('prog-pct').textContent = pct + '%';
   document.getElementById('prog-fill').style.width = pct + '%';
   updateTimerDisplay();
   document.getElementById('btn-prev').style.visibility = state.currentQ > 0 ? 'visible' : 'hidden';
-  document.getElementById('btn-next').textContent = state.currentQ < total-1 ? 'Berikutnya →' : 'Lihat Hasil ✓';
+  document.getElementById('btn-next').innerHTML = state.currentQ < total-1 ? 'Berikutnya <em style="font-size:11px;font-style:italic;">(Next)</em> →' : 'Selesai <em style="font-size:11px;font-style:italic;">(Submit)</em> ✓';
 
   const prev = state.answers[q.id];
 
@@ -1413,99 +1429,84 @@ function calculateResults() {
 // RESULTS
 // ═══════════════════════════════════════════════════
 function showResults() {
-  const { pcts } = state.results;
-  const sorted = ['F','S','E','C'].sort((a,b) => pcts[b]-pcts[a]);
-  const dom = sorted[0], sec = sorted[1];
-  const dc = COLOR_DATA[dom], sc = COLOR_DATA[sec];
+  var pcts = state.results.pcts;
+  var sorted = ['F','S','E','C'].sort(function(a,b){ return pcts[b]-pcts[a]; });
+  var dom = sorted[0], sec = sorted[1];
 
-  document.getElementById('res-name').textContent = state.profile.nama;
-  document.getElementById('res-meta').textContent =
-    `${state.profile.unit} | Level ${state.profile.level} | ${getModeLabel(state.mode)}`;
-  // Show elapsed time in result header
-  const elapsed = state.timerElapsed || 0;
-  const em = Math.floor(elapsed/60), es = elapsed%60;
-  const timeStr = `${String(em).padStart(2,'0')}:${String(es).padStart(2,'0')}`;
-  document.getElementById('res-meta').textContent +=
-    ` | ⏱️ Selesai dalam ${em > 0 ? em+'m ' : ''}${es}d`;
+  // Fill Thank You info panel
+  var elapsed = state.timerElapsed || 0;
+  var em = Math.floor(elapsed/60), es = elapsed%60;
+  var elapsedLabel = (em > 0 ? em+' menit ' : '') + es + ' detik';
+  document.getElementById('ty-nama').textContent = state.profile.nama;
+  document.getElementById('ty-unit').textContent = state.profile.unit;
+  document.getElementById('ty-mode').textContent = getModeLabel(state.mode);
+  document.getElementById('ty-time').textContent = elapsedLabel;
 
-  // Dominant
-  const modeLabel = getModeLabel(state.mode);
-  document.getElementById('dominant-block').innerHTML = `
-    <div class="color-block ${dc.class}" style="margin-bottom:0">
-      <div style="font-size:36px; margin-bottom:8px;">${dc.emoji}</div>
-      <h3>Warna Dominan: ${dc.name}</h3>
-      <div class="pct">${pcts[dom]}%</div>
-      <div class="desc">${dc.title}</div>
-      <div class="badge-row" style="margin-top:12px;">
-        <span class="badge" style="background:rgba(255,255,255,0.2); color:#fff; font-size:12px;">Warna Kedua: ${sc.name} ${pcts[sec]}%</span>
-      </div>
-    </div>`;
-
-  // Bars
-  let barsHtml = '';
-  sorted.forEach(k => {
-    const c = COLOR_DATA[k];
-    barsHtml += `<div class="bar-wrap">
-      <div class="bar-label"><span>${c.emoji} ${c.name}</span><span>${pcts[k]}%</span></div>
-      <div class="bar-track"><div class="bar-fill ${c.class}" id="bar-${k}" style="width:0%"></div></div>
-    </div>`;
-  });
-  document.getElementById('color-bars').innerHTML = barsHtml;
-
-  // Animate bars
-  setTimeout(() => {
-    sorted.forEach(k => {
-      const el = document.getElementById('bar-'+k);
-      if(el) el.style.width = pcts[k] + '%';
-    });
-  }, 100);
-
-  // 4 Color Cards
-  let cardsHtml = '';
-  sorted.forEach(k => {
-    const c = COLOR_DATA[k];
-    cardsHtml += `<div class="color-block ${c.class}">
-      <div style="font-size:24px; margin-bottom:6px;">${c.emoji}</div>
-      <h3>${c.name}</h3>
-      <div class="pct">${pcts[k]}%</div>
-      <div class="desc">${c.desc.substring(0,80)}...</div>
-    </div>`;
-  });
-  document.getElementById('colors-grid').innerHTML = cardsHtml;
-
-  // Insights
-  let insightsHtml = `
-    <div class="insight-card">
-      <h4>${dc.emoji} Kekuatan Utama Anda</h4>
-      <p>${dc.strengths.join(' • ')}</p>
-    </div>
-    <div class="insight-card" style="border-left-color: var(--sunny);">
-      <h4>⚡ Area Pengembangan</h4>
-      <p>${dc.challenges.join(' • ')}</p>
-    </div>
-    <div class="insight-card" style="border-left-color: var(--earthy);">
-      <h4>🏥 Konteks YAKKUM</h4>
-      <p>${dc.yakkum}</p>
-    </div>
-    <div class="insight-card" style="border-left-color: var(--fiery);">
-      <h4>🤝 Kombinasi ${dc.name} + ${sc.name}</h4>
-      <p>${getComboInsight(dom, sec)}</p>
-    </div>`;
-  document.getElementById('insights-area').innerHTML = insightsHtml;
-
-  // Recommendations by mode
-  const reco = RECO_BY_MODE[state.mode];
-  document.getElementById('reco-title').textContent = reco.title;
-  document.getElementById('reco-area').innerHTML = `
-    <div class="insight-card">
-      <h4>${dc.emoji} Berdasarkan Profil ${dc.name} Anda:</h4>
-      <p>${reco[dom]}</p>
-    </div>`;
-
-  // Narasi
-  document.getElementById('narasi-area').innerHTML = generateNarasiHTML(dom, sec, pcts);
-
+  // Show thank you screen
   goTo('screen-results');
+
+  // Auto send: save to Sheets AND email HRD
+  autoSubmitAll(pcts, sorted, dom, sec);
+}
+
+function autoSubmitAll(pcts, sorted, dom, sec) {
+  var statusEl = document.getElementById('ty-send-status');
+  var sheetUrl = localStorage.getItem('yakkumSheetUrl');
+  var hrd1 = localStorage.getItem('yakkumHRD1');
+
+  if (!sheetUrl && !hrd1) {
+    statusEl.innerHTML = '<span style="color:#888;">⚠️ Belum ada konfigurasi. Hubungi admin HRD. <em style="font-style:italic;">(No configuration set. Contact HR admin.)</em></span>';
+    return;
+  }
+
+  var elapsed = state.timerElapsed || 0;
+  var em2 = Math.floor(elapsed/60), es2 = elapsed%60;
+  var payload = {
+    action: 'sendEmail',
+    nama: state.profile.nama,
+    nip: state.profile.nip,
+    direktorat: state.profile.direktorat,
+    unit: state.profile.unit,
+    level: state.profile.level,
+    jabatan: state.profile.jabatan,
+    email: state.profile.email,
+    mode: getModeLabel(state.mode),
+    fiery: pcts.F,
+    sunny: pcts.S,
+    earthy: pcts.E,
+    cool: pcts.C,
+    dominant: COLOR_DATA[sorted[0]].name,
+    secondary: COLOR_DATA[sorted[1]].name,
+    elapsed_seconds: elapsed,
+    elapsed_label: em2+'m '+es2+'s',
+    to: hrd1 || '',
+    cc: localStorage.getItem('yakkumHRD2') || '',
+    subject: '[YAKKUM Assessment] '+state.profile.nama+' — '+COLOR_DATA[dom].name+' '+pcts[dom]+'% | '+getModeLabel(state.mode),
+    body: buildEmailBody(),
+    answers: JSON.stringify(state.answers)
+  };
+
+  statusEl.innerHTML = '⏳ Mengirim data... <em style="font-style:italic;">(Submitting data...)</em>';
+
+  if (sheetUrl) {
+    fetch(sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {'Content-Type':'application/json'}
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var emailOk = d.emailSent ? '📧 Email terkirim ke HRD. <em style="font-style:italic;">(Email sent to HR.)</em>' : '';
+      statusEl.innerHTML = '✅ Data tersimpan ke Google Sheets. '+emailOk;
+    })
+    .catch(function(){
+      // Fallback: open mailto
+      if (hrd1) { fallbackMailto(hrd1, statusEl); }
+      else { statusEl.innerHTML = '⚠️ Gagal menyimpan data. Hubungi admin. <em style="font-style:italic;">(Failed to save. Contact admin.)</em>'; }
+    });
+  } else if (hrd1) {
+    fallbackMailto(hrd1, statusEl);
+  }
 }
 
 function getComboInsight(d, s) {
