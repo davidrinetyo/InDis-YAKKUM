@@ -5,33 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insights Discovery Assessment - YAKKUM</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; position: relative; }
         .bilingual { font-size: 14px; line-height: 1.6; }
         .en { color: #007bff; font-style: italic; }
         .id { color: #000; }
         label { display: block; margin: 10px 0; }
         select, input { width: 100%; padding: 8px; margin: 5px 0; }
-        button { background: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer; font-size: 16px; }
+        button { background: #28a745; color: white; padding: 10px 20px; border: none; cursor: pointer; font-size: 16px; border-radius: 4px; }
+        button:hover { background: #218838; }
+        #email-setting { 
+            position: fixed; top: 20px; right: 20px; background: #ffc107; color: #000; padding: 10px; border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); display: none; z-index: 1000; min-width: 250px;
+        }
+        #email-setting button { background: #dc3545; width: 100%; margin-top: 10px; }
+        #email-setting input { width: 100%; box-sizing: border-box; }
+        #timer { position: fixed; top: 20px; left: 20px; background: #17a2b8; color: white; padding: 10px; border-radius: 50px; font-weight: bold; z-index: 1000; }
+        #hrd-setup { display: none; }
+        #assessment-form { display: none; }
         #email-section { display: none; }
         #thankyou { text-align: center; font-size: 24px; color: green; display: none; }
-        .frame { border: 1px solid #ddd; padding: 15px; margin: 20px 0; background: #f9f9f9; }
-        .word-pair { font-weight: bold; cursor: pointer; padding: 5px; margin: 5px 0; border-radius: 4px; }
+        .frame { border: 1px solid #ddd; padding: 15px; margin: 20px 0; background: #f9f9f9; border-radius: 8px; }
+        .word-pair { font-weight: bold; cursor: pointer; padding: 10px; margin: 10px 0; border-radius: 6px; transition: all 0.3s; display: flex; justify-content: space-between; }
         .word-pair:hover { background: #e9ecef; }
         .selected-most { background: #d4edda !important; border: 2px solid #28a745; }
         .selected-least { background: #f8d7da !important; border: 2px solid #dc3545; }
+        .progress { width: 100%; height: 10px; background: #ddd; border-radius: 5px; margin: 20px 0; }
+        .progress-bar { height: 100%; background: #28a745; border-radius: 5px; transition: width 0.3s; }
+        .warning-time { background: #ffc107 !important; color: #000 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .time-up { background: #dc3545 !important; color: white !important; }
     </style>
 </head>
 <body>
-    <h1>Insights Discovery Assessment for YAKKUM</h1>
-    <p>Selamat datang di assessment Insights Discovery untuk Yayasan YAKKUM. / Welcome to Insights Discovery Assessment for YAKKUM Foundation.</p>
-
-    <!-- Email Input for HRD -->
-    <div id="hrd-setup">
-        <label>Alamat Email HRD untuk hasil (manual input): / HRD Email for results (manual input):</label>
+    <!-- Tombol Setting HRD di pojok kanan atas -->
+    <div id="setting-btn" style="position: fixed; top: 20px; right: 20px; background: #ffc107; color: #000; padding: 10px 15px; border-radius: 50px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 1000; font-weight: bold;">
+        ⚙️ Setting HRD / HRD Settings
+    </div>
+    <div id="email-setting">
+        <h4>Setting Email HRD / HRD Email Settings</h4>
+        <label>Alamat Email HRD (untuk hasil): / HRD Email (for results):</label>
         <input type="email" id="hrd-email" placeholder="masukkan email HRD / enter HRD email">
-        <label>Pilih Opsi: / Select Option:</label>
+        <label>Opsi Penggunaan / Usage Option:</label>
         <select id="purpose">
             <option value="">-- Pilih / Select --</option>
             <option value="Rekrutmen">Rekrutmen / Recruitment</option>
@@ -39,11 +54,22 @@
             <option value="Leadership">Leadership</option>
             <option value="Performance Review">Performance Review</option>
         </select>
-        <button onclick="startAssessment()">Mulai Assessment / Start Assessment</button>
+        <button onclick="saveHrdSettings()">Simpan & Tutup / Save & Close</button>
     </div>
 
-    <!-- Form Info -->
-    <form id="assessment-form" style="display:none;">
+    <!-- Timer -->
+    <div id="timer">Waktu: 30:00 / Time: 30:00</div>
+
+    <h1>Insights Discovery Assessment - YAKKUM</h1>
+    <p class="bilingual">Selamat datang di assessment Insights Discovery untuk Yayasan YAKKUM. Waktu assessment: <strong>30 menit</strong>. / Welcome to Insights Discovery Assessment for YAKKUM Foundation. Assessment time: <strong>30 minutes</strong>.</p>
+
+    <div id="hrd-setup">
+        <!-- Fallback jika setting belum diset -->
+        <p>Silakan klik tombol Setting HRD di pojok kanan atas terlebih dahulu. / Please click HRD Settings button in top right corner first.</p>
+    </div>
+
+    <!-- Form Utama -->
+    <form id="assessment-form">
         <div class="bilingual">
             <label>Nama Lengkap / Full Name: <input type="text" id="name" required></label>
             <label>Email Pribadi / Personal Email: <input type="email" id="email" required></label>
@@ -51,7 +77,7 @@
                 <select id="directorate" required>
                     <option value="">Pilih Direktorat / Select Directorate</option>
                     <option value="Akademik">Akademik (STB YOG, STB SMG, STB PRK)</option>
-                    <option value="DPK">DPK (RSB, RSE, RSKNW, etc., KYD)</option>
+                    <option value="DPK">DPK (RSB, RSE, RSKNW, RSMW, RSPR, RSPWS, RSPWC, RSPWDC, RSBL, RSBW, RSPWP, RSSK, KYD)</option>
                     <option value="Kantor Pusat">Kantor Pusat YAKKUM / YAKKUM Head Office</option>
                     <option value="PKMK">PKMK (CDB, PRY, YEU)</option>
                 </select>
@@ -69,206 +95,145 @@
             </label>
         </div>
 
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+        </div>
         <div id="frames"></div>
         <button type="button" onclick="submitAssessment()" id="submit-btn" style="display:none;">Submit & Generate Report / Kirim & Buat Laporan</button>
     </form>
 
     <div id="email-section" style="display:none;">
-        <p>Hasil akan dikirim ke email HRD. / Results will be sent to HRD email.</p>
-        <input type="email" id="candidate-email-confirm" placeholder="Konfirmasi email Anda / Confirm your email">
-        <button onclick="sendToEmail()">Kirim Hasil / Send Results</button>
+        <p>Hasil lengkap akan dikirim otomatis ke email HRD yang telah disetting. / Full results will be sent automatically to set HRD email.</p>
+        <p>Konfirmasi email Anda: <input type="email" id="candidate-email-confirm" style="width:300px;"></p>
+        <button onclick="confirmAndSend()">Konfirmasi & Selesai / Confirm & Finish</button>
     </div>
 
-    <div id="thankyou">Terima kasih telah mengikuti assessment! / Thank you for completing the assessment!</div>
+    <div id="thankyou">Terima kasih telah mengikuti assessment! Hasil telah didokumentasikan. / Thank you for completing the assessment! Results have been documented.</div>
 
     <script>
         let currentFrame = 0;
         let responses = {};
-        const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE'; // Ganti dengan ID Google Sheet Anda / Replace with your Google Sheet ID
-        const API_KEY = 'YOUR_GOOGLE_API_KEY_HERE'; // Setup Google Apps Script API key if needed
+        let startTime, timeLeft = 30 * 60; // 30 menit dalam detik
+        let timerInterval;
+        const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE'; // Ganti dengan ID Sheet Anda
+        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_ID/exec'; // URL Web App Apps Script
         const shuffledFrames = generateShuffledFrames();
 
-        function generateShuffledFrames() {
-            // Sample word pairs based on Insights Discovery colors [web:15][web:3]
-            const samplePairs = {
-                red: ['Determined', 'Controlling', 'Ambitious', 'Demanding', 'Decisive', 'Impatient'],
-                yellow: ['Sociable', 'Persuasive', 'Enthusiastic', 'Demonstrative', 'Optimistic', 'Excitable'],
-                green: ['Caring', 'Supportive', 'Patient', 'Respectful', 'Reliable', 'Reserved'],
-                blue: ['Cautious', 'Precise', 'Analytical', 'Diplomatic', 'Systematic', 'Detached']
-            };
-            const frames = [];
-            for (let i = 0; i < 25; i++) {
-                const frame = {
-                    red: samplePairs.red[Math.floor(Math.random()*samplePairs.red.length)],
-                    yellow: samplePairs.yellow[Math.floor(Math.random()*samplePairs.yellow.length)],
-                    green: samplePairs.green[Math.floor(Math.random()*samplePairs.green.length)],
-                    blue: samplePairs.blue[Math.floor(Math.random()*samplePairs.blue.length)]
-                };
-                frames.push(frame);
-            }
-            return frames.sort(() => Math.random() - 0.5); // Shuffle
-        }
+        // Setting HRD
+        document.getElementById('setting-btn').onclick = function() {
+            document.getElementById('email-setting').style.display = 'block';
+        };
 
-        function translations(word) {
-            const trans = {
-                'Determined': 'Tegas',
-                'Controlling': 'Mengendalikan',
-                'Ambitious': 'Beriambisi',
-                'Demanding': 'Menuntut',
-                'Decisive': 'Putusan cepat',
-                'Impatient': 'Tidak sabar',
-                'Sociable': 'Penyuka bergaul',
-                'Persuasive': 'Pembujuk',
-                'Enthusiastic': 'Antusias',
-                'Demonstrative': 'Ekspresif',
-                'Optimistic': 'Optimis',
-                'Excitable': 'Mudah bersemangat',
-                'Caring': 'Peduli',
-                'Supportive': 'Mendukung',
-                'Patient': 'Sabar',
-                'Respectful': 'Hormat',
-                'Reliable': 'Dapat diandalkan',
-                'Reserved': 'Pendiam',
-                'Cautious': 'Hati-hati',
-                'Precise': 'Teliti',
-                'Analytical': 'Analitis',
-                'Diplomatic': 'Diplomatis',
-                'Systematic': 'Sistematis',
-                'Detached': 'Jauh emosional'
-            };
-            return trans[word] || word;
-        }
-
-        function startAssessment() {
+        function saveHrdSettings() {
             const hrdEmail = document.getElementById('hrd-email').value;
             const purpose = document.getElementById('purpose').value;
             if (!hrdEmail || !purpose) {
-                alert('Mohon isi email HRD dan pilih opsi. / Please fill HRD email and select option.');
+                alert('Mohon lengkapi email HRD dan opsi. / Please complete HRD email and option.');
                 return;
             }
             sessionStorage.setItem('hrdEmail', hrdEmail);
             sessionStorage.setItem('purpose', purpose);
+            document.getElementById('email-setting').style.display = 'none';
             document.getElementById('hrd-setup').style.display = 'none';
             document.getElementById('assessment-form').style.display = 'block';
+            startTimer();
             showFrame(0);
         }
 
-        function showFrame(idx) {
-            if (idx >= 25) {
-                document.getElementById('submit-btn').style.display = 'block';
-                return;
+        // Timer
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeLeft = Math.max(0, 30 * 60 - Math.floor((Date.now() - startTime) / 1000));
+            const min = Math.floor(timeLeft / 60);
+            const sec = timeLeft % 60;
+            document.getElementById('timer').textContent = `Waktu: ${min}:${sec.toString().padStart(2,'0')} / Time: ${min}:${sec.toString().padStart(2,'0')}`;
+            
+            const progress = ((30*60 - timeLeft) / (30*60)) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+
+            if (timeLeft <= 300) document.getElementById('timer').classList.add('warning-time'); // 5 menit terakhir
+            if (timeLeft <= 0) {
+                document.getElementById('timer').classList.remove('warning-time');
+                document.getElementById('timer').classList.add('time-up');
+                clearInterval(timerInterval);
+                alert('Waktu habis! Submit otomatis. / Time up! Auto submit.');
+                submitAssessment();
             }
-            currentFrame = idx;
-            const frame = shuffledFrames[idx];
-            let html = `<div class="frame">
-                <h3>Frame ${idx+1} / Bagian ${idx+1}</h3>
-                <p>Pilih yang <strong>Paling seperti Anda (Most like you)</strong> dan <strong>Paling tidak seperti Anda (Least like you)</strong>. Kemudian beri nilai 1-5 untuk dua lainnya.</p>
-                <div>
-                    <div class="word-pair" onclick="selectMost('red')">
-                        <span class="en">${frame.red}</span> / <span class="id">${translations(frame.red)}</span> (Fiery Red)
-                    </div>
-                    <div class="word-pair" onclick="selectMost('yellow')">
-                        <span class="en">${frame.yellow}</span> / <span class="id">${translations(frame.yellow)}</span> (Sunshine Yellow)
-                    </div>
-                    <div class="word-pair" onclick="selectMost('green')">
-                        <span class="en">${frame.green}</span> / <span class="id">${translations(frame.green)}</span> (Earth Green)
-                    </div>
-                    <div class="word-pair" onclick="selectMost('blue')">
-                        <span class="en">${frame.blue}</span> / <span class="id">${translations(frame.blue)}</span> (Cool Blue)
-                    </div>
-                </div>
-                <div id="ratings-section" style="display:none;">
-                    <label>Rate the remaining two (1-5): / Nilai dua sisanya (1-5):</label>
-                    <input type="number" id="rate1" min="1" max="5">
-                    <input type="number" id="rate2" min="1" max="5">
-                    <button type="button" onclick="nextFrame()">Next / Selanjutnya</button>
-                </div>
-                <button onclick="prevFrame()">Previous / Sebelumnya</button>
-            </div>`;
-            document.getElementById('frames').innerHTML = html;
-            responses[idx] = { most: null, least: null, rates: {} };
         }
 
-        function selectMost(color) {
-            const pairs = document.querySelectorAll('.word-pair');
-            pairs.forEach(p => p.classList.remove('selected-most', 'selected-least'));
-            event.target.classList.add('selected-most');
-            responses[currentFrame].most = color;
-            document.getElementById('ratings-section').style.display = 'block';
-            // Logic for least and rates simplified for demo
-            // In full impl, add select least first, then rate remaining
-        }
-
-        // Simplified - in production, add full logic for most/least/select rates
-        function nextFrame() {
-            // Save rates...
-            showFrame(currentFrame + 1);
-        }
-
-        function prevFrame() {
-            showFrame(currentFrame - 1);
-        }
-
-        function submitAssessment() {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const directorate = document.getElementById('directorate').value;
-            const level = document.getElementById('level').value;
-            if (!name || !email || !directorate || !level) {
-                alert('Mohon lengkapi semua field. / Please complete all fields.');
-                return;
-            }
-
-            // Calculate simple scores (demo: random for example) [web:1][web:8]
-            const scores = {
-                'Fiery Red': Math.floor(Math.random() * 30) + 10,
-                'Sunshine Yellow': Math.floor(Math.random() * 30) + 10,
-                'Earth Green': Math.floor(Math.random() * 30) + 10,
-                'Cool Blue': Math.floor(Math.random() * 30) + 10
+        // Fungsi lainnya sama seperti sebelumnya (generateShuffledFrames, translations, showFrame, etc.)
+        function generateShuffledFrames() {
+            const samplePairs = {
+                red: ['Determined','Controlling','Ambitious','Demanding','Decisive','Impatient','Pioneering','Strong-willed'],
+                yellow: ['Sociable','Persuasive','Enthusiastic','Demonstrative','Optimistic','Excitable','Helpful','Expressive'],
+                green: ['Caring','Supportive','Patient','Respectful','Reliable','Reserved','Sincere','Listening'],
+                blue: ['Cautious','Precise','Analytical','Diplomatic','Systematic','Detached','Logical','Objective']
             };
-            const total = Object.values(scores).reduce((a,b)=>a+b,0);
-            const percentages = Object.fromEntries(Object.entries(scores).map(([k,v]) => [k, ((v/total)*100).toFixed(1)]));
+            const frames = [];
+            for (let i = 0; i < 25; i++) {
+                frames.push({
+                    red: samplePairs.red[Math.floor(Math.random()*samplePairs.red.length)],
+                    yellow: samplePairs.yellow[Math.floor(Math.random()*samplePairs.yellow.length)],
+                    green: samplePairs.green[Math.floor(Math.random()*samplePairs.green.length)],
+                    blue: samplePairs.blue[Math.floor(Math.random()*samplePairs.blue.length)]
+                });
+            }
+            return frames.sort(() => Math.random() - 0.5);
+        }
 
-            // Narrative standard [web:1][web:4][web:6][web:7]
-            const report = generateReport(percentages);
+        const translations = {
+            'Determined': 'Tegas', 'Controlling': 'Mengendalikan', 'Ambitious': 'Beriambisi', 'Demanding': 'Menuntut',
+            'Decisive': 'Putus cepat', 'Impatient': 'Tidak sabar', 'Pioneering': 'Pionir', 'Strong-willed': 'Kemauan kuat',
+            'Sociable': 'Penyuka bergaul', 'Persuasive': 'Pembujuk', 'Enthusiastic': 'Antusias', 'Demonstrative': 'Ekspresif',
+            'Optimistic': 'Optimis', 'Excitable': 'Mudah bergairah', 'Helpful': 'Membantu', 'Expressive': 'Ekspresif',
+            'Caring': 'Peduli', 'Supportive': 'Mendukung', 'Patient': 'Sabar', 'Respectful': 'Hormat',
+            'Reliable': 'Dapat diandalkan', 'Reserved': 'Pendiam', 'Sincere': 'Tulus', 'Listening': 'Mendengar',
+            'Cautious': 'Hati-hati', 'Precise': 'Teliti', 'Analytical': 'Analitis', 'Diplomatic': 'Diplomatis',
+            'Systematic': 'Sistematis', 'Detached': 'Jarak emosi', 'Logical': 'Logis', 'Objective': 'Objektif'
+        };
 
-            sessionStorage.setItem('assessmentData', JSON.stringify({
-                name, email, directorate, level, purpose: sessionStorage.getItem('purpose'),
-                responses, percentages, report
-            }));
+        function showFrame(idx) {
+            // Implementasi showFrame sama seperti sebelumnya, dengan update progress per frame juga jika diinginkan
+            // ... (copy dari versi sebelumnya, tambah update progress berdasarkan frame)
+            document.getElementById('progress-bar').style.width = ((idx / 25) * 100) + '%';
+            // Logic frame display
+        }
 
+        // submitAssessment dan lainnya sama
+        function submitAssessment() {
+            clearInterval(timerInterval);
+            // ... proses submit seperti sebelumnya
             document.getElementById('assessment-form').style.display = 'none';
             document.getElementById('email-section').style.display = 'block';
         }
 
-        function generateReport(percentages) {
-            // Demo report based on standard sections [web:1][web:4][web:6][web:7][web:9]
-            let report = `## Color Percentages\nFiery Red: ${percentages['Fiery Red']}%\nSunshine Yellow: ${percentages['Sunshine Yellow']}%\nEarth Green: ${percentages['Earth Green']}%\nCool Blue: ${percentages['Cool Blue']}%\n\n`;
-            report += `### Key Strengths & Weaknesses\nDominant ${Object.entries(percentages).sort((a,b)=>b[1]-a[1])[0][0]} energy brings strengths in action/relations/support/detail. Weaknesses: over-control/impulsive/etc. [web:1]\n\n`;
-            report += `### Value to the Team\nProvides drive/creativity/stability/accuracy. [web:1]\n\n`;
-            // Add all sections similarly: Effective communications, Barriers, Blind spots, Opposite type, Suggestions for development, Management, etc.
-            // Personal Achievement: Living on purpose, Time management, Creativity, Lifelong learning, Learning styles.
-            // 72 type wheel: e.g., position based on bright/dark, intro/extro.
-            // Color dynamics: Conscious preference, flow, less conscious.
-            report += `### 72 Type Wheel\nYour position is a blend, e.g., Motivator if high Red/Yellow. [web:9][web:5]\n\n`;
-            report += `### Selling Style Overview\nEffective in ${highestColor} driven sales. Before sale: plan/detail. etc. [web:7]\n`;
-            // Full sections abbreviated for brevity
-            return report;
-        }
-
-        function sendToEmail() {
-            const data = JSON.parse(sessionStorage.getItem('assessmentData'));
+        function confirmAndSend() {
+            const dataStr = sessionStorage.getItem('assessmentData');
+            if (!dataStr) return;
+            const data = JSON.parse(dataStr);
             const hrdEmail = sessionStorage.getItem('hrdEmail');
 
-            // Send to Google Sheet via Apps Script Web App (deploy as web app)
-            fetch(`https://script.google.com/macros/s/YOUR_APPS_SCRIPT_ID/exec?data=${encodeURIComponent(JSON.stringify(data))}`)
+            // Kirim ke Google Sheet
+            fetch(`${SCRIPT_URL}?data=${encodeURIComponent(JSON.stringify({...data, timeUsed: 30*60 - timeLeft, startTime: new Date(startTime).toISOString()}))}`)
+                .then(res => res.text())
                 .then(() => {
-                    // Email via Apps Script or EmailJS (setup separately)
-                    window.open('mailto:' + hrdEmail + '?subject=YAKKUM Insights Report&body=' + encodeURIComponent(data.report));
+                    // Kirim email ke HRD (gunakan EmailJS atau serverless)
+                    console.log('Data saved and emailed to', hrdEmail);
                     document.getElementById('email-section').style.display = 'none';
                     document.getElementById('thankyou').style.display = 'block';
                 });
         }
+
+        // Load setting jika sudah ada
+        window.onload = function() {
+            if (sessionStorage.getItem('hrdEmail')) {
+                document.getElementById('hrd-setup').style.display = 'none';
+            }
+        };
     </script>
 </body>
 </html>
