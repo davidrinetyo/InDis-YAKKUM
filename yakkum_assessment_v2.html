@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YAKKUM | Insights Discovery Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C8982A; --gold-light:#E8C060; --navy:#1A2744; --navy-mid:#243562;
+  --cream:#FAF6EE; --warm-white:#FFFDF8; --text-dark:#1A1A2E; --text-mid:#3A3A5C;
+  --text-light:#6B7280; --border:#E5DEC8; --red:#C0392B; --yellow:#F4C430;
+  --green:#2E7D52; --blue:#1B5E9B; --shadow:0 4px 24px rgba(26,39,68,0.10);
+  --radius:14px; --radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#1E3A5F 100%);position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(200,152,42,0.08);pointer-events:none;}
+.header-inner{max-width:960px;margin:0 auto;padding:28px 28px 22px;display:flex;align-items:center;gap:20px;position:relative;z-index:1;}
+.header-logo img{height:62px;width:auto;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.25));}
+.header-text h1{font-family:'Playfair Display',serif;color:white;font-size:1.75rem;letter-spacing:0.5px;line-height:1.2;}
+.header-text p{color:var(--gold-light);font-size:0.88rem;margin-top:3px;font-weight:300;}
+.header-badge{margin-left:auto;background:rgba(200,152,42,0.18);border:1px solid rgba(200,152,42,0.35);color:var(--gold-light);padding:5px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;letter-spacing:1px;white-space:nowrap;}
+
+/* ADMIN BAR */
+.admin-bar{background:var(--navy);border-bottom:2px solid var(--gold);padding:8px 20px;display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+.admin-bar label{color:var(--gold-light);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;}
+.admin-bar input{background:rgba(255,255,255,0.08);border:1px solid rgba(200,152,42,0.4);color:white;padding:5px 10px;border-radius:6px;font-size:0.8rem;outline:none;transition:border 0.2s;}
+.admin-bar input:focus{border-color:var(--gold);}
+.admin-email{min-width:200px;}
+.admin-sheet{min-width:240px;}
+.save-btn{background:var(--gold);color:white;border:none;padding:6px 14px;border-radius:6px;font-size:0.78rem;font-weight:600;cursor:pointer;transition:background 0.2s;}
+.save-btn:hover{background:var(--gold-light);}
+.saved-msg{color:#6EE7B7;font-size:0.76rem;display:none;}
+.admin-sep{color:rgba(255,255,255,0.2);margin:0 4px;}
+
+/* TIMER BAR */
+.timer-bar{background:var(--navy);border-bottom:1px solid rgba(200,152,42,0.25);padding:7px 20px;display:none;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(26,39,68,0.25);}
+.timer-item{display:flex;align-items:center;gap:7px;}
+.timer-label{font-size:0.7rem;color:rgba(255,255,255,0.5);font-weight:600;letter-spacing:0.8px;text-transform:uppercase;}
+.timer-display{font-family:'Courier New',monospace;font-size:1rem;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:6px;min-width:76px;text-align:center;}
+.timer-total{background:rgba(200,152,42,0.15);border:1px solid rgba(200,152,42,0.35);color:var(--gold-light);}
+.timer-page{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:white;}
+.timer-page.warning{background:rgba(220,80,60,0.2);border-color:rgba(220,80,60,0.5);color:#FC8181;animation:timerPulse 1s infinite;}
+@keyframes timerPulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+.timer-divider{width:1px;height:24px;background:rgba(255,255,255,0.12);}
+
+/* CONTAINER */
+.container{max-width:880px;margin:0 auto;padding:28px 18px 60px;}
+
+/* STEPS */
+.steps-bar{display:flex;align-items:center;justify-content:center;margin-bottom:28px;flex-wrap:wrap;gap:4px;}
+.step-item{display:flex;align-items:center;gap:7px;color:var(--text-light);font-size:0.78rem;font-weight:600;}
+.step-item.active{color:var(--navy);}
+.step-item.done{color:var(--gold);}
+.step-num{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;background:white;}
+.step-item.active .step-num{background:var(--navy);border-color:var(--navy);color:white;}
+.step-item.done .step-num{background:var(--gold);border-color:var(--gold);color:white;}
+.step-line{width:28px;height:2px;background:var(--border);margin:0 3px;}
+.step-line.done{background:var(--gold);}
+
+/* CARD */
+.card{background:var(--warm-white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:20px;animation:fadeUp 0.4s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(90deg,var(--navy) 0%,var(--navy-mid) 100%);border-radius:var(--radius-sm) var(--radius-sm) 0 0;margin:-28px -28px 22px;}
+.section-header h3{font-family:'Playfair Display',serif;color:white;font-size:0.95rem;}
+.section-header span{color:var(--gold-light);font-size:0.78rem;font-style:italic;}
+.section-badge{background:var(--gold);color:white;border-radius:20px;padding:2px 10px;font-size:0.7rem;font-weight:700;letter-spacing:0.5px;margin-left:auto;white-space:nowrap;}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row.single{grid-template-columns:1fr;}
+.form-row.triple{grid-template-columns:1fr 1fr 1fr;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:0.8rem;font-weight:700;color:var(--navy);letter-spacing:0.3px;}
+.label-en{font-size:0.72rem;color:var(--text-light);font-weight:400;font-style:italic;}
+.form-group input,.form-group select,.form-group textarea{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;font-size:0.86rem;font-family:inherit;background:white;color:var(--text-dark);transition:border 0.2s,box-shadow 0.2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,152,42,0.12);}
+.form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C8982A' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px;}
+
+/* PURPOSE CARDS */
+.purpose-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:8px;}
+.purpose-card{border:2px solid var(--border);border-radius:var(--radius-sm);padding:16px 14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:flex-start;gap:10px;background:white;}
+.purpose-card:hover{border-color:var(--gold-light);background:#FEFBF3;}
+.purpose-card.selected{border-color:var(--gold);background:linear-gradient(135deg,#FEF9EE 0%,white 100%);box-shadow:0 0 0 3px rgba(200,152,42,0.12);}
+.purpose-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.purpose-icon.recruit{background:#EEF4FF;} .purpose-icon.develop{background:#EEFBF3;}
+.purpose-icon.leader{background:#FFF8EE;} .purpose-icon.perform{background:#FFF0EE;}
+.purpose-text strong{font-size:0.88rem;color:var(--navy);display:block;margin-bottom:2px;}
+.purpose-text em{font-size:0.73rem;color:var(--text-light);font-style:italic;}
+
+/* MODULE BADGE */
+.module-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;letter-spacing:0.5px;margin-bottom:14px;}
+.module-badge.core{background:#EEF4FF;color:#1B5E9B;border:1px solid #BFDBFE;}
+.module-badge.functional{background:#EEFBF3;color:#2E7D52;border:1px solid #A7F3D0;}
+.module-badge.leadership-mod{background:#FFF8EE;color:#92400E;border:1px solid #FDE68A;}
+.module-badge.vignette{background:#FFF0EE;color:#9B1C1C;border:1px solid #FECACA;}
+.module-badge.culture{background:#F5F3FF;color:#5B21B6;border:1px solid #DDD6FE;}
+
+/* PROGRESS */
+.progress-wrap{background:var(--border);border-radius:10px;height:7px;overflow:hidden;margin:8px 0 3px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold) 0%,var(--gold-light) 100%);border-radius:10px;transition:width 0.4s ease;}
+.progress-label{display:flex;justify-content:space-between;font-size:0.74rem;color:var(--text-light);margin-top:2px;}
+
+/* SECTION DIVIDER */
+.section-divider{display:flex;align-items:center;gap:10px;margin:22px 0 16px;}
+.section-divider hr{flex:1;border:none;border-top:1.5px solid var(--border);}
+.section-divider span{font-size:0.72rem;font-weight:700;letter-spacing:1px;color:var(--text-light);text-transform:uppercase;white-space:nowrap;}
+
+/* QUESTION */
+.question-block{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.question-block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.q-label{font-size:0.7rem;font-weight:700;letter-spacing:1px;color:var(--gold);margin-bottom:5px;text-transform:uppercase;}
+.q-text{font-size:0.94rem;color:var(--text-dark);font-weight:600;line-height:1.5;margin-bottom:3px;}
+.q-text-en{font-size:0.81rem;color:var(--text-light);font-style:italic;margin-bottom:12px;line-height:1.4;}
+.q-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.68rem;font-weight:700;margin-bottom:8px;letter-spacing:0.5px;}
+.q-tag.core-tag{background:#EEF4FF;color:#1B5E9B;}
+.q-tag.func-tag{background:#EEFBF3;color:#2E7D52;}
+.q-tag.lead-tag{background:#FFF8EE;color:#92400E;}
+.q-tag.vign-tag{background:#FFF0EE;color:#9B1C1C;}
+.q-tag.cult-tag{background:#F5F3FF;color:#5B21B6;}
+
+/* LIKERT */
+.likert-row{display:flex;gap:7px;flex-wrap:wrap;}
+.likert-option{flex:1;min-width:90px;}
+.likert-option input{display:none;}
+.likert-option label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 5px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:0.72rem;color:var(--text-mid);text-align:center;line-height:1.3;background:white;transition:all 0.15s;min-height:60px;}
+.likert-option label .score{font-size:1rem;font-weight:700;}
+.score-1{color:#E53E3E;} .score-2{color:#DD6B20;} .score-3{color:#975A16;} .score-4{color:#276749;} .score-5{color:#2B6CB0;}
+.likert-option input:checked+label{border-color:var(--gold);background:linear-gradient(135deg,#FEF9EE 0%,white 100%);box-shadow:0 0 0 3px rgba(200,152,42,0.15);color:var(--navy);font-weight:600;}
+.likert-option:hover label{border-color:var(--gold-light);background:#FEFBF3;}
+
+/* FORCED CHOICE */
+.forced-choice-block{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.forced-choice-block:last-child{border-bottom:none;}
+.fc-instruction{font-size:0.77rem;background:#EEF4FF;border-left:3px solid #1B5E9B;padding:7px 11px;border-radius:0 6px 6px 0;color:var(--navy);margin-bottom:10px;}
+.fc-grid{display:flex;flex-direction:column;gap:7px;}
+.fc-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:white;transition:all 0.15s;}
+.fc-item.selected-most{border-color:var(--green);background:#EEFBF3;}
+.fc-item.selected-least{border-color:var(--red);background:#FFF0EE;}
+.fc-btns{display:flex;gap:5px;flex-shrink:0;}
+.fc-btn{padding:3px 7px;border-radius:4px;font-size:0.68rem;font-weight:700;border:1.5px solid;cursor:pointer;transition:all 0.15s;letter-spacing:0.5px;}
+.fc-btn.most{border-color:var(--green);color:var(--green);background:transparent;}
+.fc-btn.most.active{background:var(--green);color:white;}
+.fc-btn.least{border-color:var(--red);color:var(--red);background:transparent;}
+.fc-btn.least.active{background:var(--red);color:white;}
+.fc-text{flex:1;}
+.fc-text .id{font-size:0.86rem;color:var(--text-dark);font-weight:500;}
+.fc-text .en{font-size:0.73rem;color:var(--text-light);font-style:italic;}
+
+/* VIGNETTE */
+.vignette-box{background:linear-gradient(135deg,#FFF8F0 0%,#FFF5F5 100%);border:1.5px solid #FECACA;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:12px;}
+.vignette-label{font-size:0.7rem;font-weight:700;color:#9B1C1C;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.vignette-scenario{font-size:0.9rem;color:var(--text-dark);line-height:1.6;font-style:italic;margin-bottom:4px;}
+.vignette-scenario-en{font-size:0.78rem;color:var(--text-light);font-style:italic;line-height:1.4;}
+
+/* CULTURE FIT */
+.culture-scale{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.culture-opt input{display:none;}
+.culture-opt label{display:flex;flex-direction:column;align-items:center;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:0.72rem;background:white;transition:all 0.15s;min-width:80px;text-align:center;}
+.culture-opt input:checked+label{border-color:#5B21B6;background:#F5F3FF;color:#5B21B6;font-weight:600;}
+
+/* LEVEL BADGE */
+.level-indicator{display:flex;align-items:center;gap:8px;padding:8px 14px;background:linear-gradient(135deg,#F0F9FF 0%,#EFF6FF 100%);border:1px solid #BFDBFE;border-radius:var(--radius-sm);margin-bottom:16px;font-size:0.8rem;color:var(--navy);}
+.level-indicator strong{color:#1B5E9B;}
+
+/* ALERT */
+.alert{padding:11px 15px;border-radius:var(--radius-sm);font-size:0.83rem;margin-bottom:14px;display:none;}
+.alert.show{display:block;animation:fadeUp 0.3s ease;}
+.alert-error{background:#FFF5F5;border:1px solid #FED7D7;color:#C53030;}
+.alert-success{background:#F0FFF4;border:1px solid #9AE6B4;color:#276749;}
+.alert-info{background:#EBF8FF;border:1px solid #90CDF4;color:#2A69AC;}
+
+/* BUTTONS */
+.btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;flex-wrap:wrap;gap:10px;}
+.btn{padding:11px 24px;border-radius:var(--radius-sm);font-size:0.88rem;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;font-family:inherit;letter-spacing:0.3px;}
+.btn-primary{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);color:white;box-shadow:0 4px 14px rgba(26,39,68,0.22);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,39,68,0.28);}
+.btn-secondary{background:white;color:var(--navy);border:2px solid var(--border);}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.btn-gold{background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 100%);color:white;box-shadow:0 4px 14px rgba(200,152,42,0.32);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,152,42,0.4);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+
+/* THANK YOU */
+.thankyou-page{text-align:center;padding:50px 20px;animation:fadeUp 0.6s ease both;}
+.thankyou-icon{width:82px;height:82px;background:linear-gradient(135deg,var(--gold) 0%,var(--gold-light) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.2rem;box-shadow:0 8px 28px rgba(200,152,42,0.35);}
+.thankyou-page h2{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--navy);margin-bottom:8px;}
+.thankyou-page .sub{color:var(--text-light);font-size:0.92rem;max-width:460px;margin:0 auto;line-height:1.6;}
+.thankyou-note{margin-top:24px;padding:16px 22px;background:#EEF4FF;border-radius:var(--radius-sm);font-size:0.84rem;color:var(--navy);max-width:480px;margin-left:auto;margin-right:auto;}
+
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr;}
+  .purpose-grid{grid-template-columns:1fr;}
+  .card{padding:18px;}
+  .section-header{margin:-18px -18px 18px;}
+  .likert-row{gap:4px;}
+  .likert-option{min-width:75px;}
+  .admin-bar{justify-content:flex-start;}
+  .header-inner{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-logo"><img src="data:image/jpeg;base64,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mUge4UUUUCCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKmi/wBWKhqaL/VigcSGvz//AGx/GE3ij9oLXVZiYtNkFjEAfuhAN2P+BE1+gFfnf+1P4aufDPx+8Ux3MbKt7ePewMRjcjnduHqMkj8DX23Aqh9dm5bqOn3q5+d+JEqiy+nGPwuev3M+GP8Agpd4r1bUtc8D6bP8uhaJp1yLIgnLzTXDST57ZwIh9BXzEFKJg9R1r9FvjL8HNL+Nfg99K1ANFJGd9rcoRvtX6BgD1HqDwRXxZ8V/2Y/F3wqlmku9Onv7BGKrfWUbSxN/vADKfQj8TX7hl1elCkqe2/4u9/vPyJ1XOzm9dF8krL8DiNKhDTAnvXY+H0WOPn26CuQ0dh5uMgkHnnlfY12egsrw5BUhcE89K7K7LgfqZ+xx/wAFavhz8Jf2bfBvhHXdO8UJqvhvTYdOnaztEuIJTGuA6sXU4IwcEccj3r12z/4LGfCa+4S18Yj/AHtLQf8AtWvyN8PyBgmMHdj3rtvDOOmOQOfavzrGcE5bOpKrLmu229e59xh+NMyp040o8topLbsfqdaf8FYfhhekCO28Vc+umr/8cr034CftY+Gf2j77Ubfw7FqqNpaRyTm8txCMOWC4+Y5+61fk34d+bOOdo6jtX2z/AMEnMHxT406YNnZ/+hzf418tn3DGCwmCnXo35o23em6XY93IuK8fi8fTw1W3LK97Lsm+/kfWvxW+KGnfB7wZca7qq3L2dsyIywR75CWYKMDI7mvJrn/go54As0Ja38Rcelkv/wAXW7+3PNHB+z/fmQqAbq3Az6+YD/SvgLWghiO0LgrXmcPZHhcZh3Ur3vdrR27HVxTxLjMBjFQw9rcqeqv1fn5H2fd/8FR/hvZjL23igfTT1P8A7PWRqf8AwVx+GFnbyYs/FskiAlVGmqN57DPmcfWvhLXlXDjjviuH18BnY9cmvqafBeXPfm+//gHz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" alt="YAKKUM" style="height:62px;width:auto;"></div>
+    <div class="header-text">
+      <h1>YAKKUM Insights Discovery</h1>
+      <p>Yayasan Kristen Untuk Kesehatan Umum — Integrated Assessment Platform</p>
+    </div>
+    <div class="header-badge">CONFIDENTIAL</div>
+  </div>
+</div>
+
+<!-- ADMIN BAR -->
+<div class="admin-bar">
+  <span style="color:var(--gold-light);font-size:0.76rem;font-weight:600;">⚙ HRD Admin:</span>
+  <label>Email HRD:</label>
+  <input type="email" id="hrdEmailInput" class="admin-email" placeholder="hrd@yakkum.or.id">
+  <button class="save-btn" onclick="saveAdmin()">💾 Simpan</button>
+  <span class="admin-sep">|</span>
+  <label>Google Sheet URL:</label>
+  <input type="text" id="sheetUrlInput" class="admin-sheet" placeholder="https://script.google.com/macros/s/.../exec">
+  <button class="save-btn" onclick="saveAdmin()">💾 Simpan</button>
+  <span class="saved-msg" id="savedMsg">✓ Tersimpan!</span>
+</div>
+
+<!-- TIMER BAR -->
+<div class="timer-bar" id="timerBar">
+  <div class="timer-item">
+    <span class="timer-label">⏱ Total</span>
+    <span class="timer-display timer-total" id="timerTotal">00:00:00</span>
+  </div>
+  <div class="timer-divider"></div>
+  <div class="timer-item">
+    <span class="timer-label">📄 Halaman Ini</span>
+    <span class="timer-display timer-page" id="timerPage">00:00</span>
+    <span style="font-size:0.68rem;color:rgba(255,255,255,0.35);font-style:italic;margin-left:4px;" id="timerPageLabel"></span>
+  </div>
+  <div class="timer-divider"></div>
+  <div class="timer-item">
+    <span class="timer-label" style="color:rgba(255,255,255,0.35);">Sesi</span>
+    <span style="font-size:0.72rem;color:rgba(255,255,255,0.3);font-family:'Courier New',monospace;" id="timerSession"></span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+  <div id="alertBox" class="alert"></div>
+
+  <!-- STEPS -->
+  <div class="steps-bar" id="stepsBar">
+    <div class="step-item active" id="step1-ind"><div class="step-num">1</div><span>Data Diri</span></div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-item" id="step2-ind"><div class="step-num">2</div><span>Kepribadian</span></div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-item" id="step3-ind"><div class="step-num">3</div><span>Perilaku Kerja</span></div>
+    <div class="step-line" id="line3"></div>
+    <div class="step-item" id="step4-ind"><div class="step-num">4</div><span>Preferensi</span></div>
+    <div class="step-line" id="line4"></div>
+    <div class="step-item" id="step5-ind"><div class="step-num">5</div><span>Kompetensi</span></div>
+    <div class="step-line" id="line5"></div>
+    <div class="step-item" id="step6-ind"><div class="step-num">6</div><span>Vignette</span></div>
+    <div class="step-line" id="line6"></div>
+    <div class="step-item" id="step7-ind"><div class="step-num">7</div><span>Nilai YAKKUM</span></div>
+  </div>
+
+  <!-- PAGE 1: DATA DIRI -->
+  <div id="page1">
+    <div class="card">
+      <div class="section-header">
+        <h3>Data Diri / Personal Information</h3>
+        <div class="section-badge">STEP 1 / 7</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Lengkap <span class="label-en">Full Name</span></label>
+          <input type="text" id="f_name" placeholder="Nama lengkap..." required>
+        </div>
+        <div class="form-group">
+          <label>Tanggal Lahir <span class="label-en">Date of Birth</span></label>
+          <input type="date" id="f_dob">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Jenis Kelamin <span class="label-en">Gender</span></label>
+          <select id="f_gender">
+            <option value="">-- Pilih / Select --</option>
+            <option value="L">Laki-laki / Male</option>
+            <option value="P">Perempuan / Female</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Pendidikan Terakhir <span class="label-en">Last Education</span></label>
+          <select id="f_edu">
+            <option value="">-- Pilih / Select --</option>
+            <option>SMA/SMK / Senior High School</option>
+            <option>D3 / Associate Degree</option>
+            <option>S1 / Bachelor's Degree</option>
+            <option>S2 / Master's Degree</option>
+            <option>S3 / Doctorate</option>
+            <option>Profesi / Professional</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email <span class="label-en">Email</span></label>
+          <input type="email" id="f_email" placeholder="email@domain.com">
+        </div>
+        <div class="form-group">
+          <label>No. HP <span class="label-en">Phone</span></label>
+          <input type="tel" id="f_phone" placeholder="08xxxxxxxxxx">
+        </div>
+      </div>
+      <div class="section-divider"><hr><span>Informasi YAKKUM</span><hr></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Direktorat <span class="label-en">Directorate</span></label>
+          <select id="f_directorate" onchange="updateUnit()">
+            <option value="">-- Pilih / Select --</option>
+            <option value="AKADEMIK">Direktorat Akademik</option>
+            <option value="DPK">DPK – Direktorat Pelayanan Kesehatan</option>
+            <option value="KP">Kantor Pusat YAKKUM</option>
+            <option value="PKMK">PKMK – Pengembangan & Pelayanan Kesehatan Masyarakat</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Unit Kerja <span class="label-en">Work Unit</span></label>
+          <select id="f_unit"><option value="">-- Pilih Direktorat dulu --</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Jabatan / Posisi <span class="label-en">Position</span></label>
+          <input type="text" id="f_position" placeholder="Jabatan Anda...">
+        </div>
+        <div class="form-group">
+          <label>Level Karyawan <span class="label-en">Employee Level</span></label>
+          <select id="f_level" onchange="updateLevelInfo()">
+            <option value="">-- Pilih / Select --</option>
+            <option value="1-2">Level 1–2: Pelaksana / Executor</option>
+            <option value="3-4">Level 3–4: Staf / Staff</option>
+            <option value="5-6">Level 5–6: Koordinator / Coordinator</option>
+            <option value="7">Level 7: Supervisor</option>
+            <option value="8-10">Level 8–10: Manager</option>
+            <option value="11-12">Level 11–12: Pemimpin Usaha Unit / Business Unit Leader</option>
+          </select>
+        </div>
+      </div>
+      <div id="levelInfoBox" style="display:none;" class="level-indicator">
+        <span>ℹ️</span><span id="levelInfoText"></span>
+      </div>
+      <div class="form-row single">
+        <div class="form-group">
+          <label>Lama Bekerja di YAKKUM <span class="label-en">Tenure at YAKKUM</span></label>
+          <select id="f_tenure">
+            <option value="">-- Pilih / Select --</option>
+            <option>Calon Karyawan Baru / New Candidate</option>
+            <option>&lt; 1 tahun / Less than 1 year</option>
+            <option>1–3 tahun / 1–3 years</option>
+            <option>4–7 tahun / 4–7 years</option>
+            <option>8–15 tahun / 8–15 years</option>
+            <option>&gt; 15 tahun / More than 15 years</option>
+          </select>
+        </div>
+      </div>
+      <input type="hidden" id="f_purpose_sel" value="">
+      <div class="section-divider"><hr><span>Tujuan Assessment / Assessment Purpose</span><hr></div>
+      <div class="purpose-grid">
+        <div class="purpose-card" onclick="selectPurpose('recruitment',this)">
+          <div class="purpose-icon recruit">🎯</div>
+          <div class="purpose-text"><strong>Rekrutmen / Recruitment</strong><em>Seleksi kandidat baru / New candidate selection</em></div>
+        </div>
+        <div class="purpose-card" onclick="selectPurpose('development',this)">
+          <div class="purpose-icon develop">🌱</div>
+          <div class="purpose-text"><strong>Development Karyawan / Employee Development</strong><em>Pengembangan karir & potensi / Career development</em></div>
+        </div>
+        <div class="purpose-card" onclick="selectPurpose('leadership',this)">
+          <div class="purpose-icon leader">👑</div>
+          <div class="purpose-text"><strong>Leadership Assessment</strong><em>Evaluasi kompetensi kepemimpinan / Leadership eval</em></div>
+        </div>
+        <div class="purpose-card" onclick="selectPurpose('performance',this)">
+          <div class="purpose-icon perform">📊</div>
+          <div class="purpose-text"><strong>Performance Review</strong><em>Tinjauan kinerja berkala / Periodic performance review</em></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:0.78rem;color:var(--text-light);">* Field wajib diisi / Required fields</span>
+        <button class="btn btn-primary" onclick="goToPage(2)">Lanjut → Kepribadian / Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: FORCED CHOICE -->
+  <div id="page2" style="display:none;">
+    <div class="card">
+      <div class="section-header">
+        <h3>Asesmen Kepribadian / Personality Assessment</h3>
+        <span>Insights Discovery — Forced Choice</span>
+        <div class="section-badge">STEP 2 / 7</div>
+      </div>
+      <div class="module-badge core">🔵 Core — Semua Peserta / All Participants</div>
+      <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:14px;line-height:1.6;">
+        Untuk setiap set, pilih kata yang <strong style="color:var(--navy)">PALING</strong> dan <strong style="color:var(--navy)">PALING TIDAK</strong> mencerminkan diri Anda. Tidak ada jawaban benar/salah.<br>
+        <em>For each set, select the word MOST and LEAST like you. There are no right or wrong answers.</em>
+      </p>
+      <div id="page2Questions"></div>
+      <div class="progress-wrap"><div class="progress-fill" id="p2prog" style="width:0%"></div></div>
+      <div class="progress-label"><span id="p2done">0 set dijawab</span><span id="p2total"></span></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToPage(1)">← Kembali / Back</button>
+        <button class="btn btn-primary" onclick="goToPage(3)">Lanjut → Perilaku Kerja / Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: WORK BEHAVIOUR -->
+  <div id="page3" style="display:none;">
+    <div class="card">
+      <div class="section-header">
+        <h3>Perilaku Kerja / Work Behaviour</h3>
+        <span>Core Behaviour & Values</span>
+        <div class="section-badge">STEP 3 / 7</div>
+      </div>
+      <div class="module-badge core">🔵 Core — Semua Peserta / All Participants</div>
+      <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:14px;line-height:1.6;">
+        Berikan penilaian 1–5. <em>1=Sangat Tidak Setuju/Strongly Disagree — 5=Sangat Setuju/Strongly Agree</em>
+      </p>
+      <div id="page3Questions"></div>
+      <div class="progress-wrap"><div class="progress-fill" id="p3prog" style="width:0%"></div></div>
+      <div class="progress-label"><span id="p3done">0 dijawab</span><span id="p3total"></span></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToPage(2)">← Kembali / Back</button>
+        <button class="btn btn-primary" onclick="goToPage(4)">Lanjut → Preferensi / Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: PREFERENCES -->
+  <div id="page4" style="display:none;">
+    <div class="card">
+      <div class="section-header">
+        <h3>Preferensi Kerja & Kepemimpinan / Work & Leadership Preferences</h3>
+        <span>Opsi B — Diferensiasi per Level</span>
+        <div class="section-badge">STEP 4 / 7</div>
+      </div>
+      <div id="p4ModuleBadge" class="module-badge core">🔵 Core</div>
+      <div id="p4LevelBadge" class="level-indicator" style="display:none;"></div>
+      <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:14px;line-height:1.6;">
+        Berikan penilaian 1–5. <em>1=Sangat Tidak Setuju — 5=Sangat Setuju</em>
+      </p>
+      <div id="page4Questions"></div>
+      <div class="progress-wrap"><div class="progress-fill" id="p4prog" style="width:0%"></div></div>
+      <div class="progress-label"><span id="p4done">0 dijawab</span><span id="p4total"></span></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToPage(3)">← Kembali / Back</button>
+        <button class="btn btn-primary" onclick="goToPage(5)">Lanjut → Kompetensi / Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 5: COMPETENCY MODULE (Opsi A per tujuan) -->
+  <div id="page5" style="display:none;">
+    <div class="card">
+      <div class="section-header">
+        <h3>Modul Kompetensi / Competency Module</h3>
+        <span>Opsi A — Diferensiasi per Tujuan Assessment</span>
+        <div class="section-badge">STEP 5 / 7</div>
+      </div>
+      <div id="p5ModuleBadge" class="module-badge functional">🟢 Functional</div>
+      <div id="p5PurposeInfo" class="alert alert-info show" style="margin-bottom:14px;"></div>
+      <div id="page5Questions"></div>
+      <div class="progress-wrap"><div class="progress-fill" id="p5prog" style="width:0%"></div></div>
+      <div class="progress-label"><span id="p5done">0 dijawab</span><span id="p5total"></span></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToPage(4)">← Kembali / Back</button>
+        <button class="btn btn-primary" onclick="goToPage(6)">Lanjut → Vignette / Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 6: VIGNETTE (Opsi C per Direktorat) -->
+  <div id="page6" style="display:none;">
+    <div class="card">
+      <div class="section-header">
+        <h3>Vignette Situasional / Situational Vignette</h3>
+        <span>Opsi C — Konteks RS · LSM · Akademik · Kantor Pusat</span>
+        <div class="section-badge">STEP 6 / 7</div>
+      </div>
+      <div class="module-badge vignette">🔴 Vignette — Berbasis Konteks Unit / Context-Based</div>
+      <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:14px;line-height:1.6;">
+        Baca setiap skenario dan pilih respons yang paling mencerminkan tindakan Anda.<br>
+        <em>Read each scenario and select the response that best reflects your action.</em>
+      </p>
+      <div id="page6Questions"></div>
+      <div class="progress-wrap"><div class="progress-fill" id="p6prog" style="width:0%"></div></div>
+      <div class="progress-label"><span id="p6done">0 dijawab</span><span id="p6total"></span></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToPage(5)">← Kembali / Back</button>
+        <button class="btn btn-primary" onclick="goToPage(7)">Lanjut → Nilai YAKKUM / Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 7: CULTURE FIT (Opsi C — YAKKUM Values) -->
+  <div id="page7" style="display:none;">
+    <div class="card">
+      <div class="section-header">
+        <h3>Nilai & Budaya YAKKUM / YAKKUM Values & Culture Fit</h3>
+        <span>Opsi C — Culture Fit Score · KARS · WHO LEADS · CHS</span>
+        <div class="section-badge">STEP 7 / 7</div>
+      </div>
+      <div class="module-badge culture">🟣 Culture Fit — Nilai Organisasi / Organizational Values</div>
+      <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:14px;line-height:1.6;">
+        Berikan penilaian seberapa besar nilai berikut mencerminkan diri Anda dalam bekerja sehari-hari.<br>
+        <em>Rate how strongly each value reflects your daily work behavior.</em>
+      </p>
+      <div id="page7Questions"></div>
+      <div class="progress-wrap"><div class="progress-fill" id="p7prog" style="width:0%"></div></div>
+      <div class="progress-label"><span id="p7done">0 dijawab</span><span id="p7total"></span></div>
+      <div id="submitAlertBox" class="alert alert-error"></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToPage(6)">← Kembali / Back</button>
+        <button class="btn btn-gold" onclick="submitAssessment()">✓ Kirim Assessment / Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANK YOU -->
+  <div id="thankYouPage" style="display:none;">
+    <div class="thankyou-page">
+      <div class="thankyou-icon">✓</div>
+      <h2>Terima Kasih!</h2>
+      <p class="sub">Assessment Anda telah berhasil dikirimkan. Tim HRD YAKKUM akan memproses hasilnya secara rahasia.<br><br><em>Your assessment has been submitted. The YAKKUM HR Team will process your results confidentially.</em></p>
+      <div class="thankyou-note" id="thankYouNote">
+        🏥 <strong>YAKKUM</strong> — Yayasan Kristen Untuk Kesehatan Umum<br>
+        <small style="color:var(--text-light);">Hasil bersifat rahasia · hanya diakses HRD / Results are confidential · HR access only</small>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end container -->
+
+<script>
+// ============================================================
+// CONFIGURATION
+// ============================================================
+const UNITS = {
+  AKADEMIK:['STIKES Bethesda Yogyakarta (Kampus Utama) – STB YOG','STIKES Bethesda Yogyakarta (PSDKU Semarang) – STB SMG','STIKES Bethesda Yogyakarta (PSDKU Temanggung) – STB PRK'],
+  DPK:['Rumah Sakit Bethesda (RSB) – Tipe B','Rumah Sakit Emanuel (RSE) – Tipe C','Rumah Sakit Kristen Ngesti Waluyo (RSKNW) – Tipe C','Rumah Sakit Mardi Waluyo (RSMW) – Tipe C','Rumah Sakit Panti Rahayu (RSPR) – Tipe C','Rumah Sakit Panti Waluyo Surakarta (RSPWS) – Tipe C','Rumah Sakit Panti Wilasa Citarum (RSPWC) – Tipe C','Rumah Sakit Panti Wilasa dr. Cipto (RSPWDC) – Tipe C','Rumah Sakit Bethesda Lempuyangwangi (RSBL) – Tipe D','Rumah Sakit Bethesda Wonosari (RSBW) – Tipe D','Rumah Sakit Panti Waluyo Purworejo (RSPWP) – Tipe D','Rumah Sakit Sinar Kasih (RSSK) – Tipe D','Klinik Yoga Darma (KYD)'],
+  KP:['Kantor Pusat YAKKUM'],
+  PKMK:['CD Bethesda (CDB)','Pusat Rehabilitasi YAKKUM (PRY)','YAKKUM Emergency Unit (YEU)']
+};
+
+const LEVEL_INFO = {
+  '1-2':'Level 1–2 Pelaksana: Modul dasar + perilaku kerja inti',
+  '3-4':'Level 3–4 Staf: Modul dasar + kompetensi fungsional',
+  '5-6':'Level 5–6 Koordinator: Modul penuh + situasional tim',
+  '7':'Level 7 Supervisor: Modul penuh + kepemimpinan lini pertama',
+  '8-10':'Level 8–10 Manager: Modul penuh + leadership LEADS + vignette kompleks',
+  '11-12':'Level 11–12 Pemimpin Usaha: Semua modul + strategic vignette + governance'
+};
+
+const PAGE_NAMES = {2:'Kepribadian/Personality',3:'Perilaku Kerja/Work Behaviour',4:'Preferensi/Preferences',5:'Kompetensi/Competency',6:'Vignette',7:'Nilai YAKKUM/Values'};
+
+let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
+let answers = {};
+let p2Sets=[], p3Qs=[], p4Qs=[], p5Qs=[], p6Qs=[], p7Qs=[];
+let totalSeconds=0, pageSeconds=0, currentTimerPage=1, timerInterval=null, pageTimes={};
+
+// ============================================================
+// FORCED CHOICE DATA (20 sets)
+// ============================================================
+const FC_SETS = [
+  {id:'fc1',words:[{id:'a',id_text:'Penuh Semangat',en_text:'Enthusiastic',color:'Y'},{id:'b',id_text:'Tegas',en_text:'Decisive',color:'R'},{id:'c',id_text:'Sabar',en_text:'Patient',color:'G'},{id:'d',id_text:'Teliti',en_text:'Precise',color:'B'}]},
+  {id:'fc2',words:[{id:'a',id_text:'Terbuka',en_text:'Open',color:'Y'},{id:'b',id_text:'Berani',en_text:'Daring',color:'R'},{id:'c',id_text:'Toleran',en_text:'Tolerant',color:'G'},{id:'d',id_text:'Sistematis',en_text:'Systematic',color:'B'}]},
+  {id:'fc3',words:[{id:'a',id_text:'Ramah',en_text:'Friendly',color:'Y'},{id:'b',id_text:'Kompetitif',en_text:'Competitive',color:'R'},{id:'c',id_text:'Kooperatif',en_text:'Cooperative',color:'G'},{id:'d',id_text:'Metodis',en_text:'Methodical',color:'B'}]},
+  {id:'fc4',words:[{id:'a',id_text:'Kreatif',en_text:'Creative',color:'Y'},{id:'b',id_text:'Berambisi',en_text:'Ambitious',color:'R'},{id:'c',id_text:'Setia',en_text:'Loyal',color:'G'},{id:'d',id_text:'Analitis',en_text:'Analytical',color:'B'}]},
+  {id:'fc5',words:[{id:'a',id_text:'Spontan',en_text:'Spontaneous',color:'Y'},{id:'b',id_text:'Mandiri',en_text:'Independent',color:'R'},{id:'c',id_text:'Mendengarkan',en_text:'Listening',color:'G'},{id:'d',id_text:'Akurat',en_text:'Accurate',color:'B'}]},
+  {id:'fc6',words:[{id:'a',id_text:'Optimis',en_text:'Optimistic',color:'Y'},{id:'b',id_text:'Langsung',en_text:'Direct',color:'R'},{id:'c',id_text:'Tenang',en_text:'Calm',color:'G'},{id:'d',id_text:'Kritis',en_text:'Critical',color:'B'}]},
+  {id:'fc7',words:[{id:'a',id_text:'Ekspresif',en_text:'Expressive',color:'Y'},{id:'b',id_text:'Percaya Diri',en_text:'Confident',color:'R'},{id:'c',id_text:'Rendah Hati',en_text:'Humble',color:'G'},{id:'d',id_text:'Berhati-hati',en_text:'Careful',color:'B'}]},
+  {id:'fc8',words:[{id:'a',id_text:'Antusias',en_text:'Enthusiastic',color:'Y'},{id:'b',id_text:'Asertif',en_text:'Assertive',color:'R'},{id:'c',id_text:'Stabil',en_text:'Stable',color:'G'},{id:'d',id_text:'Teratur',en_text:'Orderly',color:'B'}]},
+  {id:'fc9',words:[{id:'a',id_text:'Menghibur',en_text:'Entertaining',color:'Y'},{id:'b',id_text:'Tidak Takut',en_text:'Fearless',color:'R'},{id:'c',id_text:'Bijaksana',en_text:'Wise',color:'G'},{id:'d',id_text:'Logis',en_text:'Logical',color:'B'}]},
+  {id:'fc10',words:[{id:'a',id_text:'Bersahabat',en_text:'Sociable',color:'Y'},{id:'b',id_text:'Dominan',en_text:'Dominant',color:'R'},{id:'c',id_text:'Dapat Dipercaya',en_text:'Reliable',color:'G'},{id:'d',id_text:'Perfeksionis',en_text:'Perfectionist',color:'B'}]},
+  {id:'fc11',words:[{id:'a',id_text:'Hidup / Lively',en_text:'Lively',color:'Y'},{id:'b',id_text:'Berorientasi Hasil',en_text:'Results-Oriented',color:'R'},{id:'c',id_text:'Reflektif',en_text:'Reflective',color:'G'},{id:'d',id_text:'Konsisten',en_text:'Consistent',color:'B'}]},
+  {id:'fc12',words:[{id:'a',id_text:'Persuasif',en_text:'Persuasive',color:'Y'},{id:'b',id_text:'Determinasi',en_text:'Determined',color:'R'},{id:'c',id_text:'Harmonis',en_text:'Harmonious',color:'G'},{id:'d',id_text:'Objektif',en_text:'Objective',color:'B'}]},
+  {id:'fc13',words:[{id:'a',id_text:'Memotivasi',en_text:'Motivating',color:'Y'},{id:'b',id_text:'Blak-blakan',en_text:'Frank',color:'R'},{id:'c',id_text:'Hangat',en_text:'Warm',color:'G'},{id:'d',id_text:'Hati-hati',en_text:'Cautious',color:'B'}]},
+  {id:'fc14',words:[{id:'a',id_text:'Komunikatif',en_text:'Communicative',color:'Y'},{id:'b',id_text:'Terkendali',en_text:'Controlled',color:'R'},{id:'c',id_text:'Tidak Egois',en_text:'Selfless',color:'G'},{id:'d',id_text:'Tepat',en_text:'Precise',color:'B'}]},
+  {id:'fc15',words:[{id:'a',id_text:'Suka Bercerita',en_text:'Talkative',color:'Y'},{id:'b',id_text:'Keras Kepala',en_text:'Strong-willed',color:'R'},{id:'c',id_text:'Peka Perasaan',en_text:'Sensitive',color:'G'},{id:'d',id_text:'Skeptis',en_text:'Skeptical',color:'B'}]},
+  {id:'fc16',words:[{id:'a',id_text:'Inspiratif',en_text:'Inspiring',color:'Y'},{id:'b',id_text:'Kontrol Diri',en_text:'Self-controlled',color:'R'},{id:'c',id_text:'Pemaaf',en_text:'Forgiving',color:'G'},{id:'d',id_text:'Terencana',en_text:'Planned',color:'B'}]},
+  {id:'fc17',words:[{id:'a',id_text:'Aktif',en_text:'Active',color:'Y'},{id:'b',id_text:'Ambisius',en_text:'Ambitious',color:'R'},{id:'c',id_text:'Penuh Pengertian',en_text:'Understanding',color:'G'},{id:'d',id_text:'Berprinsip',en_text:'Principled',color:'B'}]},
+  {id:'fc18',words:[{id:'a',id_text:'Gembira',en_text:'Cheerful',color:'Y'},{id:'b',id_text:'Bertenaga',en_text:'Energetic',color:'R'},{id:'c',id_text:'Empatik',en_text:'Empathetic',color:'G'},{id:'d',id_text:'Mendalam',en_text:'Thorough',color:'B'}]},
+  {id:'fc19',words:[{id:'a',id_text:'Mudah Bergaul',en_text:'Easy-going',color:'Y'},{id:'b',id_text:'Teguh',en_text:'Unshakeable',color:'R'},{id:'c',id_text:'Berkomitmen',en_text:'Committed',color:'G'},{id:'d',id_text:'Cermat',en_text:'Meticulous',color:'B'}]},
+  {id:'fc20',words:[{id:'a',id_text:'Spontan',en_text:'Impulsive',color:'Y'},{id:'b',id_text:'Keras',en_text:'Tough',color:'R'},{id:'c',id_text:'Santai',en_text:'Relaxed',color:'G'},{id:'d',id_text:'Teliti',en_text:'Careful',color:'B'}]},
+];
+
+// ============================================================
+// WORK BEHAVIOUR (30 items — Core, all participants)
+// ============================================================
+const WB_QS = [
+  {id:'wb1',id_text:'Saya senang bekerja dalam tim dan mendukung anggota tim lain.',en_text:'I enjoy working in a team and supporting other members.',dim:'G',tag:'core'},
+  {id:'wb2',id_text:'Saya lebih suka menyelesaikan tugas secara mandiri.',en_text:'I prefer completing tasks independently.',dim:'R',tag:'core'},
+  {id:'wb3',id_text:'Saya selalu memeriksa ulang pekerjaan untuk memastikan akurasi.',en_text:'I always double-check my work for accuracy.',dim:'B',tag:'core'},
+  {id:'wb4',id_text:'Saya bersemangat menghadapi tantangan dan tugas baru.',en_text:'I feel energized facing new challenges and tasks.',dim:'Y',tag:'core'},
+  {id:'wb5',id_text:'Saya dapat membuat keputusan cepat dalam situasi mendesak.',en_text:'I can make quick decisions in urgent situations.',dim:'R',tag:'core'},
+  {id:'wb6',id_text:'Saya menikmati membantu kolega yang membutuhkan dukungan.',en_text:'I enjoy helping colleagues who need support.',dim:'G',tag:'core'},
+  {id:'wb7',id_text:'Saya senang menganalisis data dan fakta sebelum memutuskan.',en_text:'I enjoy analyzing data before deciding.',dim:'B',tag:'core'},
+  {id:'wb8',id_text:'Saya mudah beradaptasi dengan perubahan di tempat kerja.',en_text:'I easily adapt to workplace changes.',dim:'Y',tag:'core'},
+  {id:'wb9',id_text:'Saya cenderung mendominasi diskusi ketika yakin dengan pandangan saya.',en_text:'I tend to dominate discussions when confident in my views.',dim:'R',tag:'core'},
+  {id:'wb10',id_text:'Saya lebih mementingkan kualitas hasil daripada kecepatan.',en_text:'I value quality over speed of completion.',dim:'B',tag:'core'},
+  {id:'wb11',id_text:'Saya merasa nyaman membangun hubungan dengan banyak orang.',en_text:'I feel comfortable building relationships with many people.',dim:'Y',tag:'core'},
+  {id:'wb12',id_text:'Saya mengutamakan keharmonisan hubungan antar tim.',en_text:'I prioritize harmonious team relationships.',dim:'G',tag:'core'},
+  {id:'wb13',id_text:'Saya frustrasi ketika prosedur terlalu lambat atau terlalu ketat.',en_text:'I get frustrated when procedures are too slow or rigid.',dim:'R',tag:'core'},
+  {id:'wb14',id_text:'Saya selalu mengikuti prosedur dan aturan yang ditetapkan.',en_text:'I always follow established procedures and rules.',dim:'B',tag:'core'},
+  {id:'wb15',id_text:'Saya senang mencoba hal baru dan berinovasi dalam pekerjaan.',en_text:'I enjoy trying new things and innovating.',dim:'Y',tag:'core'},
+  {id:'wb16',id_text:'Saya berusaha menghindari konflik dan mencari jalan tengah.',en_text:'I try to avoid conflict and find middle ground.',dim:'G',tag:'core'},
+  {id:'wb17',id_text:'Saya puas ketika berhasil meyakinkan orang lain.',en_text:'I feel satisfied when I convince others.',dim:'R',tag:'core'},
+  {id:'wb18',id_text:'Saya butuh waktu dan data yang cukup sebelum keputusan penting.',en_text:'I need sufficient time and data before important decisions.',dim:'B',tag:'core'},
+  {id:'wb19',id_text:'Saya sering menjadi orang pertama yang memulai percakapan.',en_text:'I am often the first to start conversations.',dim:'Y',tag:'core'},
+  {id:'wb20',id_text:'Saya nyaman melayani kebutuhan orang lain.',en_text:'I feel comfortable serving others needs.',dim:'G',tag:'core'},
+  {id:'wb21',id_text:'Saya menyukai pekerjaan penuh tantangan dan persaingan.',en_text:'I enjoy work full of challenges and competition.',dim:'R',tag:'core'},
+  {id:'wb22',id_text:'Saya sangat memperhatikan detail dan kesalahan kecil.',en_text:'I pay close attention to details and small errors.',dim:'B',tag:'core'},
+  {id:'wb23',id_text:'Saya lebih produktif di lingkungan dinamis dan aktif.',en_text:'I am more productive in a dynamic environment.',dim:'Y',tag:'core'},
+  {id:'wb24',id_text:'Saya mengutamakan konsensus dalam pengambilan keputusan tim.',en_text:'I prioritize consensus in team decision-making.',dim:'G',tag:'core'},
+  {id:'wb25',id_text:'Saya tidak ragu mengambil risiko demi mencapai target.',en_text:'I do not hesitate to take risks to achieve targets.',dim:'R',tag:'core'},
+  {id:'wb26',id_text:'Saya lebih suka merencanakan matang daripada berimprovisasi.',en_text:'I prefer thorough planning over improvisation.',dim:'B',tag:'core'},
+  {id:'wb27',id_text:'Saya senang berbagi ide dan pengalaman dengan banyak orang.',en_text:'I enjoy sharing ideas and experiences.',dim:'Y',tag:'core'},
+  {id:'wb28',id_text:'Saya sangat menjaga kepercayaan dan komitmen yang sudah diberikan.',en_text:'I strongly maintain trust and given commitments.',dim:'G',tag:'core'},
+  {id:'wb29',id_text:'Saya berorientasi pada pencapaian hasil yang terukur.',en_text:'I am oriented toward measurable results.',dim:'R',tag:'core'},
+  {id:'wb30',id_text:'Saya menghargai standar kualitas dan konsistensi.',en_text:'I value quality standards and consistency.',dim:'B',tag:'core'},
+];
+
+// ============================================================
+// PREFERENCES — diferensiasi per level (Opsi B)
+// Level groups: basic (1-4), mid (5-7), senior (8-12)
+// ============================================================
+const PREF_QS = [
+  // BASIC (all levels)
+  {id:'pf1',id_text:'Saya merasa nyaman menerima instruksi yang jelas dari atasan.',en_text:'I feel comfortable receiving clear instructions from superiors.',dim:'G',levels:['1-2','3-4','5-6','7','8-10','11-12'],tag:'core'},
+  {id:'pf2',id_text:'Saya lebih suka mendiskusikan ide secara terbuka.',en_text:'I prefer discussing ideas openly.',dim:'Y',levels:['1-2','3-4','5-6','7','8-10','11-12'],tag:'core'},
+  {id:'pf3',id_text:'Saya mencari bukti dan data sebelum mempercayai sesuatu.',en_text:'I seek evidence before believing something.',dim:'B',levels:['1-2','3-4','5-6','7','8-10','11-12'],tag:'core'},
+  {id:'pf4',id_text:'Saya merasa nyaman dengan panduan dan prosedur yang jelas.',en_text:'I feel comfortable with clear guidelines.',dim:'B',levels:['1-2','3-4','5-6','7','8-10','11-12'],tag:'core'},
+  {id:'pf5',id_text:'Saya senang membangun kepercayaan jangka panjang dengan rekan.',en_text:'I enjoy building long-term trust with colleagues.',dim:'G',levels:['1-2','3-4','5-6','7','8-10','11-12'],tag:'core'},
+  {id:'pf6',id_text:'Saya suka lingkungan kerja yang penuh interaksi sosial.',en_text:'I like a work environment full of social interaction.',dim:'Y',levels:['1-2','3-4','5-6','7','8-10','11-12'],tag:'core'},
+  // MID LEVEL (5-6, 7, 8-10, 11-12)
+  {id:'pf7',id_text:'Saya tidak ragu mengambil alih kepemimpinan saat situasi kritis.',en_text:'I do not hesitate to take leadership in critical situations.',dim:'R',levels:['5-6','7','8-10','11-12'],tag:'lead'},
+  {id:'pf8',id_text:'Saya mudah membuat orang lain antusias dengan ide saya.',en_text:'I easily make others enthusiastic about my ideas.',dim:'Y',levels:['5-6','7','8-10','11-12'],tag:'lead'},
+  {id:'pf9',id_text:'Saya sangat mendukung pengembangan anggota tim saya.',en_text:'I strongly support my team members development.',dim:'G',levels:['5-6','7','8-10','11-12'],tag:'lead'},
+  {id:'pf10',id_text:'Saya lebih mudah memutuskan tanpa diskusi panjang.',en_text:'I find it easier to decide without lengthy discussions.',dim:'R',levels:['5-6','7','8-10','11-12'],tag:'lead'},
+  {id:'pf11',id_text:'Saya memastikan semua anggota tim merasa didengar dan dihargai.',en_text:'I ensure all team members feel heard and valued.',dim:'G',levels:['5-6','7','8-10','11-12'],tag:'lead'},
+  {id:'pf12',id_text:'Saya lebih memilih pendekatan bertahap dan terencana.',en_text:'I prefer a step-by-step, planned approach.',dim:'B',levels:['5-6','7','8-10','11-12'],tag:'lead'},
+  // SENIOR LEVEL (8-10, 11-12)
+  {id:'pf13',id_text:'Saya mampu merumuskan visi jangka panjang untuk unit saya.',en_text:'I can formulate a long-term vision for my unit.',dim:'R',levels:['8-10','11-12'],tag:'lead'},
+  {id:'pf14',id_text:'Saya terbiasa mengelola sumber daya (manusia, anggaran, aset) secara strategis.',en_text:'I am used to managing resources strategically.',dim:'B',levels:['8-10','11-12'],tag:'lead'},
+  {id:'pf15',id_text:'Saya aktif membangun jaringan kolaborasi lintas unit dan organisasi.',en_text:'I actively build cross-unit and inter-organization networks.',dim:'Y',levels:['8-10','11-12'],tag:'lead'},
+  {id:'pf16',id_text:'Saya nyaman membuat keputusan berisiko tinggi dengan data terbatas.',en_text:'I am comfortable making high-risk decisions with limited data.',dim:'R',levels:['8-10','11-12'],tag:'lead'},
+  {id:'pf17',id_text:'Saya terbiasa memimpin perubahan transformasional di organisasi.',en_text:'I am used to leading transformational change.',dim:'Y',levels:['8-10','11-12'],tag:'lead'},
+  {id:'pf18',id_text:'Saya secara konsisten menerapkan tata kelola yang baik (good governance).',en_text:'I consistently apply good governance principles.',dim:'B',levels:['8-10','11-12'],tag:'lead'},
+];
+
+// ============================================================
+// COMPETENCY MODULE per PURPOSE (Opsi A)
+// ============================================================
+const COMPETENCY_QS = {
+  recruitment:[
+    {id:'rc1',id_text:'Saya bergabung dengan YAKKUM karena nilai pelayanan yang selaras dengan keyakinan saya.',en_text:'I join YAKKUM because its service values align with my beliefs.',dim:'G',tag:'cult',type:'scale'},
+    {id:'rc2',id_text:'Saya bersedia ditempatkan di unit manapun sesuai kebutuhan organisasi.',en_text:'I am willing to be placed in any unit as needed.',dim:'R',tag:'func',type:'scale'},
+    {id:'rc3',id_text:'Saya dapat beradaptasi dengan cepat dalam lingkungan kerja baru.',en_text:'I can adapt quickly in a new work environment.',dim:'Y',tag:'func',type:'scale'},
+    {id:'rc4',id_text:'Saya memiliki motivasi tinggi untuk terus belajar dan berkembang.',en_text:'I have high motivation to keep learning.',dim:'Y',tag:'func',type:'scale'},
+    {id:'rc5',id_text:'Saya nyaman bekerja dengan orang dari latar belakang profesi berbeda.',en_text:'I am comfortable working with people from different professions.',dim:'G',tag:'func',type:'scale'},
+    {id:'rc6',id_text:'Saya memahami pentingnya keselamatan pasien / klien dalam pelayanan.',en_text:'I understand the importance of patient/client safety.',dim:'B',tag:'func',type:'scale'},
+    {id:'rc7',id_text:'Saya pernah menghadapi situasi sulit dan berhasil mengatasinya.',en_text:'I have faced difficult situations and successfully overcame them.',dim:'R',tag:'func',type:'scale'},
+    {id:'rc8',id_text:'Alasan utama saya melamar ke YAKKUM adalah (jelaskan singkat): / My main reason for applying to YAKKUM is:',en_text:'My main reason for applying to YAKKUM is:',dim:'all',tag:'func',type:'open'},
+    {id:'rc9',id_text:'Kontribusi terbesar yang dapat saya berikan untuk unit ini adalah: / The biggest contribution I can give this unit is:',en_text:'The biggest contribution I can give this unit is:',dim:'all',tag:'func',type:'open'},
+    {id:'rc10',id_text:'Pengalaman atau kemampuan unik yang membedakan saya dari kandidat lain: / Experience that differentiates me:',en_text:'Experience that differentiates me:',dim:'all',tag:'func',type:'open'},
+  ],
+  development:[
+    {id:'dev1',id_text:'Saya secara aktif mencari umpan balik untuk pengembangan diri.',en_text:'I actively seek feedback for self-development.',dim:'Y',tag:'func',type:'scale'},
+    {id:'dev2',id_text:'Saya memiliki rencana karir yang jelas dalam 3–5 tahun ke depan.',en_text:'I have a clear career plan for the next 3–5 years.',dim:'B',tag:'func',type:'scale'},
+    {id:'dev3',id_text:'Saya terbuka menerima penugasan lintas fungsi untuk memperluas kompetensi.',en_text:'I am open to cross-functional assignments.',dim:'Y',tag:'func',type:'scale'},
+    {id:'dev4',id_text:'Saya secara mandiri mencari peluang pelatihan dan pembelajaran.',en_text:'I independently seek training opportunities.',dim:'R',tag:'func',type:'scale'},
+    {id:'dev5',id_text:'Saya mampu menerapkan pembelajaran baru dengan cepat dalam pekerjaan.',en_text:'I can quickly apply new learning to my work.',dim:'Y',tag:'func',type:'scale'},
+    {id:'dev6',id_text:'Saya terbuka terhadap coaching dan mentoring dari atasan.',en_text:'I am open to coaching and mentoring.',dim:'G',tag:'func',type:'scale'},
+    {id:'dev7',id_text:'Saya mengidentifikasi gap kompetensi saya dan aktif menutupnya.',en_text:'I identify my competency gaps and actively address them.',dim:'B',tag:'func',type:'scale'},
+    {id:'dev8',id_text:'Kompetensi yang ingin saya kembangkan dalam 12 bulan ke depan: / Competency I want to develop:',en_text:'Competency I want to develop in the next 12 months:',dim:'all',tag:'func',type:'open'},
+    {id:'dev9',id_text:'Tantangan terbesar saya dalam pekerjaan saat ini: / My biggest work challenge:',en_text:'My biggest current work challenge:',dim:'all',tag:'func',type:'open'},
+    {id:'dev10',id_text:'Dukungan yang saya butuhkan dari organisasi untuk berkembang: / Support I need from the organization:',en_text:'Support I need from the organization to grow:',dim:'all',tag:'func',type:'open'},
+  ],
+  leadership:[
+    {id:'ld1',id_text:'Saya mampu memimpin tim menuju tujuan yang jelas bahkan dalam ketidakpastian.',en_text:'I can lead a team toward clear goals even in uncertainty.',dim:'R',tag:'lead',type:'scale'},
+    {id:'ld2',id_text:'Saya secara konsisten menginspirasi dan memotivasi tim saya.',en_text:'I consistently inspire and motivate my team.',dim:'Y',tag:'lead',type:'scale'},
+    {id:'ld3',id_text:'Saya mengelola konflik dalam tim dengan cara yang konstruktif.',en_text:'I manage team conflict constructively.',dim:'G',tag:'lead',type:'scale'},
+    {id:'ld4',id_text:'Saya membuat keputusan berdasarkan data dan analisis yang mendalam.',en_text:'I make decisions based on data and deep analysis.',dim:'B',tag:'lead',type:'scale'},
+    {id:'ld5',id_text:'Saya bertanggung jawab penuh atas keputusan dan hasil tim saya.',en_text:'I take full accountability for my team decisions.',dim:'R',tag:'lead',type:'scale'},
+    {id:'ld6',id_text:'Saya mengembangkan pemimpin masa depan di dalam tim saya.',en_text:'I develop future leaders within my team.',dim:'Y',tag:'lead',type:'scale'},
+    {id:'ld7',id_text:'Saya memimpin dengan memberikan contoh nyata — lead by example.',en_text:'I lead by example.',dim:'G',tag:'lead',type:'scale'},
+    {id:'ld8',id_text:'Saya mampu mengkomunikasikan visi dengan jelas ke seluruh level tim.',en_text:'I communicate vision clearly to all team levels.',dim:'Y',tag:'lead',type:'scale'},
+    {id:'ld9',id_text:'Saya secara aktif mengelola perubahan dan mendorong inovasi.',en_text:'I actively manage change and drive innovation.',dim:'R',tag:'lead',type:'scale'},
+    {id:'ld10',id_text:'Tantangan kepemimpinan terbesar yang pernah saya hadapi dan cara saya mengatasinya: / Biggest leadership challenge I faced:',en_text:'Biggest leadership challenge and how I overcame it:',dim:'all',tag:'lead',type:'open'},
+    {id:'ld11',id_text:'Gaya kepemimpinan saya dalam 3 kata: / My leadership style in 3 words:',en_text:'My leadership style in 3 words:',dim:'all',tag:'lead',type:'open'},
+    {id:'ld12',id_text:'Bagaimana saya mengembangkan anggota tim yang kinerjanya rendah? / How I develop low-performing team members:',en_text:'How do I develop underperforming team members?',dim:'all',tag:'lead',type:'open'},
+  ],
+  performance:[
+    {id:'pr1',id_text:'Saya berhasil mencapai target kinerja yang ditetapkan dalam periode ini.',en_text:'I achieved the performance targets set for this period.',dim:'R',tag:'func',type:'scale'},
+    {id:'pr2',id_text:'Saya berkontribusi positif terhadap budaya kerja tim.',en_text:'I contributed positively to team work culture.',dim:'G',tag:'func',type:'scale'},
+    {id:'pr3',id_text:'Saya menyelesaikan tugas tepat waktu dengan kualitas yang diharapkan.',en_text:'I completed tasks on time with expected quality.',dim:'B',tag:'func',type:'scale'},
+    {id:'pr4',id_text:'Saya secara proaktif mengambil inisiatif di luar tugas utama saya.',en_text:'I proactively took initiative beyond my main duties.',dim:'Y',tag:'func',type:'scale'},
+    {id:'pr5',id_text:'Saya mendukung rekan kerja yang membutuhkan bantuan.',en_text:'I supported colleagues who needed help.',dim:'G',tag:'func',type:'scale'},
+    {id:'pr6',id_text:'Saya mengelola waktu dan prioritas dengan efektif.',en_text:'I managed time and priorities effectively.',dim:'B',tag:'func',type:'scale'},
+    {id:'pr7',id_text:'Saya memberikan kontribusi pada peningkatan proses atau layanan.',en_text:'I contributed to process or service improvement.',dim:'Y',tag:'func',type:'scale'},
+    {id:'pr8',id_text:'Pencapaian terbesar saya dalam periode ini: / My biggest achievement this period:',en_text:'My biggest achievement this period:',dim:'all',tag:'func',type:'open'},
+    {id:'pr9',id_text:'Area yang perlu saya tingkatkan dalam periode berikutnya: / Areas to improve next period:',en_text:'Areas I need to improve next period:',dim:'all',tag:'func',type:'open'},
+    {id:'pr10',id_text:'Dukungan apa yang saya butuhkan dari atasan untuk performa lebih baik? / Support needed from my manager:',en_text:'What support do I need from my manager for better performance?',dim:'all',tag:'func',type:'open'},
+  ]
+};
+
+// ============================================================
+// VIGNETTE per DIRECTORATE (Opsi C)
+// ============================================================
+const VIGNETTE_QS = {
+  // RS & KLINIK (DPK)
+  DPK:[
+    {id:'vdpk1',
+     scenario_id:'Anda Kepala Ruangan. Tiba-tiba dua pasien kritis masuk bersamaan, ventilator hanya tersisa satu. Dokter jaga meminta Anda ikut memutuskan. Dalam konteks KARS dan patient safety, apa langkah pertama Anda?',
+     scenario_en:'You are a Head Nurse. Two critical patients arrive simultaneously with only one ventilator left. The on-call doctor asks for your input. In a KARS/patient safety context, what is your first step?',
+     options_id:['Langsung ambil keputusan berdasarkan kondisi klinis yang terlihat','Konsultasi dengan dokter senior dan ikuti protokol triage yang berlaku','Hubungi manajemen RS untuk eskalasi dan minta tambahan sumber daya','Dokumentasikan situasi terlebih dahulu sebelum bertindak'],
+     options_en:['Make immediate decision based on visible clinical condition','Consult senior doctor and follow existing triage protocol','Contact hospital management for escalation and additional resources','Document the situation first before acting'],
+     dim:['R','B','Y','B']},
+    {id:'vdpk2',
+     scenario_id:'Rekan sejawat Anda dari profesi berbeda (dokter vs perawat) berkonflik di depan pasien mengenai tindakan yang tepat. Pasien terlihat cemas. Apa tindakan Anda?',
+     scenario_en:'A colleague from a different profession argues in front of a patient about the correct procedure. The patient looks anxious. What do you do?',
+     options_id:['Langsung berpihak pada profesi saya dan dukung rekan sejawat','Minta kedua pihak berdiskusi di luar ruang pasien, prioritaskan ketenangan pasien','Lapor kepada atasan agar diselesaikan secara struktural','Diam dan biarkan mereka menyelesaikan sendiri'],
+     options_en:['Side with my own profession','Ask both parties to discuss outside, prioritize patient calm','Report to superior for structural resolution','Stay silent and let them resolve it'],
+     dim:['R','G','B','G']},
+    {id:'vdpk3',
+     scenario_id:'Anda menemukan potensi kesalahan prosedur yang dilakukan rekan satu shift. Belum ada dampak pada pasien. Apa yang Anda lakukan? (Patient Safety — Just Culture)',
+     scenario_en:'You discover a potential procedural error by a colleague on your shift. No patient harm yet. What do you do? (Patient Safety — Just Culture)',
+     options_id:['Laporkan ke atasan sesuai sistem pelaporan insiden RS','Tegur rekan tersebut secara pribadi tanpa membuat laporan formal','Biarkan karena belum ada dampak nyata pada pasien','Dokumentasikan sendiri tanpa melapor'],
+     options_en:['Report through the hospital incident reporting system','Privately reprimand the colleague without formal report','Ignore since no patient harm has occurred','Document personally without reporting'],
+     dim:['B','G','R','B']},
+  ],
+  // LSM (PKMK)
+  PKMK:[
+    {id:'vpkmk1',
+     scenario_id:'Tim YEU Anda baru tiba di lokasi bencana banjir. Koordinasi BPBD terhambat, logistik terlambat, atasan tidak bisa dihubungi. Ada 200+ korban membutuhkan bantuan. Apa langkah pertama Anda? (Core Humanitarian Standard)',
+     scenario_en:'Your YEU team just arrived at a flood disaster. BPBD coordination is blocked, logistics delayed, supervisor unreachable. 200+ victims need help. What is your first step? (Core Humanitarian Standard)',
+     options_id:['Tunggu instruksi dari pusat sebelum bertindak apapun','Lakukan penilaian cepat kebutuhan dan segera koordinasi dengan relawan lokal','Langsung distribusikan bantuan yang ada tanpa assessment terlebih dahulu','Cari media untuk publikasi agar mendapat donasi tambahan'],
+     options_en:['Wait for central instructions before acting','Do rapid needs assessment and coordinate with local volunteers','Immediately distribute available aid without assessment','Find media for publicity to get additional donations'],
+     dim:['B','R','Y','Y']},
+    {id:'vpkmk2',
+     scenario_id:'Komunitas dampingan CDB menolak program kesehatan yang sudah direncanakan setahun karena kepercayaan adat. Donor sudah mentransfer dana. Anda sebagai koordinator program, apa yang dilakukan?',
+     scenario_en:'The CDB community rejects the health program planned for a year due to traditional beliefs. Donor funds already transferred. As program coordinator, what do you do?',
+     options_id:['Tetap jalankan program sesuai rencana karena dana sudah cair','Adakan dialog mendalam dengan pemimpin komunitas, cari titik temu berbasis kearifan lokal','Kembalikan dana ke donor dan hentikan program','Laporkan ke atasan dan minta keputusan manajemen'],
+     options_en:['Run the program as planned since funds are released','Hold deep dialogue with community leaders, find common ground based on local wisdom','Return funds to donor and stop program','Report to superior and request management decision'],
+     dim:['R','G','B','B']},
+    {id:'vpkmk3',
+     scenario_id:'Klien PRY (penyandang disabilitas) mengalami diskriminasi dari staf non-PRY di lingkungan YAKKUM. Anda menyaksikannya. Apa tindakan Anda? (SPHERE Standards — Dignity)',
+     scenario_en:'A PRY client (person with disability) faces discrimination from non-PRY staff at YAKKUM. You witness it. What do you do? (SPHERE — Dignity)',
+     options_id:['Tegur staf tersebut secara langsung dan pastikan klien merasa aman','Laporkan ke HRD melalui jalur formal','Hibur klien dan jelaskan bahwa ini tidak mewakili nilai YAKKUM','Abaikan karena bukan tanggung jawab langsung saya'],
+     options_en:['Directly reprimand the staff and ensure client feels safe','Report to HR through formal channels','Comfort client and explain this does not represent YAKKUM values','Ignore as it is not my direct responsibility'],
+     dim:['R','B','G','R']},
+  ],
+  // AKADEMIK
+  AKADEMIK:[
+    {id:'vakad1',
+     scenario_id:'Mahasiswa Anda melaporkan tekanan dari teman sekelas untuk melakukan kecurangan akademik (plagiarisme). Mahasiswa tersebut takut melaporkan secara resmi. Apa tindakan Anda sebagai dosen/staf akademik?',
+     scenario_en:'A student reports peer pressure to commit academic dishonesty (plagiarism). The student is afraid to report officially. What do you do as faculty/academic staff?',
+     options_id:['Laporkan ke komite etik akademik atas nama institusi','Dampingi mahasiswa untuk berani melapor secara resmi, jamin keamanannya','Tangani sendiri dengan memanggil pihak yang bersangkutan','Abaikan karena belum ada bukti resmi'],
+     options_en:['Report to academic ethics committee on behalf of the institution','Support student to report officially, guarantee their safety','Handle it yourself by calling involved parties','Ignore as there is no official evidence yet'],
+     dim:['B','G','R','R']},
+    {id:'vakad2',
+     scenario_id:'Nilai akreditasi program studi terancam karena kekurangan data dokumentasi. Deadline 2 minggu lagi. Tim Anda kelelahan dan beberapa sudah mengajukan izin. Sebagai koordinator, apa prioritas Anda?',
+     scenario_en:'Study program accreditation is at risk due to missing documentation. Deadline is 2 weeks away. Team is exhausted and some requested leave. As coordinator, what is your priority?',
+     options_id:['Minta semua tim batalkan izin dan kerja lembur sampai selesai','Prioritaskan data kritis, delegasi tugas sesuai kapasitas, jaga wellbeing tim','Minta perpanjangan deadline ke BAN-PT/LAM','Laporkan ke pimpinan dan minta tambahan sumber daya'],
+     options_en:['Ask all team to cancel leave and work overtime','Prioritize critical data, delegate by capacity, maintain team wellbeing','Request deadline extension from accreditation body','Report to leadership and request additional resources'],
+     dim:['R','G','B','B']},
+  ],
+  // KANTOR PUSAT
+  KP:[
+    {id:'vkp1',
+     scenario_id:'Anda menerima informasi bahwa satu unit RS YAKKUM memiliki masalah tata kelola keuangan yang berpotensi melanggar regulasi. Sumber informasi adalah karyawan yang meminta kerahasiaan. Posisi Anda di Kantor Pusat. Apa tindakan Anda?',
+     scenario_en:'You receive information that a YAKKUM hospital unit has financial governance issues potentially violating regulations. The source is an employee requesting confidentiality. You are at Head Office. What do you do?',
+     options_id:['Laporkan langsung ke Direktur Eksekutif dengan semua detail','Lakukan verifikasi awal secara diskret, baru eskalasi dengan bukti','Jaga kerahasiaan informan dan tidak bertindak apapun','Konsultasikan ke tim legal untuk prosedur whistleblowing yang benar'],
+     options_en:['Report directly to Executive Director with all details','Do discreet initial verification, then escalate with evidence','Keep informant confidential and take no action','Consult legal team for proper whistleblowing procedure'],
+     dim:['R','B','G','B']},
+    {id:'vkp2',
+     scenario_id:'Kebijakan baru YAKKUM akan berdampak signifikan pada 3 unit yang berbeda, namun terdapat resistensi kuat dari unit-unit tersebut. Anda diminta memimpin sosialisasi perubahan. Pendekatan apa yang Anda pilih?',
+     scenario_en:'A new YAKKUM policy will significantly impact 3 different units, with strong resistance from them. You are asked to lead the change socialization. What approach do you choose?',
+     options_id:['Presentasi top-down: jelaskan kebijakan dan minta kepatuhan','Fasilitasi dialog dua arah, tampung aspirasi unit, cari win-win solution','Tunda sosialisasi hingga resistensi mereda dengan sendirinya','Lakukan sosialisasi bertahap per unit dengan pendekatan berbeda'],
+     options_en:['Top-down presentation: explain policy and request compliance','Facilitate two-way dialogue, accommodate unit aspirations, find win-win','Delay socialization until resistance subsides naturally','Conduct gradual socialization per unit with different approaches'],
+     dim:['R','G','B','Y']},
+  ]
+};
+
+// ============================================================
+// CULTURE FIT & VALUES (Opsi C — YAKKUM + KARS + WHO LEADS + CHS)
+// ============================================================
+const CULTURE_QS = [
+  // YAKKUM Core Values
+  {id:'cf1',id_text:'Saya melayani pasien/klien/mahasiswa dengan kasih yang tulus, bukan sekadar kewajiban.',en_text:'I serve patients/clients/students with genuine love, not just duty.',dim:'cult',tag:'cult',framework:'YAKKUM Values'},
+  {id:'cf2',id_text:'Saya menjaga integritas dalam setiap tindakan, bahkan saat tidak ada yang memperhatikan.',en_text:'I maintain integrity in every action, even when no one is watching.',dim:'cult',tag:'cult',framework:'YAKKUM Values'},
+  {id:'cf3',id_text:'Saya memperlakukan semua orang dengan martabat dan keadilan tanpa memandang latar belakang.',en_text:'I treat everyone with dignity and fairness regardless of background.',dim:'cult',tag:'cult',framework:'YAKKUM Values'},
+  {id:'cf4',id_text:'Saya melihat pekerjaan di YAKKUM sebagai panggilan pelayanan, bukan sekadar karir.',en_text:'I see work at YAKKUM as a service calling, not just a career.',dim:'cult',tag:'cult',framework:'YAKKUM Values'},
+  {id:'cf5',id_text:'Saya aktif berkontribusi pada komunitas di luar tanggung jawab formal saya.',en_text:'I actively contribute to the community beyond my formal responsibilities.',dim:'cult',tag:'cult',framework:'YAKKUM Values'},
+  // KARS — Patient/Client Safety Culture
+  {id:'cf6',id_text:'Keselamatan pasien/klien selalu menjadi prioritas utama saya, di atas efisiensi.',en_text:'Patient/client safety is always my top priority above efficiency.',dim:'cult',tag:'func',framework:'KARS Standard'},
+  {id:'cf7',id_text:'Saya nyaman melaporkan kesalahan atau near-miss tanpa takut disalahkan.',en_text:'I am comfortable reporting errors or near-misses without fear of blame.',dim:'cult',tag:'func',framework:'KARS Just Culture'},
+  {id:'cf8',id_text:'Saya secara konsisten mengikuti standar kebersihan dan higienitas.',en_text:'I consistently follow hygiene and cleanliness standards.',dim:'cult',tag:'func',framework:'KARS Standard'},
+  // WHO LEADS Framework
+  {id:'cf9',id_text:'Saya secara sadar mengelola respons emosional saya dalam situasi tekanan tinggi.',en_text:'I consciously manage my emotional response in high-pressure situations.',dim:'cult',tag:'lead',framework:'WHO LEADS — Lead Self'},
+  {id:'cf10',id_text:'Saya aktif membangun koalisi dengan pihak lain untuk mencapai tujuan bersama.',en_text:'I actively build coalitions with others to achieve shared goals.',dim:'cult',tag:'lead',framework:'WHO LEADS — Develop Coalitions'},
+  {id:'cf11',id_text:'Saya mendorong inovasi sistem dan transformasi cara kerja di unit saya.',en_text:'I encourage system innovation and work transformation in my unit.',dim:'cult',tag:'lead',framework:'WHO LEADS — Systems Transformation'},
+  // Core Humanitarian Standard (untuk semua unit — spirit pelayanan)
+  {id:'cf12',id_text:'Saya memastikan penerima layanan memiliki suara dalam evaluasi program/layanan.',en_text:'I ensure service recipients have a voice in program/service evaluation.',dim:'cult',tag:'cult',framework:'Core Humanitarian Standard'},
+  {id:'cf13',id_text:'Saya bertindak berdasarkan prinsip "Do No Harm" — tidak memperburuk kondisi orang yang dilayani.',en_text:'I act on the principle of "Do No Harm" — not worsening conditions of those served.',dim:'cult',tag:'cult',framework:'CHS / SPHERE'},
+  // Open questions
+  {id:'cf14',id_text:'Nilai YAKKUM yang paling kuat tercermin dalam diri saya adalah (jelaskan): / YAKKUM value most reflected in me is:',en_text:'The YAKKUM value most strongly reflected in me is (explain):',dim:'all',tag:'cult',framework:'YAKKUM Values',type:'open'},
+  {id:'cf15',id_text:'Kontribusi nyata saya terhadap nilai-nilai YAKKUM dalam 6 bulan terakhir: / My concrete contribution to YAKKUM values in the last 6 months:',en_text:'My concrete contribution to YAKKUM values in the last 6 months:',dim:'all',tag:'cult',framework:'YAKKUM Values',type:'open'},
+];
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function getDirectorateGroup(){
+  const d = document.getElementById('f_directorate').value;
+  return d || 'KP';
+}
+function getLevelGroup(){
+  const l = document.getElementById('f_level').value;
+  if(['1-2','3-4'].includes(l)) return 'basic';
+  if(['5-6','7'].includes(l)) return 'mid';
+  return 'senior';
+}
+function getPurpose(){return document.getElementById('f_purpose_sel').value || 'recruitment';}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function saveAdmin(){
+  localStorage.setItem('yakkum_hrd_email', document.getElementById('hrdEmailInput').value.trim());
+  localStorage.setItem('yakkum_sheet_url', document.getElementById('sheetUrlInput').value.trim());
+  const m = document.getElementById('savedMsg');
+  m.style.display='inline';
+  setTimeout(()=>m.style.display='none',2000);
+}
+function loadAdmin(){
+  const e=localStorage.getItem('yakkum_hrd_email');
+  const u=localStorage.getItem('yakkum_sheet_url');
+  if(e) document.getElementById('hrdEmailInput').value=e;
+  if(u) document.getElementById('sheetUrlInput').value=u;
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimers(){
+  document.getElementById('timerBar').style.display='flex';
+  document.getElementById('timerSession').textContent=sessionId;
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{totalSeconds++;pageSeconds++;updateTimerDisplay();},1000);
+}
+function resetPageTimer(n){
+  if(currentTimerPage && pageSeconds>0) pageTimes[currentTimerPage]=(pageTimes[currentTimerPage]||0)+pageSeconds;
+  currentTimerPage=n; pageSeconds=0;
+  document.getElementById('timerPageLabel').textContent=PAGE_NAMES[n]||'';
+}
+function updateTimerDisplay(){
+  const th=Math.floor(totalSeconds/3600),tm=Math.floor((totalSeconds%3600)/60),ts=totalSeconds%60;
+  document.getElementById('timerTotal').textContent=pad(th)+':'+pad(tm)+':'+pad(ts);
+  const pm=Math.floor(pageSeconds/60),ps=pageSeconds%60;
+  const pel=document.getElementById('timerPage');
+  pel.textContent=pad(pm)+':'+pad(ps);
+  pel.className='timer-display timer-page'+(pageSeconds>600?' warning':'');
+}
+function stopTimers(){
+  if(currentTimerPage&&pageSeconds>0) pageTimes[currentTimerPage]=(pageTimes[currentTimerPage]||0)+pageSeconds;
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=null;
+}
+function pad(n){return String(n).padStart(2,'0');}
+function getTimerSummary(){
+  const th=Math.floor(totalSeconds/3600),tm=Math.floor((totalSeconds%3600)/60),ts=totalSeconds%60;
+  const totalStr=pad(th)+':'+pad(tm)+':'+pad(ts);
+  const pageDetail=Object.entries(pageTimes).map(([pg,sec])=>{
+    return 'Step '+pg+' ('+( PAGE_NAMES[pg]||'' )+'): '+pad(Math.floor(sec/60))+':'+pad(sec%60);
+  }).join(' | ');
+  return{totalStr,totalSeconds,pageDetail,pageTimes};
+}
+
+// ============================================================
+// UNIT / LEVEL INFO
+// ============================================================
+function updateUnit(){
+  const dir=document.getElementById('f_directorate').value;
+  const sel=document.getElementById('f_unit');
+  sel.innerHTML='<option value="">-- Pilih Unit / Select Unit --</option>';
+  (UNITS[dir]||[]).forEach(u=>{const o=document.createElement('option');o.value=u;o.textContent=u;sel.appendChild(o);});
+}
+function updateLevelInfo(){
+  const l=document.getElementById('f_level').value;
+  const box=document.getElementById('levelInfoBox');
+  if(l&&LEVEL_INFO[l]){
+    document.getElementById('levelInfoText').innerHTML='<strong>Modul aktif:</strong> '+LEVEL_INFO[l];
+    box.style.display='flex';
+  } else box.style.display='none';
+}
+function selectPurpose(p,el){
+  document.getElementById('f_purpose_sel').value=p;
+  document.querySelectorAll('.purpose-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ============================================================
+// ALERT
+// ============================================================
+function showAlert(msg,type='error'){
+  const el=document.getElementById('alertBox');
+  el.textContent=msg; el.className='alert alert-'+type+' show';
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>el.className='alert',5000);
+}
+
+// ============================================================
+// PAGE NAVIGATION
+// ============================================================
+function goToPage(n){
+  if(n===2&&!validatePage1()) return;
+  if(n===3&&!validatePage2()) return;
+  if(n===2&&!timerInterval){startTimers();resetPageTimer(2);}
+  else if(n>1) resetPageTimer(n);
+  for(let i=1;i<=7;i++){
+    const el=document.getElementById('page'+i);
+    if(el) el.style.display=i===n?'block':'none';
+  }
+  for(let i=1;i<=7;i++){
+    const ind=document.getElementById('step'+i+'-ind');
+    if(!ind) continue;
+    ind.className='step-item';
+    if(i<n) ind.classList.add('done');
+    else if(i===n) ind.classList.add('active');
+  }
+  for(let i=1;i<=6;i++){
+    const ln=document.getElementById('line'+i);
+    if(ln) ln.className=i<n?'step-line done':'step-line';
+  }
+  if(n===2) renderPage2();
+  if(n===3) renderPage3();
+  if(n===4) renderPage4();
+  if(n===5) renderPage5();
+  if(n===6) renderPage6();
+  if(n===7) renderPage7();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ============================================================
+// VALIDATE
+// ============================================================
+function validatePage1(){
+  if(!document.getElementById('f_name').value.trim()){showAlert('Nama lengkap wajib diisi. / Full name is required.');return false;}
+  if(!document.getElementById('f_directorate').value){showAlert('Pilih Direktorat. / Select Directorate.');return false;}
+  if(!document.getElementById('f_level').value){showAlert('Pilih Level Karyawan. / Select Employee Level.');return false;}
+  if(!document.getElementById('f_purpose_sel').value){showAlert('Pilih Tujuan Assessment (klik kartu). / Select Assessment Purpose.');return false;}
+  return true;
+}
+function validatePage2(){
+  if(!answers.fc) {showAlert('Lengkapi semua set kepribadian. / Complete all personality sets.');return false;}
+  const incomplete=p2Sets.filter(s=>!answers.fc[s.id]||!answers.fc[s.id].most||!answers.fc[s.id].least);
+  if(incomplete.length>0){showAlert('Masih '+incomplete.length+' set belum lengkap (butuh MOST & LEAST). / '+incomplete.length+' sets incomplete.');return false;}
+  return true;
+}
+
+// ============================================================
+// RENDER PAGE 2 — FORCED CHOICE
+// ============================================================
+function renderPage2(){
+  const c=document.getElementById('page2Questions');
+  if(c.innerHTML!=='') return;
+  p2Sets=shuffle(FC_SETS);
+  c.innerHTML='';
+  p2Sets.forEach((set,idx)=>{
+    const words=shuffle(set.words);
+    const bl=document.createElement('div');
+    bl.className='forced-choice-block';
+    bl.innerHTML=`
+      <div class="q-label">Set ${idx+1} / ${p2Sets.length}</div>
+      <div class="fc-instruction">Pilih <strong>SATU</strong> yang PALING mencerminkan Anda & <strong>SATU</strong> yang PALING TIDAK.<br><em>Select ONE word MOST like you & ONE LEAST like you.</em></div>
+      <div class="fc-grid">
+        ${words.map(w=>`
+          <div class="fc-item" id="fci_${set.id}_${w.id}">
+            <div class="fc-text"><div class="id">${w.id_text}</div><div class="en">${w.en_text}</div></div>
+            <div class="fc-btns">
+              <button class="fc-btn most" onclick="toggleFC('${set.id}','${w.id}','most')">MOST</button>
+              <button class="fc-btn least" onclick="toggleFC('${set.id}','${w.id}','least')">LEAST</button>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    c.appendChild(bl);
+  });
+  updateFCProgress();
+}
+
+function toggleFC(setId,wordId,type){
+  if(!answers.fc) answers.fc={};
+  if(!answers.fc[setId]) answers.fc[setId]={most:null,least:null};
+  const other=type==='most'?'least':'most';
+  if(answers.fc[setId][other]===wordId){showAlert('Tidak bisa dipilih sebagai MOST dan LEAST sekaligus. / Cannot be both MOST and LEAST.');return;}
+  answers.fc[setId][type]=answers.fc[setId][type]===wordId?null:wordId;
+  const set=FC_SETS.find(s=>s.id===setId);
+  set.words.forEach(w=>{
+    const item=document.getElementById('fci_'+setId+'_'+w.id);
+    if(!item) return;
+    item.className='fc-item';
+    item.querySelector('.fc-btn.most').classList.remove('active');
+    item.querySelector('.fc-btn.least').classList.remove('active');
+    if(answers.fc[setId].most===w.id){item.classList.add('selected-most');item.querySelector('.fc-btn.most').classList.add('active');}
+    if(answers.fc[setId].least===w.id){item.classList.add('selected-least');item.querySelector('.fc-btn.least').classList.add('active');}
+  });
+  updateFCProgress();
+}
+function updateFCProgress(){
+  if(!answers.fc){document.getElementById('p2prog').style.width='0%';return;}
+  let done=p2Sets.filter(s=>answers.fc[s.id]&&answers.fc[s.id].most&&answers.fc[s.id].least).length;
+  document.getElementById('p2prog').style.width=Math.round(done/p2Sets.length*100)+'%';
+  document.getElementById('p2done').textContent=done+' set dijawab';
+  document.getElementById('p2total').textContent=p2Sets.length+' set total';
+}
+
+// ============================================================
+// RENDER LIKERT — generic
+// ============================================================
+function renderLikertPage(containerId,questions,progId,doneId,totalId,key){
+  const c=document.getElementById(containerId);
+  if(c.innerHTML!=='') return;
+  if(!answers[key]) answers[key]={};
+  const LABELS=[
+    {s:'1',cls:'score-1',id_l:'Sangat Tidak Setuju',en_l:'Strongly Disagree'},
+    {s:'2',cls:'score-2',id_l:'Tidak Setuju',en_l:'Disagree'},
+    {s:'3',cls:'score-3',id_l:'Netral',en_l:'Neutral'},
+    {s:'4',cls:'score-4',id_l:'Setuju',en_l:'Agree'},
+    {s:'5',cls:'score-5',id_l:'Sangat Setuju',en_l:'Strongly Agree'},
+  ];
+  questions.forEach((q,idx)=>{
+    const bl=document.createElement('div');
+    bl.className='question-block';
+    const tagColors={core:'core-tag',func:'func-tag',lead:'lead-tag',vign:'vign-tag',cult:'cult-tag'};
+    const tagLabel={core:'Core',func:'Functional',lead:'Leadership',vign:'Vignette',cult:'Culture Fit'};
+    const tagHtml=q.tag?`<span class="q-tag ${tagColors[q.tag]||'core-tag'}">${tagLabel[q.tag]||q.tag}${q.framework?' · '+q.framework:''}</span>`:'';
+    if(q.type==='open'){
+      bl.innerHTML=`<div class="q-label">No. ${idx+1}</div>${tagHtml}<div class="q-text">${q.id_text}</div><div class="q-text-en">${q.en_text}</div><div class="form-group"><textarea id="ans_${key}_${q.id}" rows="3" placeholder="Tulis jawaban singkat... / Write a brief answer..." oninput="recordOpen('${key}','${q.id}',this.value)"></textarea></div>`;
+    } else {
+      bl.innerHTML=`<div class="q-label">No. ${idx+1}</div>${tagHtml}<div class="q-text">${q.id_text}</div><div class="q-text-en">${q.en_text}</div>
+        <div class="likert-row">${LABELS.map(l=>`<div class="likert-option"><input type="radio" name="${key}_${q.id}" id="${key}_${q.id}_${l.s}" value="${l.s}" onchange="recordLikert('${key}','${q.id}',${l.s},this)"><label for="${key}_${q.id}_${l.s}"><span class="score ${l.cls}">${l.s}</span><span>${l.id_l}<br><em>${l.en_l}</em></span></label></div>`).join('')}</div>`;
+    }
+    c.appendChild(bl);
+  });
+  updateLikertProg(questions,progId,doneId,totalId,key);
+}
+
+function recordLikert(key,qid,val,el){
+  if(!answers[key]) answers[key]={};
+  answers[key][qid]=val;
+  const map={wb:['p3prog','p3done','p3total',p3Qs],pf:['p4prog','p4done','p4total',p4Qs],comp:['p5prog','p5done','p5total',p5Qs],cult:['p7prog','p7done','p7total',p7Qs]};
+  if(map[key]) updateLikertProg(map[key][3],map[key][0],map[key][1],map[key][2],key);
+}
+function recordOpen(key,qid,val){
+  if(!answers[key]) answers[key]={};
+  answers[key][qid]=val;
+  const map={wb:['p3prog','p3done','p3total',p3Qs],pf:['p4prog','p4done','p4total',p4Qs],comp:['p5prog','p5done','p5total',p5Qs],vign:['p6prog','p6done','p6total',p6Qs],cult:['p7prog','p7done','p7total',p7Qs]};
+  if(map[key]) updateLikertProg(map[key][3],map[key][0],map[key][1],map[key][2],key);
+}
+function updateLikertProg(qs,progId,doneId,totalId,key){
+  if(!qs||!answers[key]) return;
+  let done=qs.filter(q=>answers[key][q.id]!==undefined&&answers[key][q.id]!=='').length;
+  document.getElementById(progId).style.width=Math.round(done/qs.length*100)+'%';
+  document.getElementById(doneId).textContent=done+' dijawab';
+  document.getElementById(totalId).textContent=qs.length+' pertanyaan';
+}
+
+// ============================================================
+// RENDER PAGES 3-7
+// ============================================================
+function renderPage3(){
+  if(p3Qs.length===0) p3Qs=shuffle(WB_QS);
+  renderLikertPage('page3Questions',p3Qs,'p3prog','p3done','p3total','wb');
+}
+function renderPage4(){
+  if(p4Qs.length===0){
+    const level=document.getElementById('f_level').value;
+    const group=getLevelGroup();
+    p4Qs=shuffle(PREF_QS.filter(q=>q.levels.includes(level)));
+    // Update badge
+    const badges={basic:'🔵 Core — Level 1–4 (Pelaksana & Staf)',mid:'🟡 Core + Leadership Lini — Level 5–7',senior:'🟠 Full Leadership Module — Level 8–12 (Manager & Pemimpin Usaha)'};
+    document.getElementById('p4ModuleBadge').textContent=badges[group]||badges.basic;
+    document.getElementById('p4LevelBadge').innerHTML='ℹ️ <span>'+LEVEL_INFO[level]+'</span>';
+    document.getElementById('p4LevelBadge').style.display='flex';
+  }
+  renderLikertPage('page4Questions',p4Qs,'p4prog','p4done','p4total','pf');
+}
+function renderPage5(){
+  if(p5Qs.length===0){
+    const purpose=getPurpose();
+    const raw=COMPETENCY_QS[purpose]||COMPETENCY_QS.recruitment;
+    p5Qs=shuffle(raw);
+    const purposeLabels={recruitment:'🎯 Rekrutmen — Modul Seleksi & Fit Kandidat',development:'🌱 Development — Modul Learning Agility & Aspirasi',leadership:'👑 Leadership — Modul LEADS & Kompetensi Kepemimpinan',performance:'📊 Performance Review — Modul Akuntabilitas & Pencapaian'};
+    document.getElementById('p5ModuleBadge').textContent=purposeLabels[purpose]||'Modul Kompetensi';
+    document.getElementById('p5PurposeInfo').textContent='Modul ini disesuaikan dengan tujuan assessment yang Anda pilih: '+purpose.toUpperCase()+'. Pertanyaan mencerminkan konstruk spesifik untuk tujuan tersebut. / This module is tailored to your selected assessment purpose.';
+  }
+  renderLikertPage('page5Questions',p5Qs,'p5prog','p5done','p5total','comp');
+}
+
+// ============================================================
+// RENDER PAGE 6 — VIGNETTE
+// ============================================================
+function renderPage6(){
+  const c=document.getElementById('page6Questions');
+  if(c.innerHTML!=='') return;
+  const dir=getDirectorateGroup();
+  const vigPool = VIGNETTE_QS[dir] || VIGNETTE_QS.KP;
+  p6Qs=shuffle(vigPool);
+  if(!answers.vign) answers.vign={};
+  p6Qs.forEach((q,idx)=>{
+    const bl=document.createElement('div');
+    bl.className='question-block';
+    bl.innerHTML=`
+      <div class="q-label">Skenario ${idx+1} / ${p6Qs.length} <span class="q-tag vign-tag" style="margin-left:8px;">Vignette · ${dir}</span></div>
+      <div class="vignette-box">
+        <div class="vignette-label">📋 Skenario / Scenario</div>
+        <div class="vignette-scenario">${q.scenario_id}</div>
+        <div class="vignette-scenario-en">${q.scenario_en}</div>
+      </div>
+      <p style="font-size:0.79rem;color:var(--text-light);margin-bottom:10px;font-style:italic;">Pilih satu respons yang paling mencerminkan tindakan Anda. / Select the response that best reflects your action.</p>
+      <div class="fc-grid" id="vign_grid_${q.id}">
+        ${shuffle(q.options_id.map((opt,i)=>({opt,opt_en:q.options_en[i],idx:i}))).map(item=>`
+          <div class="fc-item" id="vign_${q.id}_${item.idx}" onclick="selectVignette('${q.id}',${item.idx},this)">
+            <div class="fc-text">
+              <div class="id">${item.opt}</div>
+              <div class="en">${item.opt_en}</div>
+            </div>
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;" id="vign_dot_${q.id}_${item.idx}"></div>
+          </div>`).join('')}
+      </div>`;
+    c.appendChild(bl);
+  });
+  updateVigProgress();
+}
+
+function selectVignette(qid,optIdx,el){
+  if(!answers.vign) answers.vign={};
+  answers.vign[qid]=optIdx;
+  const q=p6Qs.find(x=>x.id===qid);
+  if(!q) return;
+  q.options_id.forEach((_,i)=>{
+    const item=document.getElementById('vign_'+qid+'_'+i);
+    const dot=document.getElementById('vign_dot_'+qid+'_'+i);
+    if(item){item.className='fc-item';item.style.borderColor='';}
+    if(dot){dot.style.background='';dot.style.borderColor='var(--border)';}
+  });
+  el.style.borderColor='var(--gold)';
+  el.style.background='#FEF9EE';
+  const dot=document.getElementById('vign_dot_'+qid+'_'+optIdx);
+  if(dot){dot.style.background='var(--gold)';dot.style.borderColor='var(--gold)';}
+  updateVigProgress();
+}
+function updateVigProgress(){
+  const done=p6Qs.filter(q=>answers.vign&&answers.vign[q.id]!==undefined).length;
+  document.getElementById('p6prog').style.width=Math.round(done/Math.max(p6Qs.length,1)*100)+'%';
+  document.getElementById('p6done').textContent=done+' dijawab';
+  document.getElementById('p6total').textContent=p6Qs.length+' skenario';
+}
+
+// ============================================================
+// RENDER PAGE 7 — CULTURE FIT
+// ============================================================
+function renderPage7(){
+  if(p7Qs.length===0) p7Qs=shuffle(CULTURE_QS);
+  renderLikertPage('page7Questions',p7Qs,'p7prog','p7done','p7total','cult');
+}
+
+// ============================================================
+// SCORING ENGINE
+// ============================================================
+function computeProfile(){
+  let scores={R:0,Y:0,G:0,B:0};
+  // Forced choice
+  if(answers.fc){
+    Object.entries(answers.fc).forEach(([sid,sel])=>{
+      const set=FC_SETS.find(s=>s.id===sid);
+      if(!set) return;
+      if(sel.most){const w=set.words.find(x=>x.id===sel.most);if(w) scores[w.color]+=3;}
+      if(sel.least){const w=set.words.find(x=>x.id===sel.least);if(w) scores[w.color]-=1;}
+    });
+  }
+  // Work behaviour
+  [['wb',WB_QS],['pf',PREF_QS]].forEach(([key,qs])=>{
+    if(!answers[key]) return;
+    Object.entries(answers[key]).forEach(([qid,val])=>{
+      const q=qs.find(x=>x.id===qid);
+      if(!q||!['R','Y','G','B'].includes(q.dim)) return;
+      scores[q.dim]+=(parseInt(val)-3);
+    });
+  });
+  // Culture fit score (separate)
+  let cultScore=0,cultCount=0;
+  if(answers.cult){
+    Object.values(answers.cult).forEach(v=>{if(typeof v==='number'){cultScore+=v;cultCount++;}});
+  }
+  const cultAvg=cultCount>0?Math.round((cultScore/cultCount/5)*100):0;
+  // Normalize
+  const total=Math.abs(scores.R)+Math.abs(scores.Y)+Math.abs(scores.G)+Math.abs(scores.B);
+  let pcts={R:0,Y:0,G:0,B:0};
+  if(total>0){
+    Object.keys(pcts).forEach(k=>pcts[k]=Math.max(0,Math.round((scores[k]/total)*100)));
+    const sum=Object.values(pcts).reduce((a,b)=>a+b,0);
+    if(sum!==100){const mk=Object.keys(pcts).reduce((a,b)=>pcts[a]>pcts[b]?a:b);pcts[mk]+=(100-sum);}
+  }
+  const sorted=Object.entries(pcts).sort((a,b)=>b[1]-a[1]);
+  const dominant=sorted[0][0],secondary=sorted[1][0],tertiary=sorted[2][0],lesser=sorted[3][0];
+  const typeMap=getType(dominant,secondary);
+  return{scores,pcts,dominant,secondary,tertiary,lesser,typeMap,cultScore:cultAvg};
+}
+
+function getType(dom,sec){
+  const types={
+    RY:{id:'Director / Direktur',en:'The Director',wheel:1,desc_id:'Berorientasi hasil, tegas, visioner, penuh energi. Cenderung tidak sabar.',desc_en:'Results-oriented, decisive, visionary, energetic. Tends to be impatient.'},
+    RG:{id:'Reformer / Reformer',en:'The Reformer',wheel:5,desc_id:'Tegas namun peduli, pragmatis, bertenaga, menjaga hubungan tim.',desc_en:'Decisive but caring, pragmatic, energetic, maintains team relationships.'},
+    RB:{id:'Motivator / Motivator',en:'The Motivator',wheel:9,desc_id:'Kompetitif, berorientasi tujuan, analitis, fokus efisiensi.',desc_en:'Competitive, goal-oriented, analytical, efficiency-focused.'},
+    YR:{id:'Inspirer / Inspirator',en:'The Inspirer',wheel:2,desc_id:'Antusias, ekspresif, mudah bergaul, kreatif, suka perhatian.',desc_en:'Enthusiastic, expressive, sociable, creative, enjoys attention.'},
+    YG:{id:'Helper / Pembantu',en:'The Helper',wheel:6,desc_id:'Peduli, hangat, kooperatif, fleksibel. Menghindari konflik.',desc_en:'Caring, warm, cooperative, flexible. Avoids conflict.'},
+    YB:{id:'Socializer / Sosialisator',en:'The Socializer',wheel:10,desc_id:'Sosial, ekspresif, terbuka, antusias. Kurang suka detail.',desc_en:'Social, expressive, open, enthusiastic. Dislikes details.'},
+    GY:{id:'Counsellor / Konselor',en:'The Counsellor',wheel:3,desc_id:'Empatik, mendengarkan, sabar, harmonis. Menghindari perubahan mendadak.',desc_en:'Empathetic, listening, patient, harmonious. Avoids sudden change.'},
+    GB:{id:'Supporter / Pendukung',en:'The Supporter',wheel:7,desc_id:'Stabil, sabar, dapat diandalkan, berorientasi konsistensi.',desc_en:'Stable, patient, reliable, consistency-oriented.'},
+    GR:{id:'Coordinator / Koordinator',en:'The Coordinator',wheel:11,desc_id:'Terstruktur, metodis, bertanggung jawab, mendukung stabilitas.',desc_en:'Structured, methodical, responsible, supports stability.'},
+    BY:{id:'Observer / Pengamat',en:'The Observer',wheel:4,desc_id:'Analitis, teliti, objektif. Lebih suka bekerja sendiri.',desc_en:'Analytical, meticulous, objective. Prefers working alone.'},
+    BR:{id:'Perfectionist / Perfeksionis',en:'The Perfectionist',wheel:8,desc_id:'Sangat teliti, kritis, berorientasi kualitas, standar sangat tinggi.',desc_en:'Highly meticulous, critical, quality-oriented, very high standards.'},
+    BG:{id:'Expert / Ahli',en:'The Expert',wheel:12,desc_id:'Kompeten, metodis, fokus kualitas dan keahlian teknis.',desc_en:'Competent, methodical, quality and technical expertise focused.'},
+  };
+  return types[dom+sec]||{id:'Adaptive / Adaptif',en:'The Adapter',wheel:0,desc_id:'Fleksibel, mampu menyesuaikan diri berbagai situasi.',desc_en:'Flexible, adapts to various situations.'};
+}
+
+function buildNarrative(profile,userData){
+  const{pcts,dominant,secondary,tertiary,lesser,typeMap,cultScore}=profile;
+  const N={
+    R:{strengths:['Tegas & berani dalam keputusan / Decisive & courageous','Berorientasi hasil / Results-oriented','Energi tinggi & determinasi / High energy & determination','Pemimpin krisis / Crisis leader'],weaknesses:['Cenderung tidak sabar / Impatient','Bisa terkesan dominan / Can seem dominant','Kurang peka perasaan / Less emotionally sensitive'],vtt:'Kepemimpinan kuat, mendorong target, tidak ragu keputusan sulit. / Strong leadership, drives goals, decisive.',comm:'Langsung, singkat, fokus hasil. / Direct, concise, results-focused.',barrier:'Kurang sabar mendengarkan, bisa memotong pembicaraan. / Impatient listener.',blind:'Dampak gaya keras pada moral tim. / Impact of assertive style on team morale.',opp:'Earth Green (G)',mgmt:'Direktif/Commanding — arahan jelas, hasil cepat. / Directive — clear direction, fast results.',sell:'Langsung, fokus ROI dan manfaat nyata. / Direct, ROI and real benefit focused.',learn:'Action Learning — belajar dari pengalaman langsung. / Learns through direct experience.'},
+    Y:{strengths:['Antusias & penuh semangat / Enthusiastic','Komunikasi & networking kuat / Strong communication','Kreatif & inovatif / Creative','Menginspirasi orang lain / Inspiring'],weaknesses:['Kurang fokus detail / Lacks detail focus','Terlalu optimis tanpa hitung risiko / Over-optimistic','Sulit konsisten pada tugas rutin / Inconsistent on routine tasks'],vtt:'Membawa semangat, ide segar, persuasi. Tim tetap termotivasi. / Brings energy, fresh ideas, persuasion.',comm:'Ekspresif, antusias, storytelling. / Expressive, enthusiastic, storytelling.',barrier:'Terlalu banyak bicara, kurang mendengarkan. / Talks too much, under-listens.',blind:'Janji berlebihan, kurang rencana konkret. / Over-promising, lacks concrete plans.',opp:'Cool Blue (B)',mgmt:'Coaching/Inspiring — motivasi visi & komunikasi terbuka. / Coaching — vision motivation & open communication.',sell:'Penuh semangat, bangun emosi positif. / Enthusiastic, builds positive emotion.',learn:'Social/Collaborative — belajar via diskusi & interaksi. / Learns through discussion & interaction.'},
+    G:{strengths:['Empatik & peka / Empathetic','Membangun kepercayaan / Trust builder','Sabar & konsisten / Patient','Perekat tim / Team glue','Dapat diandalkan / Reliable'],weaknesses:['Sulit keputusan saat ada konflik / Conflict-avoidant','Terlalu mengalah / Over-accommodating','Lambat adaptasi perubahan / Slow change adapter'],vtt:'Perekat tim, semua merasa dihargai, jaga stabilitas. / Team glue, everyone valued, maintains stability.',comm:'Hangat, penuh perhatian, menyesuaikan kebutuhan. / Warm, attentive, needs-adaptive.',barrier:'Menghindari topik sensitif, pesan tidak tegas. / Avoids sensitive topics, unclear messages.',blind:'Perlu lebih asertif. Tidak ungkapkan ketidaksetujuan. / Needs more assertiveness.',opp:'Fiery Red (R)',mgmt:'Participative/Supporting — mendukung tim, konsensus. / Participative — team support, consensus.',sell:'Berbasis kepercayaan & relasi jangka panjang. / Trust and long-term relationship based.',learn:'Observational/Reflective — amati, renungkan, integrasikan. / Observes, reflects, integrates.'},
+    B:{strengths:['Analitis & akurat / Analytical & accurate','Metodis & terstruktur / Methodical','Kritis & teliti / Critical & meticulous','Standar kualitas tinggi / High quality standards','Perencanaan matang / Thorough planning'],weaknesses:['Terlalu perfeksionis & lambat / Overly perfectionist','Kurang fleksibel perubahan / Less flexible','Analysis paralysis','Kurang ekspresif emosi / Emotionally unexpressive'],vtt:'Memastikan kualitas, identifikasi risiko, analisis mendalam. / Ensures quality, risk id, deep analysis.',comm:'Terstruktur, berbasis fakta, presisi. Lebih suka tertulis. / Structured, fact-based, precise. Prefers written.',barrier:'Terlalu teknis & detail, orang kehilangan fokus inti. / Too technical, others lose core message.',blind:'Over-analysis memperlamban keputusan. / Over-analysis slows decisions.',opp:'Sunshine Yellow (Y)',mgmt:'Analytical/Pacesetting — standar tinggi, data-driven. / Analytical — high standards, data-driven.',sell:'Berbasis fakta & bukti data. / Fact and data evidence based.',learn:'Theoretical/Systematic — riset mendalam & analisis. / Deep research & structured analysis.'}
+  };
+  const n=N[dominant];
+  const cNames={R:'Fiery Red',Y:'Sunshine Yellow',G:'Earth Green',B:'Cool Blue'};
+  return{
+    type:{id:typeMap.id,en:typeMap.en},
+    description:{id:typeMap.desc_id,en:typeMap.desc_en},
+    wheel_position:typeMap.wheel,
+    dominant_color:dominant,dominant_name:cNames[dominant],
+    secondary_color:secondary,secondary_name:cNames[secondary],
+    tertiary_color:tertiary,lesser_color:lesser,
+    percentages:pcts,
+    raw_scores:profile.scores,
+    culture_fit_score:cultScore,
+    key_strengths:n.strengths,
+    weaknesses:n.weaknesses,
+    value_to_team:{id:n.vtt},
+    communication_style:{id:n.comm},
+    communication_barrier:{id:n.barrier},
+    blind_spots:{id:n.blind},
+    opposite_type:n.opp,
+    management_style:{id:n.mgmt},
+    selling_style:{id:n.sell},
+    learning_style:{id:n.learn},
+    conscious_persona:dominant+secondary,
+    less_conscious_persona:tertiary+lesser,
+  };
+}
+
+// ============================================================
+// COLLECT & SUBMIT
+// ============================================================
+function collectFormData(){
+  const timer=getTimerSummary();
+  return{
+    session_id:sessionId,
+    timestamp:new Date().toISOString(),
+    name:document.getElementById('f_name').value,
+    dob:document.getElementById('f_dob').value,
+    gender:document.getElementById('f_gender').value,
+    education:document.getElementById('f_edu').value,
+    email:document.getElementById('f_email').value,
+    phone:document.getElementById('f_phone').value,
+    directorate:document.getElementById('f_directorate').value,
+    unit:document.getElementById('f_unit').value,
+    position:document.getElementById('f_position').value,
+    level:document.getElementById('f_level').value,
+    tenure:document.getElementById('f_tenure').value,
+    purpose:document.getElementById('f_purpose_sel').value,
+    total_time:timer.totalStr,
+    total_seconds:timer.totalSeconds,
+    time_per_page:timer.pageDetail,
+  };
+}
+
+async function submitAssessment(){
+  const alertBox=document.getElementById('submitAlertBox');
+  // Validate open questions
+  const openQs=[...p5Qs,...p7Qs].filter(q=>q.type==='open');
+  const allAnswers={...answers.comp,...answers.cult};
+  const missing=openQs.filter(q=>!allAnswers[q.id]||String(allAnswers[q.id]).trim()==='');
+  if(missing.length>0){
+    alertBox.textContent='Harap lengkapi '+missing.length+' pertanyaan terbuka yang belum dijawab. / Please complete '+missing.length+' open questions.';
+    alertBox.className='alert alert-error show';
+    return;
+  }
+  const userData=collectFormData();
+  const profile=computeProfile();
+  const narrative=buildNarrative(profile,userData);
+  const payload={userData,answers,narrative,hrd_email:localStorage.getItem('yakkum_hrd_email')||'',sheet_url:localStorage.getItem('yakkum_sheet_url')||''};
+  const btn=document.querySelector('.btn-gold');
+  btn.disabled=true; btn.textContent='⏳ Mengirim... / Sending...';
+  const sheetUrl=localStorage.getItem('yakkum_sheet_url')||'';
+  if(sheetUrl){
+    try{await fetch(sheetUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),mode:'no-cors'});}
+    catch(e){}
+  }
+  showThankYou(narrative,userData);
+}
+
+function showThankYou(narrative,userData){
+  stopTimers();
+  const timer=getTimerSummary();
+  for(let i=1;i<=7;i++){
+    const el=document.getElementById('page'+i);if(el)el.style.display='none';
+  }
+  document.getElementById('thankYouPage').style.display='block';
+  for(let i=1;i<=7;i++){const ind=document.getElementById('step'+i+'-ind');if(ind)ind.className='step-item done';}
+  for(let i=1;i<=6;i++){const ln=document.getElementById('line'+i);if(ln)ln.className='step-line done';}
+  // Update timer bar
+  document.getElementById('timerBar').style.background='#14532D';
+  document.getElementById('timerTotal').className='timer-display timer-total';
+  document.getElementById('timerTotal').style.background='rgba(74,222,128,0.15)';
+  document.getElementById('timerTotal').style.borderColor='rgba(74,222,128,0.4)';
+  document.getElementById('timerTotal').style.color='#86EFAC';
+  // Thank you note
+  const note=document.getElementById('thankYouNote');
+  if(note&&narrative){
+    const p=narrative.percentages;
+    note.innerHTML=`
+      🏥 <strong>YAKKUM</strong> — Yayasan Kristen Untuk Kesehatan Umum<br>
+      <small style="color:var(--text-light);">Hasil bersifat rahasia · hanya diakses HRD / Confidential · HR access only</small>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #D1D5DB;">
+        <div style="font-size:0.76rem;color:#6B7280;margin-bottom:6px;">⏱ Total Waktu / Total Time</div>
+        <div style="font-family:'Courier New',monospace;font-size:1.3rem;font-weight:700;color:var(--navy);">${timer.totalStr}</div>
+        <div style="font-size:0.68rem;color:#9CA3AF;margin-top:3px;">${timer.pageDetail}</div>
+      </div>`;
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  loadAdmin();
+  document.getElementById('timerSession').textContent=sessionId;
+});
+</script>
+
+<!-- =========================================================
+GOOGLE APPS SCRIPT — Deploy as Web App
+Paste semua kode di bawah ini ke Google Apps Script:
+==========================================================
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var u = data.userData, n = data.narrative, p = n ? n.percentages : {};
+
+    // Sheet 1: Raw Data
+    var raw = ss.getSheetByName("Raw Data") || ss.insertSheet("Raw Data");
+    if (raw.getLastRow() === 0) {
+      raw.appendRow(["Session ID","Timestamp","Nama","Tgl Lahir","Gender","Pendidikan",
+        "Email","No HP","Direktorat","Unit","Jabatan","Level","Masa Kerja","Tujuan",
+        "Tipe ID","Tipe EN","Dominant","Secondary","% Red","% Yellow","% Green","% Blue",
+        "Culture Fit %","Wheel","Raw R","Raw Y","Raw G","Raw B",
+        "Total Waktu","Total Detik","Waktu Per Halaman"]);
+    }
+    raw.appendRow([u.session_id,u.timestamp,u.name,u.dob,u.gender,u.education,
+      u.email,u.phone,u.directorate,u.unit,u.position,u.level,u.tenure,u.purpose,
+      n?n.type.id:'',n?n.type.en:'',n?n.dominant_color:'',n?n.secondary_color:'',
+      p.R||0,p.Y||0,p.G||0,p.B||0,n?n.culture_fit_score:0,n?n.wheel_position:0,
+      n?n.raw_scores.R:0,n?n.raw_scores.Y:0,n?n.raw_scores.G:0,n?n.raw_scores.B:0,
+      u.total_time||'',u.total_seconds||0,u.time_per_page||'']);
+
+    // Sheet 2: Narrative
+    var nar = ss.getSheetByName("Narrative") || ss.insertSheet("Narrative");
+    if (nar.getLastRow() === 0) {
+      nar.appendRow(["Session ID","Nama","Tipe","Deskripsi","Strengths","Weaknesses",
+        "Value to Team","Comm Style","Comm Barrier","Blind Spots","Opposite",
+        "Management","Selling","Learning","Conscious","Less Conscious","Culture Fit %"]);
+    }
+    if (n) {
+      nar.appendRow([u.session_id,u.name,n.type.id,n.description.id,
+        (n.key_strengths||[]).join('; '),(n.weaknesses||[]).join('; '),
+        n.value_to_team?n.value_to_team.id:'',
+        n.communication_style?n.communication_style.id:'',
+        n.communication_barrier?n.communication_barrier.id:'',
+        n.blind_spots?n.blind_spots.id:'',n.opposite_type||'',
+        n.management_style?n.management_style.id:'',
+        n.selling_style?n.selling_style.id:'',
+        n.learning_style?n.learning_style.id:'',
+        n.conscious_persona||'',n.less_conscious_persona||'',n.culture_fit_score||0]);
+    }
+
+    // Sheet 3: Open Answers
+    var oa = ss.getSheetByName("Open Answers") || ss.insertSheet("Open Answers");
+    if (oa.getLastRow() === 0) oa.appendRow(["Session ID","Nama","Tujuan","Question ID","Jawaban"]);
+    var ans = data.answers || {};
+    ['comp','cult','vign'].forEach(function(key) {
+      if (!ans[key]) return;
+      Object.entries(ans[key]).forEach(function([qid, val]) {
+        if (typeof val === 'string' && val.trim() !== '') {
+          oa.appendRow([u.session_id, u.name, u.purpose, qid, val]);
+        }
+      });
+    });
+
+    // Send Email
+    var hrdEmail = data.hrd_email;
+    if (hrdEmail && hrdEmail.includes('@')) {
+      MailApp.sendEmail({
+        to: hrdEmail,
+        subject: 'YAKKUM Assessment — ' + u.name + ' (' + u.session_id + ') — ' + (u.purpose||'').toUpperCase(),
+        htmlBody: buildEmail(u, n)
+      });
+    }
+    return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:'error',msg:err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function buildEmail(u, n) {
+  if (!n) return '<p>Assessment received for: ' + u.name + '</p>';
+  var p = n.percentages || {};
+  var colorBar = '<table style="width:320px;border-collapse:collapse;border-radius:6px;overflow:hidden"><tr>' +
+    '<td style="width:'+p.R+'%;background:#C0392B;height:12px;"></td>' +
+    '<td style="width:'+p.Y+'%;background:#F4C430;height:12px;"></td>' +
+    '<td style="width:'+p.G+'%;background:#2E7D52;height:12px;"></td>' +
+    '<td style="width:'+p.B+'%;background:#1B5E9B;height:12px;"></td>' +
+    '</tr></table>';
+  return '<div style="font-family:Georgia,serif;max-width:720px;color:#1A2744;">' +
+    '<div style="background:#1A2744;padding:16px 20px;border-radius:8px 8px 0 0;">' +
+    '<h2 style="color:white;margin:0;font-size:1.2rem;">YAKKUM Insights Discovery Report</h2>' +
+    '<p style="color:#E8C060;margin:4px 0 0;font-size:0.85rem;">Confidential — HRD Internal Use Only</p></div>' +
+    '<div style="background:#FAF6EE;padding:20px;border:1px solid #E5DEC8;">' +
+    '<table style="width:100%;font-size:0.85rem;border-collapse:collapse;">' +
+    '<tr><td style="padding:3px 8px 3px 0"><strong>Nama:</strong> '+u.name+'</td><td><strong>Session:</strong> '+u.session_id+'</td></tr>' +
+    '<tr><td><strong>Direktorat:</strong> '+u.directorate+'</td><td><strong>Unit:</strong> '+u.unit+'</td></tr>' +
+    '<tr><td><strong>Level:</strong> '+u.level+'</td><td><strong>Tujuan:</strong> '+u.purpose+'</td></tr>' +
+    '<tr><td><strong>⏱ Total Waktu:</strong> <span style="font-family:monospace;font-weight:700;color:#1A2744;">'+u.total_time+'</span></td><td><strong>Tanggal:</strong> '+u.timestamp+'</td></tr>' +
+    '</table>' +
+    '<hr style="border:1px solid #E5DEC8;margin:14px 0">' +
+    '<h3 style="color:#C8982A;margin:0 0 8px">🎨 Profil Insights Discovery</h3>' +
+    colorBar +
+    '<p style="font-size:0.83rem;margin:8px 0">🔴 Red: <b>'+p.R+'%</b> &nbsp; 🟡 Yellow: <b>'+p.Y+'%</b> &nbsp; 🟢 Green: <b>'+p.G+'%</b> &nbsp; 🔵 Blue: <b>'+p.B+'%</b></p>' +
+    '<p><strong>Tipe:</strong> '+n.type.id+' ('+n.type.en+')</p>' +
+    '<p><strong>Dominant:</strong> '+n.dominant_name+' | <strong>Secondary:</strong> '+n.secondary_name+'</p>' +
+    '<p><strong>🟣 Culture Fit Score:</strong> <span style="font-size:1.1em;font-weight:700;color:#5B21B6;">'+n.culture_fit_score+'%</span></p>' +
+    '<p style="font-size:0.83rem;font-style:italic;color:#666">'+n.description.id+'</p>' +
+    '<hr style="border:1px solid #E5DEC8;margin:12px 0">' +
+    '<h3 style="color:#C8982A;margin:0 0 6px">💪 Key Strengths</h3><ul style="font-size:0.83rem">'+( n.key_strengths||[]).map(s=>'<li>'+s+'</li>').join('')+'</ul>' +
+    '<h3 style="color:#C8982A;margin:8px 0 6px">⚠️ Development Areas</h3><ul style="font-size:0.83rem">'+(n.weaknesses||[]).map(s=>'<li>'+s+'</li>').join('')+'</ul>' +
+    '<h3 style="color:#C8982A;margin:8px 0 6px">🤝 Value to Team</h3><p style="font-size:0.83rem">'+(n.value_to_team?n.value_to_team.id:'')+'</p>' +
+    '<h3 style="color:#C8982A;margin:8px 0 6px">💬 Communication Style</h3><p style="font-size:0.83rem">'+(n.communication_style?n.communication_style.id:'')+'</p>' +
+    '<h3 style="color:#C8982A;margin:8px 0 6px">🔍 Blind Spots</h3><p style="font-size:0.83rem">'+(n.blind_spots?n.blind_spots.id:'')+'</p>' +
+    '<h3 style="color:#C8982A;margin:8px 0 6px">👔 Management Style</h3><p style="font-size:0.83rem">'+(n.management_style?n.management_style.id:'')+'</p>' +
+    '<h3 style="color:#C8982A;margin:8px 0 6px">📚 Learning Style</h3><p style="font-size:0.83rem">'+(n.learning_style?n.learning_style.id:'')+'</p>' +
+    '<h3 style="color:#C8982A;margin:8px 0 6px">🧠 Color Dynamics</h3>' +
+    '<p style="font-size:0.83rem"><strong>Conscious Persona:</strong> '+n.conscious_persona+' | <strong>Less Conscious:</strong> '+n.less_conscious_persona+'</p>' +
+    '<p style="font-size:0.75rem;color:#888;margin-top:16px;border-top:1px solid #eee;padding-top:10px;">CONFIDENTIAL — YAKKUM HRD Internal Use Only. Waktu Pengerjaan: '+u.time_per_page+'</p>' +
+    '</div></div>';
+}
+========================================================= -->
+
+</body>
+</html>
