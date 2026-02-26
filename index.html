@@ -1,414 +1,1811 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insights Discovery Assessment - YAKKUM</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            max-width: 900px; margin: 0 auto; padding: 20px; 
-            position: relative; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        .bilingual { font-size: 15px; line-height: 1.7; margin-bottom: 15px; }
-        .en { color: #007bff; font-style: italic; font-weight: 500; }
-        .id { color: #2c3e50; font-weight: 600; }
-        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #34495e; }
-        input, select { 
-            width: 100%; padding: 12px; margin: 5px 0 15px; 
-            border: 2px solid #ddd; border-radius: 8px; font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        input:focus, select:focus { border-color: #007bff; outline: none; box-shadow: 0 0 5px rgba(0,123,255,0.3); }
-        button { 
-            background: linear-gradient(45deg, #28a745, #20c997); color: white; 
-            padding: 12px 25px; border: none; cursor: pointer; font-size: 16px; 
-            border-radius: 25px; font-weight: bold; transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
-        }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40,167,69,0.4); }
-        button:active { transform: translateY(0); }
-        
-        /* Setting HRD */
-        #setting-btn { 
-            position: fixed; top: 25px; right: 25px; 
-            background: linear-gradient(45deg, #ffc107, #ffed4e); color: #2c3e50; 
-            padding: 12px 18px; border-radius: 50px; cursor: pointer; 
-            box-shadow: 0 4px 20px rgba(255,193,7,0.4); z-index: 1001; 
-            font-weight: bold; font-size: 14px; transition: all 0.3s;
-        }
-        #setting-btn:hover { transform: scale(1.05); }
-        #email-setting { 
-            position: fixed; top: 80px; right: 25px; 
-            background: white; padding: 25px; border-radius: 15px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: none; z-index: 1000; 
-            min-width: 320px; backdrop-filter: blur(10px);
-        }
-        #email-setting button { background: linear-gradient(45deg, #dc3545, #fd7e14); width: 100%; margin-top: 15px; }
-        
-        /* Timer & Progress */
-        #timer { 
-            position: fixed; top: 25px; left: 25px; 
-            background: linear-gradient(45deg, #17a2b8, #20c997); color: white; 
-            padding: 15px 20px; border-radius: 50px; font-weight: bold; font-size: 18px; 
-            z-index: 1000; box-shadow: 0 4px 20px rgba(23,162,184,0.4);
-        }
-        .progress { 
-            width: 100%; height: 12px; background: #e9ecef; 
-            border-radius: 10px; margin: 25px 0; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .progress-bar { 
-            height: 100%; background: linear-gradient(90deg, #28a745, #20c997); 
-            border-radius: 10px; transition: width 0.5s ease; box-shadow: 0 0 20px rgba(40,167,69,0.5);
-        }
-        .warning-time { background: linear-gradient(45deg, #ffc107, #fd7e14) !important; color: #2c3e50 !important; animation: pulse 1s infinite; }
-        .time-up { background: linear-gradient(45deg, #dc3545, #fd7e14) !important; color: white !important; }
-        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
-        
-        .frame { 
-            background: white; border: 2px solid #e9ecef; padding: 25px; margin: 25px 0; 
-            border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.08); 
-        }
-        .word-pair { 
-            font-weight: bold; cursor: pointer; padding: 18px; margin: 12px 0; 
-            border-radius: 12px; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center;
-            border: 2px solid #dee2e6; background: #f8f9fa;
-        }
-        .word-pair:hover { background: #e9ecef; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .selected-most { background: linear-gradient(45deg, #d4edda, #c3e6cb) !important; border-color: #28a745; box-shadow: 0 0 20px rgba(40,167,69,0.4); }
-        .selected-least { background: linear-gradient(45deg, #f8d7da, #f5c6cb) !important; border-color: #dc3545; box-shadow: 0 0 20px rgba(220,53,69,0.4); }
-        
-        #thankyou { text-align: center; font-size: 28px; color: #28a745; padding: 50px; display: none; }
-        .hidden { display: none !important; }
-        h1 { color: #2c3e50; text-align: center; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; }
-        h3 { color: #495057; border-bottom: 3px solid #007bff; padding-bottom: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YAKKUM Discovery Insights Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fiery:    #E84C2B;
+    --sunny:    #F5A623;
+    --earthy:   #2E7D32;
+    --cool:     #1565C0;
+    --bg:       #F9F6F1;
+    --card:     #FFFFFF;
+    --text:     #1A1A1A;
+    --sub:      #666;
+    --border:   #E0D8CC;
+    --shadow:   0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #1A2744 0%, #2E4A8A 60%, #1565C0 100%);
+    color: #fff;
+    padding: 28px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  .logo-wrap { display: flex; align-items: center; gap: 16px; }
+  .logo-circle {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, #E84C2B, #F5A623);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700; color: #fff;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.2);
+  }
+  .logo-text h1 { font-family: 'Playfair Display', serif; font-size: 22px; letter-spacing: .5px; }
+  .logo-text span { font-size: 12px; opacity: .75; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; }
+  .header-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 6px 18px; border-radius: 20px;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+  /* ── SCREEN SYSTEM ── */
+  .screen { display: none; animation: fadeIn .4s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+  /* ── WELCOME ── */
+  .welcome-card {
+    background: var(--card); border-radius: 20px; padding: 48px;
+    box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);
+  }
+  .welcome-card h2 { font-family: 'Playfair Display', serif; font-size: 34px; margin-bottom: 12px; color: #1A2744; }
+  .welcome-card p { color: var(--sub); font-size: 16px; max-width: 580px; margin: 0 auto 36px; line-height: 1.7; }
+
+  /* ── MODE CARDS ── */
+  .mode-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px; }
+  .mode-card {
+    border: 2px solid var(--border); border-radius: 14px; padding: 24px;
+    cursor: pointer; transition: all .25s;
+    background: var(--card); text-align: left;
+  }
+  .mode-card:hover { border-color: #1565C0; box-shadow: 0 8px 32px rgba(21,101,192,0.12); transform: translateY(-2px); }
+  .mode-card.selected { border-color: #1565C0; background: #EEF4FF; }
+  .mode-icon { font-size: 28px; margin-bottom: 10px; }
+  .mode-card h3 { font-size: 15px; font-weight: 600; color: #1A2744; margin-bottom: 6px; }
+  .mode-card p { font-size: 13px; color: var(--sub); line-height: 1.5; }
+
+  /* ── FORM FIELDS ── */
+  .form-section { background: var(--card); border-radius: 16px; padding: 32px; box-shadow: var(--shadow); margin-bottom: 24px; border: 1px solid var(--border); }
+  .form-section h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: #1A2744; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 13px; font-weight: 500; color: #444; }
+  label span.req { color: var(--fiery); }
+  select, input {
+    padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 9px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; background: #FAFAF8;
+    transition: border .2s, box-shadow .2s; outline: none;
+  }
+  select:focus, input:focus { border-color: #1565C0; box-shadow: 0 0 0 3px rgba(21,101,192,0.1); background: #fff; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 14px 36px; border-radius: 10px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    transition: all .2s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, #1A2744, #2E4A8A); color: #fff; }
+  .btn-primary:hover { box-shadow: 0 8px 24px rgba(26,39,68,0.3); transform: translateY(-1px); }
+  .btn-secondary { background: #fff; border: 2px solid var(--border); color: var(--text); }
+  .btn-secondary:hover { border-color: #1565C0; color: #1565C0; }
+  .btn-danger { background: linear-gradient(135deg, var(--fiery), #FF6B47); color: #fff; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap { background: var(--card); border-radius: 14px; padding: 20px 28px; margin-bottom: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .progress-info { display: flex; justify-content: space-between; font-size: 13px; color: var(--sub); margin-bottom: 10px; }
+  .progress-bar { height: 8px; background: #EEE; border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cool), var(--sunny)); border-radius: 10px; transition: width .4s ease; }
+  .q-section-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--cool); margin-bottom: 4px; }
+
+  /* ── QUESTION CARD ── */
+  .q-card { background: var(--card); border-radius: 18px; padding: 36px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 24px; }
+  .q-num { font-size: 12px; font-weight: 600; color: var(--sub); margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+  .q-text { font-family: 'Playfair Display', serif; font-size: 20px; line-height: 1.55; color: #1A2744; margin-bottom: 28px; }
+
+  /* ── ANSWER OPTIONS ── */
+  .options-grid { display: grid; gap: 12px; }
+  .opt {
+    display: flex; align-items: center; gap: 14px;
+    border: 2px solid var(--border); border-radius: 12px; padding: 16px 20px;
+    cursor: pointer; transition: all .2s; background: #FAFAF8;
+  }
+  .opt:hover { border-color: #1565C0; background: #EEF4FF; }
+  .opt.selected { border-color: #1565C0; background: #EEF4FF; }
+  .opt-letter {
+    width: 34px; height: 34px; min-width: 34px; border-radius: 50%;
+    background: var(--border); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: var(--sub); transition: all .2s;
+  }
+  .opt.selected .opt-letter { background: #1565C0; color: #fff; }
+  .opt-text { font-size: 14px; line-height: 1.5; }
+
+  /* Likert */
+  .likert-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .lk-btn {
+    flex: 1; min-width: 80px; padding: 12px 8px; border-radius: 10px;
+    border: 2px solid var(--border); text-align: center; cursor: pointer;
+    transition: all .2s; background: #FAFAF8; font-size: 13px;
+  }
+  .lk-btn:hover { border-color: #1565C0; }
+  .lk-btn.selected { border-color: #1565C0; background: #EEF4FF; font-weight: 600; }
+  .likert-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--sub); margin-top: 6px; padding: 0 2px; }
+
+  /* ── NAV ── */
+  .q-nav { display: flex; justify-content: space-between; align-items: center; }
+
+  /* ── RESULTS ── */
+  .result-header { background: linear-gradient(135deg, #1A2744, #2E4A8A); color: #fff; border-radius: 20px; padding: 40px; margin-bottom: 28px; text-align: center; }
+  .result-header h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 8px; }
+  .result-meta { font-size: 13px; opacity: .75; }
+
+  .colors-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 28px; }
+  .color-block {
+    border-radius: 16px; padding: 28px; color: #fff; position: relative; overflow: hidden;
+  }
+  .color-block::before { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+  .color-block.fiery   { background: linear-gradient(135deg, #E84C2B, #FF6B47); }
+  .color-block.sunny   { background: linear-gradient(135deg, #F5A623, #FFD166); }
+  .color-block.earthy  { background: linear-gradient(135deg, #2E7D32, #43A047); }
+  .color-block.cool    { background: linear-gradient(135deg, #1565C0, #1E88E5); }
+  .color-block h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 6px; }
+  .color-block .pct { font-size: 42px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .color-block .desc { font-size: 13px; opacity: .85; line-height: 1.5; }
+
+  .bar-wrap { margin-bottom: 12px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+  .bar-track { height: 12px; background: #EEE; border-radius: 10px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
+  .bar-fill.fiery { background: linear-gradient(90deg, #E84C2B, #FF6B47); }
+  .bar-fill.sunny { background: linear-gradient(90deg, #F5A623, #FFD166); }
+  .bar-fill.earthy { background: linear-gradient(90deg, #2E7D32, #43A047); }
+  .bar-fill.cool  { background: linear-gradient(90deg, #1565C0, #1E88E5); }
+
+  .insight-card { background: var(--card); border-radius: 14px; padding: 24px; margin-bottom: 16px; border-left: 4px solid #1565C0; box-shadow: var(--shadow); }
+  .insight-card h4 { font-size: 15px; font-weight: 600; color: #1A2744; margin-bottom: 8px; }
+  .insight-card p { font-size: 14px; color: var(--sub); line-height: 1.6; }
+
+  .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .badge { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge.fiery { background: #FEE8E3; color: #C62828; }
+  .badge.sunny { background: #FFF3DC; color: #A05B00; }
+  .badge.earthy { background: #E8F5E9; color: #1B5E20; }
+  .badge.cool  { background: #E3F0FF; color: #0D47A1; }
+
+  /* ── LOADING ── */
+  .loading { text-align: center; padding: 60px; }
+  .spinner {
+    width: 48px; height: 48px; border: 4px solid var(--border);
+    border-top-color: #1565C0; border-radius: 50%;
+    animation: spin .8s linear infinite; margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── CONFIG MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; }
+  .modal-overlay.open { display: flex; align-items: center; justify-content: center; }
+  .modal { background: var(--card); border-radius: 20px; padding: 36px; max-width: 560px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 18px; color: #1A2744; }
+  .modal p { font-size: 14px; color: var(--sub); line-height: 1.6; margin-bottom: 20px; }
+  .code-block { background: #1A2744; color: #A5D6FF; border-radius: 10px; padding: 16px; font-family: monospace; font-size: 13px; line-height: 1.7; margin-bottom: 20px; overflow-x: auto; }
+
+  .tabs { display: flex; gap: 4px; background: #F0EDE8; border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+  .tab { flex: 1; padding: 9px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--sub); transition: all .2s; }
+  .tab.active { background: var(--card); color: #1A2744; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+  /* ── TIMER ── */
+  .timer-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .timer-box {
+    display: flex; align-items: center; gap: 8px;
+    background: #EEF4FF; border-radius: 8px;
+    padding: 7px 14px; font-size: 13px; font-weight: 600; color: #1565C0;
+  }
+  .timer-box.warning { background: #FFF3DC; color: #A05B00; }
+  .timer-box.danger  { background: #FEE8E3; color: #C62828; animation: pulse .8s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .timer-icon { font-size: 16px; }
+  .eta-box {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--sub);
+  }
+  .eta-box span { font-weight: 600; color: var(--text); }
+
+  /* ── WELCOME ESTIMATE ── */
+  .est-row {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .est-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: #F0EDE8; border-radius: 8px; padding: 8px 16px;
+    font-size: 13px; color: #444;
+  }
+  .est-chip strong { color: #1A2744; }
+
+
+  /* ── EMAIL MODAL TABS ── */
+  .ntab-row { display:flex; gap:4px; background:#F0EDE8; border-radius:10px; padding:4px; margin-bottom:18px; }
+  .ntab { flex:1; padding:8px; border-radius:7px; text-align:center; cursor:pointer; font-size:13px; font-weight:500; color:var(--sub); transition:all .2s; }
+  .ntab.active { background:var(--card); color:#1A2744; box-shadow:0 2px 8px rgba(0,0,0,.08); }
+
+  /* ── NARRATIVE SECTION ── */
+  .narr-section { background:linear-gradient(135deg,#F9F6FF,#EEF4FF); border:1px solid #D0E4FF; border-radius:14px; padding:24px; margin-bottom:16px; }
+  .narr-section h4 { font-family:'Playfair Display',serif; font-size:16px; color:#1A2744; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .narr-section p { font-size:14px; color:#333; line-height:1.75; }
+  .narr-section ul { padding-left:20px; margin-top:8px; }
+  .narr-section ul li { font-size:14px; color:#333; line-height:1.75; margin-bottom:4px; }
+
+  /* ── INTERACTION STYLE TABLE ── */
+  .interaction-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .int-box { background:#fff; border-radius:10px; padding:14px; border:1px solid var(--border); }
+  .int-box h5 { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--sub); margin-bottom:8px; }
+  .int-box p { font-size:13px; color:var(--text); line-height:1.6; }
+
+  /* ── SEND BUTTON STATES ── */
+  .btn-email { background:linear-gradient(135deg,#00897B,#00ACC1); color:#fff; }
+  .btn-email:hover { box-shadow:0 8px 24px rgba(0,137,123,0.3); transform:translateY(-1px); }
+
+  /* ── THANK YOU ── */
+  .thankyou-card {
+    background: var(--card); border-radius: 24px; padding: 56px 48px;
+    box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);
+    max-width: 640px; margin: 0 auto;
+  }
+  .ty-icon-wrap {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, #2E7D32, #43A047);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px; box-shadow: 0 8px 24px rgba(46,125,50,0.3);
+  }
+  .ty-icon { color: #fff; font-size: 40px; font-weight: 700; line-height: 1; }
+  .thankyou-card h2 {
+    font-family: 'Playfair Display', serif; font-size: 32px;
+    color: #1A2744; margin-bottom: 2px;
+  }
+  .ty-en { font-size: 13px; color: var(--sub); font-style: italic; margin-bottom: 20px; display: block; }
+  .ty-main { font-size: 16px; color: #444; line-height: 1.8; margin-bottom: 28px; }
+  .ty-main .ty-en { font-size: 13px; margin-top: 6px; margin-bottom: 0; }
+  .ty-info-box {
+    background: #F4F6FA; border-radius: 14px; padding: 20px 24px;
+    margin-bottom: 24px; text-align: left; border: 1px solid var(--border);
+  }
+  .ty-info-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    gap: 12px; flex-wrap: wrap;
+  }
+  .ty-info-row:last-child { border-bottom: none; }
+  .ty-label { font-size: 13px; color: var(--sub); min-width: 160px; }
+  .ty-label .ty-en { display: inline; font-size: 11px; }
+  .ty-value { font-size: 14px; font-weight: 600; color: #1A2744; text-align: right; }
+  .ty-note {
+    font-size: 13px; color: var(--sub); line-height: 1.8;
+    background: #FFF8E1; border-radius: 10px; padding: 14px 18px;
+    border-left: 4px solid var(--sunny); text-align: left; margin-bottom: 8px;
+  }
+  .ty-note .ty-en { display: inline; font-size: 12px; }
+  .ty-status { font-size: 13px; margin-top: 12px; color: var(--sub); min-height: 20px; }
+  @media (max-width: 640px) {
+    header { padding: 16px 20px; }
+    .container { padding: 20px 12px; }
+    .mode-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .colors-grid { grid-template-columns: 1fr; }
+    .welcome-card { padding: 28px 20px; }
+    .q-card { padding: 24px 20px; }
+  }
+</style>
 </head>
 <body>
-    <!-- Tombol Setting HRD Pojok Kanan Atas -->
-    <div id="setting-btn">⚙️ Setting HRD / HRD Settings</div>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo-circle">Y</div>
+    <div class="logo-text">
+      <h1>YAKKUM</h1>
+      <span>Discovery Insights Assessment <em style="font-size:10px;font-style:italic;opacity:.7;">(<i>Assessment Tool</i>)</em></span>
+    </div>
+  </div>
+  <div class="header-badge">Discovery Insights®</div>
+</header>
+
+<!-- CONFIG MODAL -->
+<div class="modal-overlay" id="configModal">
+  <div class="modal">
+    <h3>⚙️ Konfigurasi Google Sheets <em style="font-size:13px;font-style:italic;font-weight:400;color:#888;">(<i>Google Sheets Configuration</i>)</em></h3>
+    <p>Masukkan URL Google Apps Script Web App Anda untuk menyimpan data hasil assessment ke Google Sheets.</p>
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Google Apps Script Web App URL</label>
+      <input type="text" id="sheetUrl" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+    </div>
+    <p style="font-size:12px; color:#888; margin-bottom:20px;">💡 Lihat panduan setup Google Sheets di bawah ini:</p>
+    <div class="code-block">
+// Google Apps Script (Code.gs) — LENGKAP<br>
+function doPost(e) {<br>
+&nbsp;&nbsp;var data = JSON.parse(e.postData.contents);<br>
+&nbsp;&nbsp;var result = {status:'ok', emailSent:false};<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// 1. Simpan ke Sheets<br>
+&nbsp;&nbsp;var sheet = SpreadsheetApp.openById('SHEET_ID').getActiveSheet();<br>
+&nbsp;&nbsp;sheet.appendRow([new Date(), data.nama, data.nip,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data.unit, data.level, data.mode,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data.fiery, data.sunny, data.earthy, data.cool,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data.dominant, data.secondary,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data.elapsed_label, data.answers]);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;// 2. Kirim Email jika action=sendEmail<br>
+&nbsp;&nbsp;if (data.action === 'sendEmail' && data.to) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;GmailApp.sendEmail(data.to, data.subject, data.body,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{cc: data.cc || '', name: 'YAKKUM Assessment'});<br>
+&nbsp;&nbsp;&nbsp;&nbsp;result.emailSent = true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;return ContentService.createTextOutput(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;JSON.stringify(result))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.setMimeType(ContentService.MimeType.JSON);<br>
+}
+    </div>
+    <div style="display:flex; gap:12px;">
+      <button class="btn btn-primary" onclick="saveConfig()">💾 Simpan</button>
+      <button class="btn btn-secondary" onclick="closeConfig()">Tutup</button>
+      <button class="btn btn-secondary" style="font-size:12px;" onclick="closeConfig();openEmailConfig()">📧 Setup Email HRD →</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SCREEN 1: WELCOME -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-card">
+      <div style="font-size:48px; margin-bottom:16px;">🌈</div>
+      <h2>Discovery Insights Assessment</h2>
+      <p>Kenali diri Anda melalui 4 warna kepribadian. Assessment ini membantu YAKKUM memahami gaya kerja, komunikasi, dan potensi kepemimpinan setiap individu.<br><em style="font-size:13px;color:#888;">(<i>Discover yourself through 4 personality colours. This assessment helps YAKKUM understand each individual's work style, communication, and leadership potential.</i>)</em></p>
+      <div style="display:flex; gap:16px; justify-content:center; margin-bottom:36px; flex-wrap:wrap;">
+        <span class="badge fiery" style="font-size:13px; padding:8px 18px;">🔴 Fiery Red</span>
+        <span class="badge sunny" style="font-size:13px; padding:8px 18px;">🟡 Sunshine Yellow</span>
+        <span class="badge earthy" style="font-size:13px; padding:8px 18px;">🟢 Earth Green</span>
+        <span class="badge cool" style="font-size:13px; padding:8px 18px;">🔵 Cool Blue</span>
+      </div>
+      <!-- Estimasi Waktu -->
+      <div class="est-row">
+        <div class="est-chip">⏱️ Estimasi waktu: <strong>15–20 menit</strong><br><em style="font-size:11px;color:#888;">(<i>Estimated time: 15–20 minutes</i>)</em></div>
+        <div class="est-chip">📝 Jumlah pertanyaan: <strong>60 soal</strong><br><em style="font-size:11px;color:#888;">(<i>Total questions: 60 items</i>)</em></div>
+        <div class="est-chip">🔖 4 bagian: <strong>~4–5 menit/bagian</strong><br><em style="font-size:11px;color:#888;">(<i>4 sections: ~4–5 min each</i>)</em></div>
+      </div>
+      <p style="font-size:14px;">Pilih tujuan assessment Anda: <em style="font-size:12px;color:#888;">(<i>Select your assessment purpose:</i>)</em></p>
+      <div class="mode-grid" style="text-align:left; margin-top:20px; margin-bottom:32px;">
+        <div class="mode-card" onclick="selectMode('rekrutmen',this)">
+          <div class="mode-icon">🎯</div>
+          <h3>Rekrutmen Karyawan <em style="font-size:11px;font-style:italic;color:#888;">(<i>Recruitment</i>)</em></h3>
+          <p>Untuk calon karyawan baru YAKKUM — menilai kecocokan budaya dan potensi peran.<br><em style="font-size:11px;color:#888;">(<i>For new YAKKUM candidates — assessing cultural fit and role potential.</i>)</em></p>
+        </div>
+        <div class="mode-card" onclick="selectMode('development',this)">
+          <div class="mode-icon">🌱</div>
+          <h3>Development Karyawan <em style="font-size:11px;font-style:italic;color:#888;">(<i>Employee Development</i>)</em></h3>
+          <p>Untuk karyawan aktif — pengembangan diri, potensi karir, dan rencana pelatihan.<br><em style="font-size:11px;color:#888;">(<i>For active employees — self-development, career potential, and training plans.</i>)</em></p>
+        </div>
+        <div class="mode-card" onclick="selectMode('leadership',this)">
+          <div class="mode-icon">🏆</div>
+          <h3>Leadership Assessment <em style="font-size:11px;font-style:italic;color:#888;">(<i>Leadership</i>)</em></h3>
+          <p>Menilai gaya kepemimpinan dan efektivitas manajerial karyawan.<br><em style="font-size:11px;color:#888;">(<i>Evaluating leadership style and managerial effectiveness.</i>)</em></p>
+        </div>
+        <div class="mode-card" onclick="selectMode('performance',this)">
+          <div class="mode-icon">📊</div>
+          <h3>Performance Review <em style="font-size:11px;font-style:italic;color:#888;">(<i>Performance</i>)</em></h3>
+          <p>Mengidentifikasi kekuatan karyawan dan area yang perlu ditingkatkan.<br><em style="font-size:11px;color:#888;">(<i>Identifying employee strengths and areas for improvement.</i>)</em></p>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="goToProfile()">Mulai Assessment <em style="font-size:12px;font-style:italic;">(<i>Start Assessment</i>)</em> →</button>
+      <button class="btn btn-secondary" style="margin-left:12px;" onclick="openConfig()">⚙️ Setup Google Sheets <em style="font-size:11px;font-style:italic;">(<i>Configure</i>)</em></button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div class="form-section">
+      <h3>📋 Data Peserta <em style="font-size:13px;font-style:italic;font-weight:400;color:#888;">(<i>Participant Data</i>)</em></h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Lengkap <em style="font-size:11px;font-style:italic;color:#888;">(<i>Full Name</i>)</em> <span class="req">*</span></label>
+          <input type="text" id="p_nama" placeholder="Masukkan nama lengkap">
+        </div>
+        <div class="form-group">
+          <label id="nip-label">NIP / Nomor Peserta <em style="font-size:11px;font-style:italic;color:#888;">(<i>Employee ID / Participant No.</i>)</em></label>
+          <input type="text" id="p_nip" placeholder="Opsional">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Direktorat <em style="font-size:11px;font-style:italic;color:#888;">(<i>Directorate</i>)</em> <span class="req">*</span></label>
+          <select id="p_direktorat" onchange="updateUnit()">
+            <option value="">-- Pilih Direktorat --</option>
+            <option value="Akademik">Akademik</option>
+            <option value="DPK">DPK (Direktorat Pelayanan Kesehatan)</option>
+            <option value="Kantor Pusat">Kantor Pusat YAKKUM</option>
+            <option value="PKMK">PKMK</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Unit Kerja <em style="font-size:11px;font-style:italic;color:#888;">(<i>Work Unit</i>)</em> <span class="req">*</span></label>
+          <select id="p_unit">
+            <option value="">-- Pilih Direktorat Dulu --</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Level / Grade <em style="font-size:11px;font-style:italic;color:#888;">(<i>Employment Level</i>)</em> <span class="req">*</span></label>
+          <select id="p_level">
+            <option value="">-- Pilih Level --</option>
+            <option value="1-2">Level 1-2 (Pelaksana)</option>
+            <option value="3-4">Level 3-4 (Staf)</option>
+            <option value="5-6">Level 5-6 (Koordinator)</option>
+            <option value="7">Level 7 (Supervisor)</option>
+            <option value="8-10">Level 8-10 (Manager)</option>
+            <option value="11-12">Level 11-12 (Pemimpin Usaha Unit)</option>
+            <option value="Pengurus">Pengurus Yayasan</option>
+            <option value="Calon">Calon Karyawan (Rekrutmen)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Jabatan / Posisi <em style="font-size:11px;font-style:italic;color:#888;">(<i>Position / Title</i>)</em></label>
+          <input type="text" id="p_jabatan" placeholder="Masukkan jabatan Anda">
+        </div>
+      </div>
+      <div class="form-row single">
+        <div class="form-group">
+          <label>Email <em style="font-size:11px;font-style:italic;color:#888;">(<i>Email Address</i>)</em></label>
+          <input type="email" id="p_email" placeholder="email@yakkum.or.id">
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px;">
+      <button class="btn btn-secondary" onclick="goTo('screen-welcome')">← Kembali <em style="font-size:11px;font-style:italic;">(<i>Back</i>)</em></button>
+      <button class="btn btn-primary" onclick="startAssessment()">Mulai Tes <em style="font-size:11px;font-style:italic;">(<i>Start Test</i>)</em> →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: QUESTIONS -->
+  <div class="screen" id="screen-questions">
+    <div class="progress-wrap">
+      <div class="q-section-label" id="q-section-label">Bagian 1 dari 4</div>
+      <div class="progress-info">
+        <span id="prog-text">Pertanyaan 1 dari 60</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="timer-row">
+        <div class="timer-box" id="timer-box">
+          <span class="timer-icon">⏱️</span>
+          <span id="timer-display">00:00</span>
+        </div>
+        <div class="eta-box">⚡ Estimasi selesai <em style="font-size:10px;font-style:italic;">(Est. remaining)</em>: <span id="eta-display">± 20 menit</span></div>
+        <div class="eta-box">📈 Kecepatan <em style="font-size:10px;font-style:italic;">(Speed)</em>: <span id="speed-display">—</span></div>
+      </div>
+    </div>
+    <div id="question-area"></div>
+    <div class="q-nav">
+      <button class="btn btn-secondary" id="btn-prev" onclick="prevQ()">← Sebelumnya <em style="font-size:11px;font-style:italic;">(<i>Previous</i>)</em></button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQ()">Berikutnya →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: LOADING -->
+  <div class="screen" id="screen-loading">
+    <div class="loading">
+      <div class="spinner"></div>
+      <h3 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:8px;">Menganalisis Profil Anda...<br><em style="font-size:14px;font-weight:400;font-style:italic;color:rgba(255,255,255,0.7);">(<i>Analysing Your Profile...</i>)</em></h3>
+      <p style="color:var(--sub);">Sistem sedang memproses 60 jawaban Anda<br><em style="font-size:12px;font-style:italic;">(<i>The system is processing your 60 responses</i>)</em></p>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: TERIMA KASIH -->
+  <div class="screen" id="screen-results">
+    <div class="thankyou-card">
+      <div class="ty-icon-wrap">
+        <div class="ty-icon">✓</div>
+      </div>
+      <h2>Terima Kasih!</h2>
+      <p class="ty-en"><em>(Thank You!)</em></p>
+      <p class="ty-main">
+        Jawaban Anda telah berhasil diterima dan sedang diproses oleh tim HRD YAKKUM.
+        <br><em class="ty-en">(Your responses have been received and are being processed by the YAKKUM HR team.)</em>
+      </p>
+      <div class="ty-info-box">
+        <div class="ty-info-row">
+          <span class="ty-label">Peserta <em class="ty-en">(Participant)</em></span>
+          <span class="ty-value" id="ty-nama">—</span>
+        </div>
+        <div class="ty-info-row">
+          <span class="ty-label">Unit Kerja <em class="ty-en">(Work Unit)</em></span>
+          <span class="ty-value" id="ty-unit">—</span>
+        </div>
+        <div class="ty-info-row">
+          <span class="ty-label">Tujuan Assessment <em class="ty-en">(Assessment Purpose)</em></span>
+          <span class="ty-value" id="ty-mode">—</span>
+        </div>
+        <div class="ty-info-row">
+          <span class="ty-label">Waktu Pengerjaan <em class="ty-en">(Time Taken)</em></span>
+          <span class="ty-value" id="ty-time">—</span>
+        </div>
+      </div>
+      <p class="ty-note">
+        Hasil assessment ini bersifat <strong>rahasia</strong> dan hanya digunakan untuk keperluan internal YAKKUM. 
+        Anda akan mendapat informasi lebih lanjut melalui HRD unit Anda.
+        <br><em class="ty-en">(The assessment results are <strong>confidential</strong> and for internal YAKKUM use only. 
+        Further information will be communicated through your HR unit.)</em>
+      </p>
+      <div id="ty-send-status" class="ty-status"></div>
+      <button class="btn btn-secondary" style="margin-top:24px;" onclick="restartAll()">
+        Isi Assessment Lagi <em class="ty-en">(Fill Again)</em>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════
+const UNITS = {
+  'Akademik': [
+    'STB YOG – STIKES Bethesda Yogyakarta (Utama)',
+    'STB SMG – STIKES Bethesda Yogyakarta (PSDKU Semarang)',
+    'STB PRK – STIKES Bethesda Yogyakarta (PSDKU Temanggung)'
+  ],
+  'DPK': [
+    'RSB – Rumah Sakit Bethesda (Tipe B)',
+    'RSE – Rumah Sakit Emanuel (Tipe C)',
+    'RSKNW – Rumah Sakit Kristen Ngesti Waluyo (Tipe C)',
+    'RSMW – Rumah Sakit Mardi Waluyo (Tipe C)',
+    'RSPR – Rumah Sakit Panti Rahayu (Tipe C)',
+    'RSPWS – Rumah Sakit Panti Waluyo Surakarta (Tipe C)',
+    'RSPWC – Rumah Sakit Panti Wilasa Citarum (Tipe C)',
+    'RSPWDC – Rumah Sakit Panti Wilasa dr. Cipto (Tipe C)',
+    'RSBL – Rumah Sakit Bethesda Lempuyangwangi (Tipe D)',
+    'RSBW – Rumah Sakit Bethesda Wonosari (Tipe D)',
+    'RSPWP – Rumah Sakit Panti Waluyo Purworejo (Tipe D)',
+    'RSSK – Rumah Sakit Sinar Kasih (Tipe D)',
+    'KYD – Klinik Yoga Darma'
+  ],
+  'Kantor Pusat': ['Kantor Pusat YAKKUM'],
+  'PKMK': [
+    'CDB – CD Bethesda',
+    'PRY – Pusat Rehabilitasi YAKKUM',
+    'YEU – YAKKUM Emergency Unit'
+  ]
+};
+
+// ═══════════════════════════════════════════════════
+// 60 DISCOVERY INSIGHTS QUESTIONS
+// color: F=Fiery Red, S=Sunshine Yellow, E=Earth Green, C=Cool Blue
+// ═══════════════════════════════════════════════════
+const QUESTIONS = [
+  // PART 1: GAYA KERJA & ORIENTASI (15Q)
+  { id:1,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Ketika menghadapi tugas baru, reaksi pertama Anda adalah…',
+    opts:[
+      {t:'Langsung memulai, hasilnya nanti disesuaikan', c:'F'},
+      {t:'Bersemangat dan mengajak tim berdiskusi ide-ide baru', c:'S'},
+      {t:'Memastikan semua orang siap dan nyaman terlebih dahulu', c:'E'},
+      {t:'Membaca petunjuk dan memahami detail sebelum bertindak', c:'C'}
+    ]},
+  { id:2,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Saat bekerja dalam tim, Anda paling sering berperan sebagai…',
+    opts:[
+      {t:'Pemimpin yang mendorong tindakan cepat', c:'F'},
+      {t:'Motivator yang membangkitkan semangat tim', c:'S'},
+      {t:'Pendengar setia yang menjaga keharmonisan', c:'E'},
+      {t:'Penganalisis yang memastikan kualitas dan akurasi', c:'C'}
+    ]},
+  { id:3,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Apa yang paling penting bagi Anda dalam pekerjaan?',
+    opts:[
+      {t:'Mencapai target dan hasil nyata', c:'F'},
+      {t:'Kreativitas, variasi, dan pengakuan', c:'S'},
+      {t:'Hubungan baik dan rasa aman dalam tim', c:'E'},
+      {t:'Standar tinggi, presisi, dan prosedur jelas', c:'C'}
+    ]},
+  { id:4,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Bagaimana Anda mengambil keputusan penting?',
+    opts:[
+      {t:'Cepat dan tegas berdasarkan insting', c:'F'},
+      {t:'Dengan antusias bersama banyak masukan orang lain', c:'S'},
+      {t:'Dengan hati-hati, mempertimbangkan dampak ke semua pihak', c:'E'},
+      {t:'Berdasarkan data lengkap dan analisis mendalam', c:'C'}
+    ]},
+  { id:5,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Lingkungan kerja ideal Anda adalah…',
+    opts:[
+      {t:'Kompetitif, bergerak cepat, penuh tantangan', c:'F'},
+      {t:'Dinamis, penuh interaksi sosial dan spontanitas', c:'S'},
+      {t:'Stabil, kooperatif, saling mendukung', c:'E'},
+      {t:'Terstruktur, tenang, dengan prosedur yang jelas', c:'C'}
+    ]},
+  { id:6,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'likert',
+    text:'Saya merasa nyaman membuat keputusan di bawah tekanan waktu.',
+    dimension:'F'},
+  { id:7,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'likert',
+    text:'Saya menikmati bertemu dan berinteraksi dengan banyak orang baru.',
+    dimension:'S'},
+  { id:8,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'likert',
+    text:'Bagi saya, menjaga perasaan dan kenyamanan rekan kerja adalah prioritas.',
+    dimension:'E'},
+  { id:9,  part:'Bagian 1: Gaya Kerja & Orientasi', type:'likert',
+    text:'Saya selalu memeriksa ulang pekerjaan saya sebelum menyerahkannya.',
+    dimension:'C'},
+  { id:10, part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Ketika ada konflik di tempat kerja, Anda cenderung…',
+    opts:[
+      {t:'Menghadapinya langsung dan menyelesaikannya segera', c:'F'},
+      {t:'Mencairkan suasana dengan humor dan optimisme', c:'S'},
+      {t:'Menjadi mediator dan mencari jalan tengah bersama', c:'E'},
+      {t:'Menganalisis sebab-akibatnya sebelum bertindak', c:'C'}
+    ]},
+  { id:11, part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Cara Anda menghadapi perubahan besar di organisasi…',
+    opts:[
+      {t:'Memimpin perubahan dengan penuh keyakinan', c:'F'},
+      {t:'Antusias dan menyebarkan semangat positif', c:'S'},
+      {t:'Perlahan menyesuaikan diri sambil menjaga stabilitas tim', c:'E'},
+      {t:'Meminta informasi lengkap sebelum menerima perubahan', c:'C'}
+    ]},
+  { id:12, part:'Bagian 1: Gaya Kerja & Orientasi', type:'likert',
+    text:'Saya merasa lebih produktif ketika bekerja secara mandiri tanpa banyak gangguan.',
+    dimension:'C'},
+  { id:13, part:'Bagian 1: Gaya Kerja & Orientasi', type:'likert',
+    text:'Saya mudah bersemangat dan kadang bisa terlalu optimistis.',
+    dimension:'S'},
+  { id:14, part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Ketika proyek gagal, respons Anda biasanya…',
+    opts:[
+      {t:'Langsung fokus mencari solusi berikutnya', c:'F'},
+      {t:'Tetap positif dan meyakinkan tim untuk bangkit', c:'S'},
+      {t:'Memperhatikan bagaimana tim merasakannya dan mendukung mereka', c:'E'},
+      {t:'Menganalisis penyebab kegagalan secara sistematis', c:'C'}
+    ]},
+  { id:15, part:'Bagian 1: Gaya Kerja & Orientasi', type:'choice',
+    text:'Motivasi terbesar Anda bekerja di YAKKUM adalah…',
+    opts:[
+      {t:'Mencapai target organisasi yang ambisius', c:'F'},
+      {t:'Menjalin relasi dan memberikan dampak positif yang terasa', c:'S'},
+      {t:'Melayani dengan tulus sesuai nilai-nilai Kristiani', c:'E'},
+      {t:'Memastikan mutu layanan kesehatan yang terjaga', c:'C'}
+    ]},
+
+  // PART 2: KOMUNIKASI & INTERAKSI (15Q)
+  { id:16, part:'Bagian 2: Komunikasi & Interaksi', type:'choice',
+    text:'Gaya komunikasi Anda yang paling dominan adalah…',
+    opts:[
+      {t:'Tegas, langsung ke inti, dan tidak berbelit-belit', c:'F'},
+      {t:'Ekspresif, antusias, dan penuh cerita', c:'S'},
+      {t:'Hangat, penuh perhatian, dan sabar mendengarkan', c:'E'},
+      {t:'Sistematis, faktual, dan berbasis data', c:'C'}
+    ]},
+  { id:17, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya lebih memilih presentasi singkat berisi poin utama daripada laporan panjang.',
+    dimension:'F'},
+  { id:18, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya sering menjadi pusat perhatian dalam diskusi kelompok.',
+    dimension:'S'},
+  { id:19, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya selalu berusaha mendengar pendapat semua orang sebelum menyimpulkan.',
+    dimension:'E'},
+  { id:20, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya tidak nyaman jika harus menyampaikan informasi tanpa data pendukung.',
+    dimension:'C'},
+  { id:21, part:'Bagian 2: Komunikasi & Interaksi', type:'choice',
+    text:'Dalam rapat, Anda paling sering…',
+    opts:[
+      {t:'Mendominasi diskusi dan mendorong keputusan segera', c:'F'},
+      {t:'Berbagi ide-ide baru dan menginspirasi suasana', c:'S'},
+      {t:'Memastikan semua suara didengar dan tim kompak', c:'E'},
+      {t:'Mencatat poin penting dan mempertanyakan asumsi', c:'C'}
+    ]},
+  { id:22, part:'Bagian 2: Komunikasi & Interaksi', type:'choice',
+    text:'Orang lain sering mendeskripsikan Anda sebagai…',
+    opts:[
+      {t:'Tegas, berani, dan penuh keyakinan', c:'F'},
+      {t:'Menyenangkan, antusias, dan penuh semangat', c:'S'},
+      {t:'Baik hati, dapat diandalkan, dan setia', c:'E'},
+      {t:'Teliti, analitis, dan perfeksionis', c:'C'}
+    ]},
+  { id:23, part:'Bagian 2: Komunikasi & Interaksi', type:'choice',
+    text:'Saat menyampaikan umpan balik (feedback) ke rekan kerja, Anda biasanya…',
+    opts:[
+      {t:'Langsung dan jujur tanpa basa-basi', c:'F'},
+      {t:'Positif dan mendorong dengan penuh semangat', c:'S'},
+      {t:'Lembut dan memperhatikan perasaan orang tersebut', c:'E'},
+      {t:'Berbasis fakta dan observasi konkret', c:'C'}
+    ]},
+  { id:24, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya mudah terpengaruh oleh suasana hati orang-orang di sekitar saya.',
+    dimension:'E'},
+  { id:25, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya suka merencanakan dan mempersiapkan materi dengan matang sebelum bicara.',
+    dimension:'C'},
+  { id:26, part:'Bagian 2: Komunikasi & Interaksi', type:'choice',
+    text:'Ketika menjelaskan ide kepada atasan, Anda lebih memilih…',
+    opts:[
+      {t:'Langsung menyampaikan bottom-line dan rekomendasi', c:'F'},
+      {t:'Bercerita dengan visual menarik dan penuh semangat', c:'S'},
+      {t:'Menjelaskan dampaknya ke tim dan pemangku kepentingan', c:'E'},
+      {t:'Menyajikan data, grafik, dan analisis lengkap', c:'C'}
+    ]},
+  { id:27, part:'Bagian 2: Komunikasi & Interaksi', type:'choice',
+    text:'Email atau pesan yang Anda tulis cenderung…',
+    opts:[
+      {t:'Singkat, padat, dan langsung pada inti', c:'F'},
+      {t:'Informal, ceria, dan kadang panjang lebar', c:'S'},
+      {t:'Penuh salam hangat dan perhatian personal', c:'E'},
+      {t:'Formal, terstruktur, dan detail', c:'C'}
+    ]},
+  { id:28, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya kesulitan mengatakan "tidak" kepada rekan yang membutuhkan bantuan.',
+    dimension:'E'},
+  { id:29, part:'Bagian 2: Komunikasi & Interaksi', type:'likert',
+    text:'Saya sering berbicara lebih cepat ketika bersemangat tentang sesuatu.',
+    dimension:'S'},
+  { id:30, part:'Bagian 2: Komunikasi & Interaksi', type:'choice',
+    text:'Saat mendapat kritik atas pekerjaan Anda, reaksi pertama Anda adalah…',
+    opts:[
+      {t:'Mempertahankan posisi dan mendebat jika tidak setuju', c:'F'},
+      {t:'Tetap positif dan mencari hikmahnya', c:'S'},
+      {t:'Mempertanyakan apakah Anda menyakiti perasaan orang lain', c:'E'},
+      {t:'Mengevaluasi validitas kritik secara objektif', c:'C'}
+    ]},
+
+  // PART 3: NILAI & MOTIVASI (15Q)
+  { id:31, part:'Bagian 3: Nilai & Motivasi', type:'choice',
+    text:'Apa yang paling memotivasi Anda untuk bekerja keras?',
+    opts:[
+      {t:'Kemenangan, kompetisi, dan penghargaan atas prestasi', c:'F'},
+      {t:'Pengakuan, popularitas, dan rasa dihargai tim', c:'S'},
+      {t:'Harmoni, kepercayaan, dan membantu orang lain tumbuh', c:'E'},
+      {t:'Kualitas, ketepatan, dan masalah yang terpecahkan', c:'C'}
+    ]},
+  { id:32, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Saya lebih suka menyelesaikan satu proyek besar daripada menangani banyak tugas kecil.',
+    dimension:'F'},
+  { id:33, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Saya mendapatkan energi dari bertemu banyak orang dan acara sosial.',
+    dimension:'S'},
+  { id:34, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Loyalitas kepada tim dan organisasi adalah nilai paling penting bagi saya.',
+    dimension:'E'},
+  { id:35, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Saya lebih suka memiliki waktu sendiri untuk berpikir daripada langsung diskusi.',
+    dimension:'C'},
+  { id:36, part:'Bagian 3: Nilai & Motivasi', type:'choice',
+    text:'Nilai kerja mana yang paling Anda pegang teguh di YAKKUM?',
+    opts:[
+      {t:'Keberanian mengambil keputusan untuk kemajuan organisasi', c:'F'},
+      {t:'Semangat melayani dengan hati dan kreativitas', c:'S'},
+      {t:'Kasih dan kepedulian terhadap sesama', c:'E'},
+      {t:'Integritas dan standar profesional yang tinggi', c:'C'}
+    ]},
+  { id:37, part:'Bagian 3: Nilai & Motivasi', type:'choice',
+    text:'Apa yang paling Anda takuti dalam pekerjaan?',
+    opts:[
+      {t:'Kehilangan kendali atau gagal mencapai target', c:'F'},
+      {t:'Diabaikan atau tidak dihargai kontribusinya', c:'S'},
+      {t:'Konflik yang merusak hubungan dalam tim', c:'E'},
+      {t:'Membuat kesalahan atau menghasilkan pekerjaan buruk', c:'C'}
+    ]},
+  { id:38, part:'Bagian 3: Nilai & Motivasi', type:'choice',
+    text:'Ketika diberi kebebasan penuh dalam suatu proyek, Anda akan…',
+    opts:[
+      {t:'Langsung menentukan target ambisius dan delegasi tugas', c:'F'},
+      {t:'Mengumpulkan banyak orang, brainstorming ide kreatif', c:'S'},
+      {t:'Memastikan semua anggota tim terlibat dan setuju', c:'E'},
+      {t:'Membuat rencana detail dan jadwal yang terstruktur', c:'C'}
+    ]},
+  { id:39, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Saya percaya bahwa tindakan lebih berbicara daripada kata-kata.',
+    dimension:'F'},
+  { id:40, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Saya senang ketika bisa membuat orang lain tertawa atau merasa lebih baik.',
+    dimension:'S'},
+  { id:41, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Saya merasa tidak nyaman dengan persaingan internal di antara rekan kerja.',
+    dimension:'E'},
+  { id:42, part:'Bagian 3: Nilai & Motivasi', type:'likert',
+    text:'Bagi saya, sebuah pekerjaan belum selesai jika masih ada detail yang belum sempurna.',
+    dimension:'C'},
+  { id:43, part:'Bagian 3: Nilai & Motivasi', type:'choice',
+    text:'Dalam konteks pelayanan kesehatan YAKKUM, peran ideal Anda adalah…',
+    opts:[
+      {t:'Pemimpin yang menggerakkan sistem dan strategi', c:'F'},
+      {t:'Inovator yang membawa semangat baru dalam pelayanan', c:'S'},
+      {t:'Pendamping pasien yang penuh empati dan kasih', c:'E'},
+      {t:'Ahli klinis yang memastikan standar mutu tertinggi', c:'C'}
+    ]},
+  { id:44, part:'Bagian 3: Nilai & Motivasi', type:'choice',
+    text:'Saat Anda merasa frustrasi di tempat kerja, biasanya disebabkan oleh…',
+    opts:[
+      {t:'Terlalu banyak prosedur yang memperlambat kemajuan', c:'F'},
+      {t:'Suasana yang membosankan dan kurang inspiratif', c:'S'},
+      {t:'Ketidakharmonisan atau kurangnya apresiasi terhadap orang', c:'E'},
+      {t:'Pekerjaan yang tidak terencana atau kurang akurat', c:'C'}
+    ]},
+  { id:45, part:'Bagian 3: Nilai & Motivasi', type:'choice',
+    text:'Keberhasilan terbesar dalam karir Anda akan Anda ukur dari…',
+    opts:[
+      {t:'Dampak dan hasil nyata yang Anda capai', c:'F'},
+      {t:'Pengaruh positif dan inspirasi yang Anda berikan', c:'S'},
+      {t:'Hubungan bermakna dan kepercayaan yang dibangun', c:'E'},
+      {t:'Keahlian dan kualitas kerja yang diakui', c:'C'}
+    ]},
+
+  // PART 4: KEPEMIMPINAN & PENGEMBANGAN (15Q)
+  { id:46, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'choice',
+    text:'Gaya kepemimpinan Anda yang paling dominan adalah…',
+    opts:[
+      {t:'Direktif – memberi arahan jelas dan memimpin di depan', c:'F'},
+      {t:'Transformasional – menginspirasi dan memotivasi tim', c:'S'},
+      {t:'Servant – melayani dan mendukung kebutuhan tim', c:'E'},
+      {t:'Transaksional – berbasis sistem, prosedur, dan standar', c:'C'}
+    ]},
+  { id:47, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Saya merasa nyaman membuat keputusan tanpa perlu konsensus penuh dari tim.',
+    dimension:'F'},
+  { id:48, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Saya sering menjadi orang yang merayakan keberhasilan kecil tim.',
+    dimension:'S'},
+  { id:49, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Saya lebih memilih membangun kepercayaan daripada mengejar kecepatan kerja.',
+    dimension:'E'},
+  { id:50, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Saya selalu memastikan ada prosedur standar sebelum tim memulai pekerjaan.',
+    dimension:'C'},
+  { id:51, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'choice',
+    text:'Cara Anda mengembangkan anggota tim adalah…',
+    opts:[
+      {t:'Memberi tantangan dan target yang ambisius', c:'F'},
+      {t:'Menjadi mentor yang antusias dan penuh dorongan', c:'S'},
+      {t:'Mendampingi secara personal dengan sabar dan empati', c:'E'},
+      {t:'Memberikan feedback terstruktur berbasis kompetensi', c:'C'}
+    ]},
+  { id:52, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'choice',
+    text:'Ketika anggota tim membuat kesalahan, pendekatan Anda adalah…',
+    opts:[
+      {t:'Tegur langsung dan fokus pada solusi', c:'F'},
+      {t:'Semangati mereka dan fokus pada pembelajaran', c:'S'},
+      {t:'Dengarkan ceritanya dulu dengan empati penuh', c:'E'},
+      {t:'Analisis kesalahan dan buat prosedur pencegahan', c:'C'}
+    ]},
+  { id:53, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'choice',
+    text:'Dalam konteks kepemimpinan YAKKUM, Anda menekankan…',
+    opts:[
+      {t:'Pencapaian target pelayanan dan inovasi organisasi', c:'F'},
+      {t:'Semangat tim dan budaya kerja yang menyenangkan', c:'S'},
+      {t:'Nilai-nilai kasih Kristiani dan pelayanan dari hati', c:'E'},
+      {t:'Tata kelola, akreditasi, dan standar mutu', c:'C'}
+    ]},
+  { id:54, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Saya selalu mendorong tim untuk berani mengambil inisiatif.',
+    dimension:'F'},
+  { id:55, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Saya percaya visi yang menarik dan inspiratif adalah kunci kepemimpinan.',
+    dimension:'S'},
+  { id:56, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Menjaga psikologis keamanan tim (psychological safety) adalah prioritas saya.',
+    dimension:'E'},
+  { id:57, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'likert',
+    text:'Saya percaya sistem dan proses yang baik lebih penting dari kepribadian pemimpin.',
+    dimension:'C'},
+  { id:58, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'choice',
+    text:'Rencana pengembangan diri Anda ke depan di YAKKUM adalah…',
+    opts:[
+      {t:'Mengambil peran strategis yang lebih besar dan berpengaruh', c:'F'},
+      {t:'Memperluas jaringan dan menjadi duta YAKKUM', c:'S'},
+      {t:'Memperdalam pelayanan pastoral dan pendampingan', c:'E'},
+      {t:'Meningkatkan keahlian teknis dan klinis', c:'C'}
+    ]},
+  { id:59, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'choice',
+    text:'Apa tantangan terbesar Anda sebagai pemimpin di fasilitas kesehatan?',
+    opts:[
+      {t:'Menjaga momentum perubahan di tengah birokrasi', c:'F'},
+      {t:'Mempertahankan semangat tim di tengah tekanan kerja tinggi', c:'S'},
+      {t:'Menyeimbangkan kebutuhan individu dan target organisasi', c:'E'},
+      {t:'Memastikan kepatuhan standar di tengah keterbatasan SDM', c:'C'}
+    ]},
+  { id:60, part:'Bagian 4: Kepemimpinan & Pengembangan', type:'choice',
+    text:'Warisan kepemimpinan apa yang ingin Anda tinggalkan di YAKKUM?',
+    opts:[
+      {t:'Organisasi yang lebih kuat, kompetitif, dan berdampak', c:'F'},
+      {t:'Budaya kerja yang positif dan penuh semangat melayani', c:'S'},
+      {t:'Tim yang solid, saling percaya, dan bertumbuh bersama', c:'E'},
+      {t:'Sistem tata kelola yang handal dan mutu terjaga', c:'C'}
+    ]}
+];
+
+// ═══════════════════════════════════════════════════
+// INSIGHTS DATABASE
+// ═══════════════════════════════════════════════════
+const COLOR_DATA = {
+  F: {
+    name: 'Fiery Red', emoji: '🔴', label: 'Fiery Red',
+    title: 'Pemimpin yang Berani & Berorientasi Hasil',
+    desc: 'Anda adalah sosok yang penuh energi, tegas, dan berorientasi pada tindakan nyata. Anda memimpin dengan keyakinan dan tidak takut mengambil risiko demi mencapai tujuan.',
+    strengths: ['Pengambil keputusan cepat dan tegas', 'Berani menghadapi tantangan', 'Fokus pada hasil dan efisiensi', 'Pemimpin alami yang menggerakkan tim'],
+    challenges: ['Bisa terlalu dominan dan kurang sabar', 'Kadang kurang mempertimbangkan perasaan orang lain', 'Mengabaikan detail dan prosedur'],
+    yakkum: 'Sangat cocok untuk peran kepemimpinan di unit RS Tipe B/C, Direktur Unit, atau posisi strategis yang membutuhkan keberanian dalam perubahan organisasi.',
+    class: 'fiery'
+  },
+  S: {
+    name: 'Sunshine Yellow', emoji: '🟡', label: 'Sunshine Yellow',
+    title: 'Inspirator yang Antusias & Penuh Semangat',
+    desc: 'Anda adalah pribadi yang ceria, optimistis, dan mampu menginspirasi orang-orang di sekitar Anda. Kreativitas dan kemampuan sosial Anda menjadi aset berharga bagi tim.',
+    strengths: ['Komunikator yang luar biasa', 'Mampu memotivasi dan menginspirasi', 'Kreatif dan penuh ide baru', 'Pembangun relasi yang handal'],
+    challenges: ['Bisa terlalu optimistis dan mengabaikan risiko', 'Sulit fokus pada satu hal', 'Kadang kurang konsisten dalam follow-up'],
+    yakkum: 'Sangat cocok untuk peran Humas, Pengembangan SDM, Pendidikan & Pelatihan, atau koordinasi antar unit di STIKES Bethesda.',
+    class: 'sunny'
+  },
+  E: {
+    name: 'Earth Green', emoji: '🟢', label: 'Earth Green',
+    title: 'Pelayan yang Empatik & Penuh Kasih',
+    desc: 'Anda adalah pribadi yang tulus, empatik, dan selalu mengutamakan kesejahteraan orang lain. Nilai-nilai kasih yang Anda pegang sangat sejalan dengan misi pelayanan YAKKUM.',
+    strengths: ['Empati yang dalam terhadap pasien/sesama', 'Membangun kepercayaan tim dengan baik', 'Setia, konsisten, dan dapat diandalkan', 'Peacemaker yang menjaga harmoni'],
+    challenges: ['Sulit mengatakan tidak', 'Bisa terlalu mengakomodasi hingga merugikan diri sendiri', 'Lambat dalam situasi yang membutuhkan ketegasan'],
+    yakkum: 'Sangat cocok untuk peran perawatan langsung, pelayanan pastoral, community development (CDB, PRY), atau koordinasi tim yang membutuhkan empati tinggi.',
+    class: 'earthy'
+  },
+  C: {
+    name: 'Cool Blue', emoji: '🔵', label: 'Cool Blue',
+    title: 'Analis yang Teliti & Berorientasi Kualitas',
+    desc: 'Anda adalah pribadi yang analitis, sistematis, dan selalu mengedepankan standar kualitas tinggi. Ketelitian Anda memastikan pelayanan YAKKUM berjalan dengan presisi.',
+    strengths: ['Analitis dan berbasis bukti (evidence-based)', 'Standar kualitas dan akurasi tinggi', 'Perencanaan yang matang dan terstruktur', 'Konsisten menjaga prosedur dan SOP'],
+    challenges: ['Bisa terlalu perfeksionis dan lambat', 'Kurang fleksibel terhadap perubahan mendadak', 'Terlihat dingin secara emosional'],
+    yakkum: 'Sangat cocok untuk peran klinis teknis, akreditasi, quality assurance, manajemen data, atau penelitian di PKMK.',
+    class: 'cool'
+  }
+};
+
+const RECO_BY_MODE = {
+  rekrutmen: {
+    title: '🎯 Rekomendasi Rekrutmen',
+    F: 'Kandidat ini memiliki potensi kepemimpinan yang kuat. Pertimbangkan untuk posisi yang memerlukan pengambilan keputusan cepat dan manajemen perubahan. Rekomendasikan wawancara lanjutan dengan fokus pada contoh nyata pencapaian dan cara mengelola tim.',
+    S: 'Kandidat ini sangat cocok untuk posisi yang melibatkan interaksi publik, komunikasi, dan pengembangan program. Eksplorasi lebih lanjut kemampuan follow-through dan manajemen prioritas.',
+    E: 'Kandidat ini akan menjadi aset berharga dalam pelayanan langsung pasien dan kerja tim. Pertimbangkan untuk posisi yang memerlukan empati tinggi. Pastikan kandidat memiliki ketegasan yang cukup untuk situasi kritis.',
+    C: 'Kandidat ini ideal untuk posisi teknis, klinis, atau analitis. Pastikan ada kesempatan untuk bekerja secara sistematis. Eksplorasi kemampuan beradaptasi dalam situasi darurat.'
+  },
+  development: {
+    title: '🌱 Rencana Pengembangan',
+    F: 'Program pelatihan: Active Listening & Empathetic Leadership, Manajemen Detail & Follow-up, Coaching & Mentoring Skills. Target: menyeimbangkan drive hasil dengan kepekaan interpersonal.',
+    S: 'Program pelatihan: Time Management & Prioritization, Project Completion & Follow-through, Data-Driven Decision Making. Target: mengubah energi sosial menjadi produktivitas terstruktur.',
+    E: 'Program pelatihan: Assertiveness Training, Conflict Resolution, Setting Healthy Boundaries. Target: membangun keberanian berpendapat tanpa kehilangan empati.',
+    C: 'Program pelatihan: Communication & Influencing Skills, Change Management, Design Thinking. Target: mengkomunikasikan expertise dengan cara yang lebih engaging dan adaptif.'
+  },
+  leadership: {
+    title: '🏆 Assessment Kepemimpinan',
+    F: 'Potensi: Strong Executive Leader. Fokus pengembangan pada Empathetic Leadership agar tidak kehilangan kepercayaan tim. Siap untuk peran C-Suite dengan coaching intensif.',
+    S: 'Potensi: Transformational Leader. Perlu penguatan pada execution discipline dan accountability system. Sangat cocok untuk peran yang membutuhkan culture change.',
+    E: 'Potensi: Servant Leader sejati. Kekuatan terbesar untuk kepemimpinan berbasis nilai. Perlu penguatan pada kemampuan mengambil keputusan tegas di saat krisis.',
+    C: 'Potensi: Expert Leader & Systems Thinker. Sangat efektif membangun organisasi yang andal. Perlu mengembangkan visionary thinking dan kemampuan menginspirasi secara emosional.'
+  },
+  performance: {
+    title: '📊 Review Kinerja',
+    F: 'Kinerja terbaik: pencapaian target, problem-solving cepat, leading initiatives. Area improvement: patience, team buy-in, attention to detail. KPI yang relevan: target achievement rate, team retention.',
+    S: 'Kinerja terbaik: engagement tim, kreativitas, hubungan antar departemen. Area improvement: deadline adherence, consistency, depth of analysis. KPI yang relevan: collaboration score, innovation metrics.',
+    E: 'Kinerja terbaik: kepuasan pasien/klien, team cohesion, mentoring junior staff. Area improvement: assertiveness, productivity under pressure, setting priorities. KPI yang relevan: patient satisfaction, team wellness score.',
+    C: 'Kinerja terbaik: kualitas output, kepatuhan SOP, akurasi data. Area improvement: agility, interpersonal warmth, speed of execution. KPI yang relevan: error rate, compliance score, quality metrics.'
+  }
+};
+
+
+// ═══════════════════════════════════════════════════
+// NARASI STANDAR DISCOVERY INSIGHTS (lengkap)
+// ═══════════════════════════════════════════════════
+const NARASI = {
+  F: {
+    overview: `Individu dengan warna dominan Fiery Red adalah pribadi yang penuh energi, tegas, dan sangat berorientasi pada tindakan serta hasil. Dalam kerangka Discovery Insights, Fiery Red mewakili dimensi Extraversion-Thinking: energi yang diarahkan ke luar dengan orientasi pada logika, tujuan, dan pencapaian nyata. Mereka adalah orang-orang yang bergerak cepat, tidak suka membuang waktu, dan secara alami menempatkan diri sebagai pemimpin dalam situasi yang membutuhkan keputusan segera.`,
     
-    <!-- Modal Setting HRD -->
-    <div id="email-setting">
-        <h4 style="margin-top:0; color:#2c3e50;">🔧 Pengaturan HRD / HRD Configuration</h4>
-        <label>📧 Email HRD (Hasil otomatis): / HRD Email (Auto results):</label>
-        <input type="email" id="hrd-email" placeholder="hrd@yakkum.org">
-        <label>🎯 Tujuan Assessment / Assessment Purpose:</label>
-        <select id="purpose">
-            <option value="">-- Pilih Opsi / Select Option --</option>
-            <option value="Rekrutmen">Rekrutmen Karyawan Baru / New Employee Recruitment</option>
-            <option value="Development">Pengembangan Karyawan / Employee Development</option>
-            <option value="Leadership">Leadership Assessment</option>
-            <option value="Performance Review">Performance Review</option>
-        </select>
-        <button onclick="saveHrdSettings()">💾 Simpan & Mulai / Save & Start</button>
-    </div>
-
-    <!-- Timer Countdown -->
-    <div id="timer">⏱️ Waktu: 30:00 / Time: 30:00</div>
-
-    <h1>🌈 Insights Discovery Assessment<br><small>Yayasan YAKKUM - 4 Direktorat</small></h1>
+    core_values: [
+      'Kendali dan otonomi dalam pengambilan keputusan',
+      'Hasil nyata yang terukur dan dapat dipertanggungjawabkan',
+      'Tantangan yang memacu adrenalin dan kompetisi',
+      'Efisiensi dan ketidaksukaan terhadap birokrasi berlebihan',
+      'Pengakuan atas pencapaian dan kepemimpinan'
+    ],
     
-    <div class="bilingual">
-        <p><strong>PENTING:</strong> Assessment 25 frame, waktu <strong>30 menit</strong>. Pilih <em>Most/Least like you</em> lalu rate 1-5 lainnya. Otomatis submit jika waktu habis. / 
-        <strong>IMPORTANT:</strong> 25 frames assessment, <strong>30 minutes</strong> time limit. Select <em>Most/Least like you</em> then rate others 1-5. Auto-submit on time up.</p>
+    communication: `Mereka berkomunikasi secara langsung, padat, dan tanpa basa-basi. Fiery Red berbicara dengan keyakinan tinggi dan tidak segan menginterupsi jika merasa diskusi tidak produktif. Mereka menghargai lawan bicara yang to-the-point dan kurang sabar terhadap penjelasan yang berbelit-belit. Dalam konteks organisasi kesehatan seperti YAKKUM, gaya komunikasi mereka sangat efektif dalam situasi darurat dan pengambilan keputusan cepat di bangsal atau ruang manajemen.`,
+    
+    strengths_narr: `Kekuatan utama Fiery Red terletak pada kemampuannya memimpin di tengah ketidakpastian. Mereka tidak membutuhkan konsensus penuh untuk bertindak — cukup data minimal dan keyakinan diri. Dalam lingkungan rumah sakit yang dinamis seperti Rumah Sakit Bethesda atau RS Bethesda Lempuyangwangi, kemampuan ini sangat berharga dalam situasi krisis medis atau perubahan kebijakan yang mendesak. Fiery Red juga unggul dalam negosiasi, penetapan target, dan mendorong perubahan yang mungkin ditolak oleh tipe kepribadian lain.`,
+    
+    blind_spots: `Titik lemah Fiery Red yang perlu diwaspadai adalah kecenderungan mengabaikan perasaan orang lain dalam proses pengambilan keputusan. Mereka bisa terkesan arogan, tidak empatik, dan sulit mendengarkan — terutama saat merasa tertekan waktu. Dalam konteks pelayanan kesehatan YAKKUM yang menjunjung nilai kasih dan melayani dengan hati, Fiery Red perlu secara sadar melatih empati dan aktif mendengarkan perspektif tim kesehatan yang lebih berorientasi pada hubungan.`,
+    
+    under_pressure: `Di bawah tekanan, Fiery Red cenderung menjadi lebih dominan, impulsif, dan bahkan otoriter. Mereka bisa mengambil alih kendali secara sepihak dan mengabaikan prosedur standar. Tim di sekitar mereka perlu memahami pola ini agar dapat memberikan pendampingan yang tepat, bukan konfrontasi langsung yang justru memperburuk situasi.`,
+    
+    interaction_do: [
+      'Sampaikan inti permasalahan di awal pembicaraan',
+      'Berikan fakta dan data pendukung yang singkat',
+      'Hormati keputusannya meski Anda tidak sepenuhnya setuju',
+      'Berikan tantangan dan tanggung jawab yang nyata',
+      'Akui kontribusinya secara langsung dan konkret'
+    ],
+    interaction_dont: [
+      'Jangan berbelit-belit atau mengulang-ulang poin yang sama',
+      'Jangan mempertanyakan otoritasnya di depan orang lain',
+      'Jangan lambat dalam merespons permintaannya',
+      'Jangan terlalu banyak aturan yang membatasi ruang geraknya',
+      'Jangan mengabaikan pencapaiannya tanpa pengakuan'
+    ],
+    
+    development: `Untuk tumbuh sebagai pemimpin yang lebih lengkap di YAKKUM, individu Fiery Red disarankan untuk mengikuti program Empathetic Leadership, belajar teknik Active Listening, dan membiasakan diri memberi ruang kepada anggota tim untuk berbicara tanpa interupsi. Pemahaman mendalam tentang nilai-nilai pelayanan Kristiani YAKKUM — yang menempatkan kasih sebagai fondasi kerja — akan membantu Fiery Red menyeimbangkan drive pencapaian dengan kepedulian manusiawi.`
+  },
+
+  S: {
+    overview: `Individu dengan warna dominan Sunshine Yellow adalah pribadi yang optimistis, ekspresif, dan penuh antusiasme. Dalam kerangka Discovery Insights, Sunshine Yellow mewakili dimensi Extraversion-Feeling: energi yang diarahkan ke luar dengan orientasi pada hubungan, inspirasi, dan kreativitas. Mereka adalah sumber semangat tim, pencipta suasana positif, dan komunikator alami yang mampu menggerakkan hati orang banyak.`,
+    
+    core_values: [
+      'Kebebasan berekspresi dan berkreasi',
+      'Hubungan interpersonal yang hangat dan bermakna',
+      'Pengakuan atas kontribusi dan daya tarik personal',
+      'Lingkungan kerja yang menyenangkan dan penuh variasi',
+      'Visi besar dan kemungkinan yang menginspirasi'
+    ],
+    
+    communication: `Sunshine Yellow berkomunikasi dengan penuh emosi, ekspresi, dan cerita. Mereka adalah storyteller alami yang mampu membuat ide abstrak menjadi menarik dan mudah dipahami. Dalam konteks YAKKUM, kemampuan ini sangat berharga dalam presentasi visi organisasi, kampanye kesehatan masyarakat, atau membangun semangat tim di STIKES Bethesda. Mereka cenderung menggunakan bahasa yang inklusif ("kita", "bersama-sama") dan menghindari konflik.`,
+    
+    strengths_narr: `Kekuatan utama Sunshine Yellow adalah kemampuannya membangun koneksi emosional yang cepat dan tulus. Mereka adalah perekat sosial yang membuat orang merasa diterima dan dihargai. Dalam lingkungan pelayanan kesehatan yang penuh tekanan seperti RS Panti Wilasa atau unit PKMK, kehadiran Sunshine Yellow memberikan energi positif yang mencegah burnout dan menjaga moril tim. Mereka juga unggul dalam networking, public relations, dan memimpin perubahan budaya organisasi.`,
+    
+    blind_spots: `Kelemahan utama Sunshine Yellow adalah kesulitan menyelesaikan apa yang sudah dimulai (poor follow-through), kecenderungan over-promising, dan ketidakmampuan menghadapi detail teknis yang membosankan. Mereka mudah teralihkan oleh ide-ide baru sebelum menyelesaikan tugas saat ini. Di lingkungan klinis yang membutuhkan konsistensi dan kepatuhan prosedur seperti akreditasi RS, ini bisa menjadi risiko yang perlu dikelola.`,
+    
+    under_pressure: `Di bawah tekanan, Sunshine Yellow cenderung bereaksi secara emosional — mereka bisa menjadi dramatis, menyalahkan orang lain, atau justru menghindari masalah dengan bersikap terlalu positif. Dalam situasi krisis, mereka perlu dukungan struktur dan fakta dari rekan Cool Blue atau Fiery Red agar respons mereka lebih efektif.`,
+    
+    interaction_do: [
+      'Mulai percakapan dengan sapaan hangat dan personal',
+      'Berikan ruang untuk berbagi ide meski terlihat tidak langsung relevan',
+      'Akui semangat dan kontribusinya secara terbuka',
+      'Libatkan mereka dalam perencanaan yang visioner',
+      'Beri deadline yang jelas dengan pengingat berkala'
+    ],
+    interaction_dont: [
+      'Jangan langsung masuk ke data teknis tanpa "warming up"',
+      'Jangan mengkritik di depan banyak orang',
+      'Jangan berikan tugas rutin yang membosankan tanpa variasi',
+      'Jangan abaikan ide-idenya meski terkesan tidak realistis',
+      'Jangan biarkan mereka bekerja tanpa check-in dan akuntabilitas'
+    ],
+    
+    development: `Untuk berkembang di YAKKUM, Sunshine Yellow disarankan mengikuti pelatihan Project Management, Time Boxing, dan Accountability Partnership. Mereka perlu belajar cara mengubah energi sosial menjadi output yang terstruktur. Dalam konteks nilai YAKKUM, Sunshine Yellow perlu mendalami dimensi pelayanan yang bukan sekadar "terasa menyenangkan" tetapi juga konsisten dan andal bagi pasien dan komunitas.`
+  },
+
+  E: {
+    overview: `Individu dengan warna dominan Earth Green adalah pribadi yang hangat, empatik, dan sangat berorientasi pada hubungan serta harmoni. Dalam kerangka Discovery Insights, Earth Green mewakili dimensi Introversion-Feeling: energi yang diarahkan ke dalam dengan kepekaan tinggi terhadap perasaan orang lain. Mereka adalah penjaga nilai, pemelihara hubungan, dan fondasi moral dalam tim.`,
+    
+    core_values: [
+      'Harmoni dan keseimbangan dalam hubungan tim',
+      'Kejujuran, kepercayaan, dan loyalitas jangka panjang',
+      'Kepedulian tulus terhadap kesejahteraan sesama',
+      'Proses yang inklusif dan menghargai setiap suara',
+      'Konsistensi dan prediktabilitas dalam lingkungan kerja'
+    ],
+    
+    communication: `Earth Green berkomunikasi dengan cara yang hangat, penuh pertimbangan, dan selalu memperhatikan dampak kata-katanya terhadap perasaan orang lain. Mereka adalah pendengar yang luar biasa dan sering menjadi tempat curhat rekan-rekan kerja. Dalam konteks YAKKUM, nilai ini sangat selaras dengan misi pelayanan Kristiani yang mengutamakan kasih dan kepedulian. Mereka unggul dalam komunikasi empatis dengan pasien, keluarga pasien, dan anggota tim yang sedang dalam kesulitan.`,
+    
+    strengths_narr: `Kekuatan utama Earth Green adalah kemampuannya membangun kepercayaan jangka panjang yang kokoh. Dalam organisasi seperti YAKKUM yang bergerak di bidang kesehatan berbasis nilai, kepercayaan adalah aset yang tidak ternilai. Earth Green adalah perekat yang menjaga tim tetap bersatu meski menghadapi tekanan besar. Mereka juga sangat efektif dalam peran mentoring, pendampingan spiritual, dan community development di unit seperti CDB, PRY, atau YEU.`,
+    
+    blind_spots: `Kelemahan Earth Green adalah kesulitan mengatakan "tidak", kecenderungan menghindari konflik meski konflik itu perlu, dan pengambilan keputusan yang terlalu lambat karena terlalu banyak mempertimbangkan perasaan semua pihak. Dalam situasi darurat medis atau manajemen krisis, keterlambatan ini bisa berdampak serius. Earth Green juga rentan mengalami burnout karena terlalu banyak menyerap beban emosional orang lain.`,
+    
+    under_pressure: `Di bawah tekanan, Earth Green cenderung menarik diri, menjadi pasif-agresif, atau bahkan mengorbankan kebutuhan sendiri demi menghindari konflik. Mereka membutuhkan ruang aman untuk mengekspresikan kekhawatiran mereka — idealnya dalam percakapan one-on-one yang penuh kepercayaan.`,
+    
+    interaction_do: [
+      'Berikan waktu untuk membangun kepercayaan sebelum meminta sesuatu',
+      'Tunjukkan bahwa Anda peduli dengan perasaan dan pendapatnya',
+      'Berikan penguatan positif yang tulus dan spesifik',
+      'Libatkan mereka dalam keputusan yang mempengaruhi tim',
+      'Hormati kebutuhan mereka akan stabilitas dan konsistensi'
+    ],
+    interaction_dont: [
+      'Jangan memaksakan perubahan mendadak tanpa penjelasan',
+      'Jangan mengabaikan sinyal bahwa mereka tidak nyaman',
+      'Jangan berikan kritik tanpa diimbangi apresiasi',
+      'Jangan taruh mereka di posisi konflik terbuka tanpa dukungan',
+      'Jangan ekspektasi respons cepat tanpa waktu untuk refleksi'
+    ],
+    
+    development: `Untuk tumbuh di YAKKUM, Earth Green sangat direkomendasikan mengikuti pelatihan Assertiveness Training, Boundary Setting, dan Conflict Resolution yang konstruktif. Mereka perlu belajar bahwa mengatakan "tidak" adalah bentuk pelayanan yang sehat — bukan pengkhianatan terhadap nilai kasih. Dengan membangun kemampuan asertif, Earth Green dapat menjadi pemimpin pelayan (servant leader) yang jauh lebih efektif dan berkelanjutan.`
+  },
+
+  C: {
+    overview: `Individu dengan warna dominan Cool Blue adalah pribadi yang analitis, sistematis, dan sangat berorientasi pada kualitas serta akurasi. Dalam kerangka Discovery Insights, Cool Blue mewakili dimensi Introversion-Thinking: energi yang diarahkan ke dalam dengan orientasi pada logika, data, dan standar yang terukur. Mereka adalah pemikir mendalam yang tidak akan puas sebelum memahami "mengapa" di balik setiap fenomena.`,
+    
+    core_values: [
+      'Akurasi, presisi, dan standar yang konsisten',
+      'Objektivitas berbasis fakta dan data',
+      'Prosedur yang jelas dan dapat diandalkan',
+      'Waktu berpikir yang cukup sebelum bertindak',
+      'Integritas intelektual dan kejujuran faktual'
+    ],
+    
+    communication: `Cool Blue berkomunikasi dengan cara yang terstruktur, berbasis fakta, dan kadang terkesan formal atau dingin. Mereka lebih nyaman menulis daripada berbicara di depan umum, dan lebih suka menyampaikan analisis mendalam daripada kesan pertama. Dalam konteks YAKKUM, kemampuan ini sangat berharga dalam dokumentasi medis, penyusunan SOP, penelitian kesehatan, dan program akreditasi RS yang membutuhkan presisi tinggi.`,
+    
+    strengths_narr: `Kekuatan utama Cool Blue adalah kemampuannya mendeteksi masalah yang tidak terlihat oleh orang lain. Mereka adalah sistem peringatan dini yang memastikan standar kualitas terjaga di setiap aspek operasional. Di lingkungan rumah sakit seperti RS Bethesda atau program PKMK, ketelitian Cool Blue menjadi penjaga mutu yang tak tergantikan — dari akurasi data pasien hingga kepatuhan terhadap protokol klinis berbasis bukti (evidence-based medicine).`,
+    
+    blind_spots: `Kelemahan Cool Blue adalah kecenderungan analysis paralysis — terlalu lama menganalisis sebelum bertindak sehingga melewatkan momentum. Mereka juga bisa terkesan dingin, tidak peduli, atau arogan secara intelektual di mata rekan yang lebih berorientasi pada perasaan. Dalam konteks pelayanan kesehatan yang juga membutuhkan kehangatan manusiawi, Cool Blue perlu secara sadar melatih kecerdasan emosional dan kemampuan beradaptasi dengan cepat.`,
+    
+    under_pressure: `Di bawah tekanan, Cool Blue cenderung menarik diri lebih dalam ke analisis, menjadi kritis terhadap semua orang termasuk diri sendiri, dan sulit membuat keputusan karena merasa datanya tidak pernah cukup. Mereka membutuhkan kepastian bahwa ada ruang untuk mengevaluasi dan memperbaiki tanpa dihukum atas ketidaksempurnaan.`,
+    
+    interaction_do: [
+      'Berikan data, laporan, dan dokumentasi yang lengkap sebelum rapat',
+      'Hormati kebutuhan mereka untuk berpikir sebelum menjawab',
+      'Hargai ketelitian dan standar tinggi yang mereka terapkan',
+      'Berikan waktu untuk mempersiapkan presentasi atau keputusan',
+      'Tunjukkan bahwa prosedur dan SOP akan dipatuhi'
+    ],
+    interaction_dont: [
+      'Jangan minta keputusan instan tanpa data pendukung',
+      'Jangan meremehkan perhatian mereka pada detail',
+      'Jangan ubah rencana secara mendadak tanpa penjelasan logis',
+      'Jangan paksa mereka dalam situasi sosial yang berlebihan',
+      'Jangan kritik pekerjaan mereka tanpa dasar yang jelas'
+    ],
+    
+    development: `Untuk berkembang di YAKKUM, Cool Blue disarankan mengikuti pelatihan Communication & Storytelling for Non-Communicators, Adaptive Leadership, dan Emotional Intelligence. Mereka perlu belajar bahwa komunikasi yang efektif tidak selalu harus sempurna secara teknis — kadang cukup dengan jujur dan manusiawi. Dalam nilai YAKKUM, Cool Blue dapat menjadi pemimpin yang menggabungkan standar ilmiah dengan kasih yang tulus.`
+  }
+};
+
+// Fungsi generate narasi HTML
+function generateNarasiHTML(dom, sec, pcts) {
+  const dn = NARASI[dom];
+  const dc = COLOR_DATA[dom];
+  const sc = COLOR_DATA[sec];
+  
+  return `
+    <div class="narr-section">
+      <h4>${dc.emoji} Gambaran Umum Profil ${dc.name}</h4>
+      <p>${dn.overview}</p>
     </div>
 
-    <!-- Form Identitas & Frames -->
-    <form id="assessment-form" class="hidden">
-        <div class="bilingual">
-            <label>👤 Nama Lengkap / Full Name:</label>
-            <input type="text" id="name" required>
-            <label>📧 Email Pribadi / Personal Email:</label>
-            <input type="email" id="email" required>
-            <label>🏢 Direktorat / Directorate:</label>
-            <select id="directorate" required>
-                <option value="">Pilih Direktorat / Select</option>
-                <option value="Akademik">Akademik: STB YOG (Utama), STB SMG, STB PRK</option>
-                <option value="DPK">DPK Pelayanan Kesehatan: RSB(TipB), RSE/RSKNW/RSMW/RSPR/RSPWS/RSPWC/RSPWDC(TipC), RSBL/RSBW/RSPWP/RSSK(TipD), KYD</option>
-                <option value="Kantor Pusat">Kantor Pusat YAKKUM / Head Office</option>
-                <option value="PKMK">PKMK: CDB, PRY, YEU</option>
-            </select>
-            <label>📊 Level / Level:</label>
-            <select id="level" required>
-                <option value="">Pilih Level / Select</option>
-                <option value="1-2">1-2: Pelaksana / Operator</option>
-                <option value="3-4">3-4: Staf / Staff</option>
-                <option value="5-6">5-6: Koordinator / Coordinator</option>
-                <option value="7">7: Supervisor</option>
-                <option value="8-10">8-10: Manager</option>
-                <option value="11-12">11-12: Pemimpin Usaha Unit / Business Leader</option>
-            </select>
-        </div>
-
-        <div class="progress">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-
-        <div id="frames"></div>
-        <button type="button" id="submit-btn" class="hidden" onclick="submitAssessment()">
-            ✅ Submit Assessment & Generate Report
-        </button>
-    </form>
-
-    <!-- Konfirmasi Email -->
-    <div id="email-section" class="hidden">
-        <div class="frame">
-            <h3>📤 Konfirmasi Hasil / Results Confirmation</h3>
-            <p class="bilingual">Hasil lengkap (Color %, 72 Type Wheel, Strengths/Weaknesses, Selling Style, Personal Achievement, dll.) akan dikirim ke <strong>HRD Email</strong> dalam 1 menit. Data juga tersimpan di Google Sheet internal.</p>
-            <label>✅ Konfirmasi Email Anda / Confirm Your Email:</label>
-            <input type="email" id="candidate-email-confirm">
-            <button onclick="confirmAndSend()">🚀 Kirim Hasil & Selesai / Send & Finish</button>
-        </div>
+    <div class="narr-section" style="background:linear-gradient(135deg,#F9FFF9,#E8F5E9);border-color:#C8E6C9;">
+      <h4>🎯 Nilai-Nilai Inti</h4>
+      <ul>${dn.core_values.map(function(v){return '<li>'+v+'</li>';}).join('')}</ul>
     </div>
 
-    <!-- Thank You -->
-    <div id="thankyou" class="frame">
-        <h1>🎉 Terima Kasih! / Thank You!</h1>
-        <p style="font-size:20px;"><strong>Assessment selesai & data aman terkirim ke HRD.</strong><br>
-        Hasil lengkap diproses untuk Rekrutmen/Development/Leadership/Performance Review.</p>
+    <div class="narr-section">
+      <h4>🗣️ Gaya Komunikasi</h4>
+      <p>${dn.communication}</p>
     </div>
 
-    <script>
-        // Konfigurasi Global
-        const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE'; // Ganti ID Sheet
-        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_ID/exec'; // URL Apps Script Web App
-        let currentFrame = 0, responses = {}, startTime, timeLeft = 1800; // 30 menit
-        let timerInterval, shuffledFrames = generateShuffledFrames();
+    <div class="narr-section" style="background:linear-gradient(135deg,#FFFBF0,#FFF8E1);border-color:#FFE082;">
+      <h4>💪 Kekuatan dalam Konteks YAKKUM</h4>
+      <p>${dn.strengths_narr}</p>
+    </div>
 
-        // Data Kata Insights Discovery (dari referensi resmi) [web:1][web:3][web:15]
-        const colorWords = {
-            red: ['Determined','Controlling','Ambitious','Demanding','Decisive','Impatient','Pioneering','Strong-willed','Assertive','Driving'],
-            yellow: ['Sociable','Persuasive','Enthusiastic','Demonstrative','Optimistic','Excitable','Helpful','Expressive','Inspiring','Amusing'],
-            green: ['Caring','Supportive','Patient','Respectful','Reliable','Reserved','Sincere','Listening','Accommodating','Modest'],
-            blue: ['Cautious','Precise','Analytical','Diplomatic','Systematic','Detached','Logical','Objective','Reserved','Fact-finding']
-        };
+    <div class="narr-section" style="background:linear-gradient(135deg,#FFF5F5,#FCE4EC);border-color:#F48FB1;">
+      <h4>⚠️ Titik Lemah & Blind Spots</h4>
+      <p>${dn.blind_spots}</p>
+    </div>
 
-        const translations = {
-            'Determined':'Tegas','Controlling':'Mengendalikan','Ambitious':'Ambisius','Demanding':'Menuntut','Decisive':'Putus cepat',
-            'Impatient':'Tidak sabar','Pioneering':'Pionir','Strong-willed':'Kemauan kuat','Assertive':'Tegas','Driving':'Pendorong',
-            'Sociable':'Ekstrovert','Persuasive':'Pembujuk','Enthusiastic':'Antusias','Demonstrative':'Ekspresif','Optimistic':'Optimis',
-            'Excitable':'Mudah bersemangat','Helpful':'Membantu','Expressive':'Ekspresif','Inspiring':'Menginspirasi','Amusing':'Lucu',
-            'Caring':'Peduli','Supportive':'Mendukung','Patient':'Sabar','Respectful':'Hormat','Reliable':'Dapat diandalkan',
-            'Reserved':'Pendiam','Sincere':'Ikhlas','Listening':'Pendengar','Accommodating':'Akomodatif','Modest':'Sederhana',
-            'Cautious':'Hati-hati','Precise':'Presisi','Analytical':'Analitis','Diplomatic':'Diplomatis','Systematic':'Sistematis',
-            'Detached':'Objektif','Logical':'Logis','Objective':'Objektif','Reserved':'Tenang','Fact-finding':'Pencari fakta'
-        };
+    <div class="narr-section" style="background:linear-gradient(135deg,#F5F0FF,#EDE7F6);border-color:#CE93D8;">
+      <h4>🔥 Perilaku di Bawah Tekanan</h4>
+      <p>${dn.under_pressure}</p>
+    </div>
 
-        function generateShuffledFrames() {
-            const frames = [];
-            for (let i = 0; i < 25; i++) {
-                frames.push({
-                    red: colorWords.red[Math.floor(Math.random() * colorWords.red.length)],
-                    yellow: colorWords.yellow[Math.floor(Math.random() * colorWords.yellow.length)],
-                    green: colorWords.green[Math.floor(Math.random() * colorWords.green.length)],
-                    blue: colorWords.blue[Math.floor(Math.random() * colorWords.blue.length)]
-                });
-            }
-            return frames.sort(() => Math.random() - 0.5); // Urutan acak anti-cheat
-        }
+    <div class="narr-section">
+      <h4>🤝 Panduan Interaksi</h4>
+      <div class="interaction-grid">
+        <div class="int-box" style="border-top:3px solid #2E7D32;">
+          <h5>✅ Yang Harus Dilakukan</h5>
+          <ul style="padding-left:16px;">${dn.interaction_do.map(function(v){return '<li style="font-size:13px;line-height:1.6;margin-bottom:3px;">'+v+'</li>';}).join('')}</ul>
+        </div>
+        <div class="int-box" style="border-top:3px solid #C62828;">
+          <h5>❌ Yang Harus Dihindari</h5>
+          <ul style="padding-left:16px;">${dn.interaction_dont.map(function(v){return '<li style="font-size:13px;line-height:1.6;margin-bottom:3px;">'+v+'</li>';}).join('')}</ul>
+        </div>
+      </div>
+    </div>
 
-        // Event Listeners
-        document.getElementById('setting-btn').onclick = () => {
-            document.getElementById('email-setting').style.display = 'block';
-        };
+    <div class="narr-section" style="background:linear-gradient(135deg,#E3F2FD,#EEF4FF);border-color:#90CAF9;">
+      <h4>🌱 Rekomendasi Pengembangan di YAKKUM</h4>
+      <p>${dn.development}</p>
+    </div>
 
-        function saveHrdSettings() {
-            const hrdEmail = document.getElementById('hrd-email').value;
-            const purpose = document.getElementById('purpose').value;
-            if (!hrdEmail || !purpose) return alert('Lengkapi data HRD! / Complete HRD data!');
-            
-            sessionStorage.setItem('hrdEmail', hrdEmail);
-            sessionStorage.setItem('purpose', purpose);
-            document.getElementById('email-setting').style.display = 'none';
-            document.getElementById('assessment-form').classList.remove('hidden');
-            startTimer();
-            showFrame(0);
-        }
+    <div class="narr-section" style="background:#1A2744;border-color:#1A2744;">
+      <h4 style="color:#fff;">📊 Ringkasan Profil Warna</h4>
+      <p style="color:rgba(255,255,255,0.85);font-size:13px;">
+        Warna dominan <strong style="color:#FFD166;">${dc.name} (${pcts[dom]}%)</strong> dikombinasikan dengan 
+        warna sekunder <strong style="color:#A5D6FF;">${sc.name} (${pcts[sec]}%)</strong> 
+        menciptakan profil kepribadian yang unik. Perpaduan ini menentukan bagaimana Anda berinteraksi, 
+        membuat keputusan, dan berkontribusi dalam misi pelayanan kesehatan YAKKUM yang berlandaskan 
+        nilai-nilai Kristiani.
+      </p>
+    </div>`;
+}
 
-        // Timer Logic
-        function startTimer() {
-            startTime = Date.now();
-            timerInterval = setInterval(updateTimer, 1000);
-        }
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let state = {
+  mode: null,
+  profile: {},
+  currentQ: 0,
+  answers: {},
+  sheetUrl: localStorage.getItem('yakkumSheetUrl') || ''
+};
 
-        function updateTimer() {
-            timeLeft = Math.max(0, 1800 - Math.floor((Date.now() - startTime) / 1000));
-            const min = Math.floor(timeLeft / 60), sec = timeLeft % 60;
-            document.getElementById('timer').innerHTML = `⏱️ Waktu: ${min}:${sec.toString().padStart(2, '0')} / Time: ${min}:${sec.toString().padStart(2, '0')}`;
-            
-            const progress = Math.min(100, ((1800 - timeLeft) / 1800) * 100);
-            document.getElementById('progress-bar').style.width = progress + '%';
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
 
-            const timerEl = document.getElementById('timer');
-            timerEl.classList.remove('warning-time', 'time-up');
-            if (timeLeft <= 300) timerEl.classList.add('warning-time');
-            if (timeLeft <= 0) {
-                timerEl.classList.add('time-up');
-                clearInterval(timerInterval);
-                alert('⏰ Waktu habis! Auto-submit... / Time up! Auto-submitting...');
-                submitAssessment();
-            }
-        }
+function selectMode(mode, el) {
+  state.mode = mode;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
 
-        // Frame Display
-        function showFrame(idx) {
-            if (idx >= 25) {
-                document.getElementById('submit-btn').classList.remove('hidden');
-                return;
-            }
-            currentFrame = idx;
-            const frame = shuffledFrames[idx];
-            responses[idx] = { most: null, least: null, rates: {} };
+function goToProfile() {
+  if (!state.mode) { alert('Silakan pilih tujuan assessment terlebih dahulu.'); return; }
+  goTo('screen-profile');
+}
 
-            let html = `
-            <div class="frame">
-                <h3>📋 Frame ${idx + 1}/25</h3>
-                <p class="bilingual">Pilih <strong>2 paling mirip Anda (Most)</strong> & <strong>2 paling tidak mirip (Least)</strong>, lalu rate 1-5 untuk sisanya. / 
-                Select <strong>2 Most like you</strong> & <strong>2 Least like you</strong>, rate others 1-5.</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="word-pair" onclick="selectWord('${idx}', 'red', '${frame.red}')">
-                        <span class="en">🔥 Fiery Red: ${frame.red}</span>
-                        <span class="id">${translations[frame.red] || frame.red}</span>
-                    </div>
-                    <div class="word-pair" onclick="selectWord('${idx}', 'yellow', '${frame.yellow}')">
-                        <span class="en">☀️ Sunshine Yellow: ${frame.yellow}</span>
-                        <span class="id">${translations[frame.yellow] || frame.yellow}</span>
-                    </div>
-                    <div class="word-pair" onclick="selectWord('${idx}', 'green', '${frame.green}')">
-                        <span class="en">🌿 Earth Green: ${frame.green}</span>
-                        <span class="id">${translations[frame.green] || frame.green}</span>
-                    </div>
-                    <div class="word-pair" onclick="selectWord('${idx}', 'blue', '${frame.blue}')">
-                        <span class="en">💧 Cool Blue: ${frame.blue}</span>
-                        <span class="id">${translations[frame.blue] || frame.blue}</span>
-                    </div>
-                </div>
-                <div id="ratings-${idx}" style="margin-top:20px; display:none;">
-                    <label>Rate sisa kata (1-5): / Rate remaining (1-5):</label>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <input type="number" id="rate1-${idx}" min="1" max="5" placeholder="1-5">
-                        <input type="number" id="rate2-${idx}" min="1" max="5" placeholder="1-5">
-                    </div>
-                    <button onclick="nextFrame()" style="margin-top:15px;">➡️ Next Frame / Frame Berikutnya</button>
-                </div>
-                ${idx > 0 ? '<button onclick="prevFrame()" style="margin-right:10px;">⬅️ Previous</button>' : ''}
-            </div>`;
-            document.getElementById('frames').innerHTML = html;
-        }
+function updateUnit() {
+  const dir = document.getElementById('p_direktorat').value;
+  const sel = document.getElementById('p_unit');
+  sel.innerHTML = '';
+  if (!dir) { sel.innerHTML = '<option>-- Pilih Direktorat Dulu --</option>'; return; }
+  UNITS[dir].forEach(u => {
+    const o = document.createElement('option');
+    o.value = u; o.textContent = u;
+    sel.appendChild(o);
+  });
+}
 
-        function selectWord(frameIdx, color, word) {
-            // Simplified selection logic - full impl track most/least selections
-            const pair = event.target.closest('.word-pair');
-            if (pair.classList.contains('selected-most')) {
-                pair.classList.remove('selected-most');
-            } else {
-                document.querySelectorAll('.word-pair').forEach(p => p.classList.remove('selected-most', 'selected-least'));
-                pair.classList.add('selected-most');
-                document.getElementById(`ratings-${frameIdx}`).style.display = 'block';
-            }
-            responses[frameIdx][color] = { word, type: 'most' };
-        }
+function startAssessment() {
+  const nama = document.getElementById('p_nama').value.trim();
+  const dir  = document.getElementById('p_direktorat').value;
+  const unit = document.getElementById('p_unit').value;
+  const lvl  = document.getElementById('p_level').value;
+  if (!nama || !dir || !unit || !lvl) { alert('Harap isi semua field yang wajib (*).'); return; }
+  state.profile = {
+    nama,
+    nip:      document.getElementById('p_nip').value.trim(),
+    direktorat: dir,
+    unit,
+    level:    lvl,
+    jabatan:  document.getElementById('p_jabatan').value.trim(),
+    email:    document.getElementById('p_email').value.trim()
+  };
+  state.currentQ = 0;
+  state.answers = {};
+  state.timerStart = Date.now();
+  state.timerInterval = null;
+  goTo('screen-questions');
+  startTimer();
+  renderQuestion();
+}
 
-        function nextFrame() { showFrame(currentFrame + 1); }
-        function prevFrame() { showFrame(currentFrame - 1); }
+// ═══════════════════════════════════════════════════
+// QUESTION RENDERING
+// ═══════════════════════════════════════════════════
+function renderQuestion() {
+  const q = QUESTIONS[state.currentQ];
+  const total = QUESTIONS.length;
+  const pct = Math.round((state.currentQ / total) * 100);
 
-        function submitAssessment() {
-            clearInterval(timerInterval);
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                directorate: document.getElementById('directorate').value,
-                level: document.getElementById('level').value,
-                purpose: sessionStorage.getItem('purpose')
-            };
-            if (!formData.name || !formData.email) return alert('Lengkapi data diri! / Complete personal data!');
+  var partMap = {
+    'Bagian 1: Gaya Kerja & Orientasi': 'Bagian 1: Gaya Kerja & Orientasi <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 1: Work Style &amp; Orientation)</em>',
+    'Bagian 2: Komunikasi & Interaksi': 'Bagian 2: Komunikasi & Interaksi <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 2: Communication &amp; Interaction)</em>',
+    'Bagian 3: Nilai & Motivasi': 'Bagian 3: Nilai & Motivasi <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 3: Values &amp; Motivation)</em>',
+    'Bagian 4: Kepemimpinan & Pengembangan': 'Bagian 4: Kepemimpinan & Pengembangan <em style="font-size:10px;font-style:italic;font-weight:400;">(Part 4: Leadership &amp; Development)</em>'
+  };
+  document.getElementById('q-section-label').innerHTML = partMap[q.part] || q.part;
+  document.getElementById('prog-text').innerHTML = 'Pertanyaan '+(state.currentQ+1)+' dari '+total+' <em style="font-size:11px;font-style:italic;color:var(--sub);">(Question '+(state.currentQ+1)+' of '+total+')</em>';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  updateTimerDisplay();
+  document.getElementById('btn-prev').style.visibility = state.currentQ > 0 ? 'visible' : 'hidden';
+  document.getElementById('btn-next').innerHTML = state.currentQ < total-1 ? 'Berikutnya <em style="font-size:11px;font-style:italic;">(Next)</em> →' : 'Selesai <em style="font-size:11px;font-style:italic;">(Submit)</em> ✓';
 
-            // Calculate Scores (simplified Insights scoring)
-            const scores = { red: 0, yellow: 0, green: 0, blue: 0 };
-            Object.values(responses).forEach(resp => {
-                if (resp.red?.type === 'most') scores.red += 4;
-                if (resp.yellow?.type === 'most') scores.yellow += 4;
-                // ... similar for others + rates
-            });
-            const total = Object.values(scores).reduce((a,b)=>a+b,0) || 100;
-            const percentages = {
-                'Fiery Red': ((scores.red / total) * 100).toFixed(1),
-                'Sunshine Yellow': ((scores.yellow / total) * 100).toFixed(1),
-                'Earth Green': ((scores.green / total) * 100).toFixed(1),
-                'Cool Blue': ((scores.blue / total) * 100).toFixed(1)
-            };
+  const prev = state.answers[q.id];
 
-            const report = generateFullReport(percentages);
-            const assessmentData = { ...formData, responses, percentages, report, timeUsed: 1800 - timeLeft, startTime: new Date(startTime).toISOString() };
+  let html = `<div class="q-card">
+    <div class="q-num">Pertanyaan ${state.currentQ+1}</div>
+    <div class="q-text">${q.text}</div>`;
 
-            sessionStorage.setItem('assessmentData', JSON.stringify(assessmentData));
-            document.getElementById('assessment-form').classList.add('hidden');
-            document.getElementById('email-section').classList.remove('hidden');
-        }
+  if (q.type === 'choice') {
+    html += '<div class="options-grid">';
+    const letters = ['A','B','C','D'];
+    q.opts.forEach((o, i) => {
+      const sel = prev && prev.value === o.c ? 'selected' : '';
+      html += `<div class="opt ${sel}" onclick="selectChoice(${q.id},'${o.c}',this)">
+        <div class="opt-letter">${letters[i]}</div>
+        <div class="opt-text">${o.t}</div>
+      </div>`;
+    });
+    html += '</div>';
+  } else {
+    // likert
+    const labels = ['Sangat Tidak Setuju','Tidak Setuju','Netral','Setuju','Sangat Setuju'];
+    const scores = [1,2,3,4,5];
+    html += '<div class="likert-row">';
+    scores.forEach((s,i) => {
+      const sel = prev && prev.score === s ? 'selected' : '';
+      html += `<div class="lk-btn ${sel}" onclick="selectLikert(${q.id},'${q.dimension}',${s},this)">${labels[i]}</div>`;
+    });
+    html += '</div>';
+    html += `<div class="likert-labels"><span>← Tidak Setuju</span><span>Setuju →</span></div>`;
+  }
+  html += '</div>';
+  document.getElementById('question-area').innerHTML = html;
+}
 
-        function generateFullReport(percentages) {
-            const sorted = Object.entries(percentages).sort((a,b)=>b[1]-a[1]);
-            const primary = sorted[0][0], secondary = sorted[1][0];
-            return `
-## 🎨 Insights Discovery Profile - YAKKUM
+function selectChoice(qid, color, el) {
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  state.answers[qid] = { type:'choice', value: color };
+}
 
-### 📊 Color Energy Percentages
-- Fiery Red: ${percentages['Fiery Red']}% 🔥
-- Sunshine Yellow: ${percentages['Sunshine Yellow']}% ☀️
-- Earth Green: ${percentages['Earth Green']}% 🌿
-- Cool Blue: ${percentages['Cool Blue']}% 💧
+function selectLikert(qid, dim, score, el) {
+  document.querySelectorAll('.lk-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.answers[qid] = { type:'likert', dimension: dim, score };
+}
 
-### 🔑 Key Strengths & Weaknesses [web:1][web:4]
-**Strengths:** ${primary} dominant: Action-oriented, decisive, relationship-building. ${secondary} adds creativity/stability/precision.
-**Weaknesses:** May be impatient/overly controlling/too reserved/too perfectionist.
+function prevQ() {
+  if (state.currentQ > 0) { state.currentQ--; renderQuestion(); }
+}
 
-### 👥 Value to the Team
-Provides drive, enthusiasm, support, analytical insight. [web:6]
+function nextQ() {
+  const q = QUESTIONS[state.currentQ];
+  if (!state.answers[q.id]) {
+    alert('Silakan pilih jawaban terlebih dahulu.'); return;
+  }
+  if (state.currentQ < QUESTIONS.length - 1) {
+    state.currentQ++;
+    renderQuestion();
+  } else {
+    calculateResults();
+  }
+}
 
-### 🗣️ Effective Communications / Barriers
-**Effective:** Direct/warm/consultative/structured.
-**Barriers:** Avoid overwhelming with details/emotions.
+// ═══════════════════════════════════════════════════
+// CALCULATION
+// ═══════════════════════════════════════════════════
+function calculateResults() {
+  stopTimer();
+  goTo('screen-loading');
+  setTimeout(() => {
+    const scores = { F:0, S:0, E:0, C:0 };
+    const counts = { F:0, S:0, E:0, C:0 };
 
-### 🎯 72 Type Wheel Position [web:9]
-Primary ${primary}-${secondary}: e.g., "Motivator" (Red-Yellow) or "Coach" (Green-Yellow).
+    Object.values(state.answers).forEach(a => {
+      if (a.type === 'choice') {
+        scores[a.value] += 4; counts[a.value]++;
+      } else {
+        // likert — map 1-5 to raw score
+        scores[a.dimension] += a.score;
+        counts[a.dimension]++;
+      }
+    });
 
-### 📈 Suggestions for Development
-Balance energies: Develop weaker colors through training.
+    const total = Object.values(scores).reduce((a,b)=>a+b,0) || 1;
+    const pcts = {};
+    ['F','S','E','C'].forEach(k => pcts[k] = Math.round((scores[k]/total)*100));
 
-### 💼 Management Style / Selling Style Overview [web:7]
-**Management:** Directive/participative/supportive/analytical.
-**Selling:** Results-driven/relationship-building/needs-focused/process-driven.
+    // normalize to 100
+    let sum = Object.values(pcts).reduce((a,b)=>a+b,0);
+    if (sum !== 100) pcts['F'] += (100 - sum);
 
-### 🌟 Personal Achievement
-**Living on Purpose:** Align with ${primary} strengths.
-**Time Management:** Prioritize based on energy preferences.
-**Lifelong Learning:** Visual (Yellow)/Auditory (Green)/Kinesthetic (Red/Blue).
+    state.results = { scores, pcts };
+    showResults();
+  }, 1800);
+}
 
-### 🔄 Color Dynamics
-Conscious: ${primary}, Flow: ${secondary}, Less Conscious: Lowest energy.
+// ═══════════════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════════════
+function showResults() {
+  var pcts = state.results.pcts;
+  var sorted = ['F','S','E','C'].sort(function(a,b){ return pcts[b]-pcts[a]; });
+  var dom = sorted[0], sec = sorted[1];
 
-**Full report attached for HRD internal use.** [web:1][web:2][web:4][web:6][web:7][web:9]
-            `;
-        }
+  // Fill Thank You info panel
+  var elapsed = state.timerElapsed || 0;
+  var em = Math.floor(elapsed/60), es = elapsed%60;
+  var elapsedLabel = (em > 0 ? em+' menit ' : '') + es + ' detik';
+  document.getElementById('ty-nama').textContent = state.profile.nama;
+  document.getElementById('ty-unit').textContent = state.profile.unit;
+  document.getElementById('ty-mode').textContent = getModeLabel(state.mode);
+  document.getElementById('ty-time').textContent = elapsedLabel;
 
-        function confirmAndSend() {
-            const data = JSON.parse(sessionStorage.getItem('assessmentData'));
-            fetch(`${SCRIPT_URL}?data=${encodeURIComponent(JSON.stringify(data))}&hrdEmail=${sessionStorage.getItem('hrdEmail')}`)
-                .then(() => {
-                    document.getElementById('email-section').classList.add('hidden');
-                    document.getElementById('thankyou').style.display = 'block';
-                }).catch(err => alert('Error: ' + err));
-        }
+  // Show thank you screen
+  goTo('screen-results');
 
-        // Auto-load jika sudah setting
-        if (sessionStorage.getItem('hrdEmail')) {
-            document.getElementById('assessment-form').classList.remove('hidden');
-            startTimer();
-            showFrame(0);
-        }
-    </script>
+  // Auto send: save to Sheets AND email HRD
+  autoSubmitAll(pcts, sorted, dom, sec);
+}
+
+function autoSubmitAll(pcts, sorted, dom, sec) {
+  var statusEl = document.getElementById('ty-send-status');
+  var sheetUrl = localStorage.getItem('yakkumSheetUrl');
+  var hrd1 = localStorage.getItem('yakkumHRD1');
+
+  if (!sheetUrl && !hrd1) {
+    statusEl.innerHTML = '<span style="color:#888;">⚠️ Belum ada konfigurasi. Hubungi admin HRD. <em style="font-style:italic;">(No configuration set. Contact HR admin.)</em></span>';
+    return;
+  }
+
+  var elapsed = state.timerElapsed || 0;
+  var em2 = Math.floor(elapsed/60), es2 = elapsed%60;
+  var payload = {
+    action: 'sendEmail',
+    nama: state.profile.nama,
+    nip: state.profile.nip,
+    direktorat: state.profile.direktorat,
+    unit: state.profile.unit,
+    level: state.profile.level,
+    jabatan: state.profile.jabatan,
+    email: state.profile.email,
+    mode: getModeLabel(state.mode),
+    fiery: pcts.F,
+    sunny: pcts.S,
+    earthy: pcts.E,
+    cool: pcts.C,
+    dominant: COLOR_DATA[sorted[0]].name,
+    secondary: COLOR_DATA[sorted[1]].name,
+    elapsed_seconds: elapsed,
+    elapsed_label: em2+'m '+es2+'s',
+    to: hrd1 || '',
+    cc: localStorage.getItem('yakkumHRD2') || '',
+    subject: '[YAKKUM Assessment] '+state.profile.nama+' — '+COLOR_DATA[dom].name+' '+pcts[dom]+'% | '+getModeLabel(state.mode),
+    body: buildEmailBody(),
+    answers: JSON.stringify(state.answers)
+  };
+
+  statusEl.innerHTML = '⏳ Mengirim data... <em style="font-style:italic;">(Submitting data...)</em>';
+
+  if (sheetUrl) {
+    fetch(sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {'Content-Type':'application/json'}
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var emailOk = d.emailSent ? '📧 Email terkirim ke HRD. <em style="font-style:italic;">(Email sent to HR.)</em>' : '';
+      statusEl.innerHTML = '✅ Data tersimpan ke Google Sheets. '+emailOk;
+    })
+    .catch(function(){
+      // Fallback: open mailto
+      if (hrd1) { fallbackMailto(hrd1, statusEl); }
+      else { statusEl.innerHTML = '⚠️ Gagal menyimpan data. Hubungi admin. <em style="font-style:italic;">(Failed to save. Contact admin.)</em>'; }
+    });
+  } else if (hrd1) {
+    fallbackMailto(hrd1, statusEl);
+  }
+}
+
+function getComboInsight(d, s) {
+  const combos = {
+    'FS': 'Pemimpin karismatik yang berani dan inspiratif. Anda menggerakkan orang dengan determinasi sekaligus semangat. Sangat efektif memimpin transformasi di RS atau unit akademik.',
+    'SF': 'Sama seperti FS — perpaduan energi dan visi yang kuat.',
+    'FE': 'Pemimpin yang tegas sekaligus peduli. Anda tahu kapan harus mendorong dan kapan mendukung. Ideal untuk Direktur yang menyeimbangkan target dan kesejahteraan SDM.',
+    'EF': 'Sama seperti FE.',
+    'FC': 'Eksekutif yang berani sekaligus berbasis data. Keputusan Anda cepat tetapi selalu didukung fakta. Sangat cocok untuk kepemimpinan klinis senior.',
+    'CF': 'Sama seperti FC.',
+    'SE': 'Pemimpin yang menginspirasi sekaligus empatik. Anda membangun kultur kerja yang hangat dan penuh semangat. Cocok untuk HR, pengembangan SDM, dan pelayanan komunitas.',
+    'ES': 'Sama seperti SE.',
+    'SC': 'Komunikator analitis yang memadukan kreativitas dengan ketepatan. Ideal untuk peran pendidikan, riset, dan inovasi di STIKES atau PKMK.',
+    'CS': 'Sama seperti SC.',
+    'EC': 'Pemimpin yang empatik dan teliti. Anda memastikan proses berjalan baik sambil menjaga kesejahteraan tim. Sangat cocok untuk Kepala Keperawatan atau manajemen klinik.',
+    'CE': 'Sama seperti EC.'
+  };
+  return combos[d+s] || combos[s+d] || 'Kombinasi warna ini menciptakan profil unik yang memadukan kekuatan dari dua dimensi berbeda dalam pelayanan YAKKUM.';
+}
+
+function getModeLabel(m) {
+  const map = { rekrutmen:'Rekrutmen', development:'Development', leadership:'Leadership', performance:'Performance Review' };
+  return map[m] || m;
+}
+
+// ═══════════════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════════════
+function startTimer() {
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  state.timerStart = Date.now();
+  state.timerInterval = setInterval(() => updateTimerDisplay(), 1000);
+}
+
+function stopTimer() {
+  if (state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
+  state.timerElapsed = Math.floor((Date.now() - (state.timerStart || Date.now())) / 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('timer-display');
+  const box = document.getElementById('timer-box');
+  const eta = document.getElementById('eta-display');
+  const spd = document.getElementById('speed-display');
+  if (!el) return;
+
+  const elapsed = Math.floor((Date.now() - state.timerStart) / 1000);
+  const m = Math.floor(elapsed / 60), s = elapsed % 60;
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+  // Color warning
+  box.className = 'timer-box';
+  if (elapsed > 1200) box.classList.add('danger');        // >20 min
+  else if (elapsed > 900) box.classList.add('warning');   // >15 min
+
+  // ETA: avg 20s per question
+  const answered = Object.keys(state.answers).length;
+  const remaining = QUESTIONS.length - answered;
+  if (answered > 0) {
+    const avgPerQ = elapsed / answered;
+    const estRemSec = Math.ceil(remaining * avgPerQ);
+    const em = Math.floor(estRemSec / 60), es = estRemSec % 60;
+    eta.textContent = em > 0 ? `± ${em} menit ${es} detik` : `± ${es} detik lagi`;
+    spd.textContent = `${avgPerQ.toFixed(1)} dtk/soal`;
+  } else {
+    eta.textContent = '± 20 menit';
+    spd.textContent = '—';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// GOOGLE SHEETS
+// ═══════════════════════════════════════════════════
+function saveToSheets() {
+  const url = localStorage.getItem('yakkumSheetUrl');
+  if (!url) { openConfig(); return; }
+  const { pcts } = state.results;
+  const sorted = ['F','S','E','C'].sort((a,b)=>pcts[b]-pcts[a]);
+  const payload = {
+    nama: state.profile.nama,
+    nip: state.profile.nip,
+    unit: state.profile.unit,
+    level: state.profile.level,
+    mode: getModeLabel(state.mode),
+    fiery: pcts.F,
+    sunny: pcts.S,
+    earthy: pcts.E,
+    cool: pcts.C,
+    dominant: COLOR_DATA[sorted[0]].name,
+    secondary: COLOR_DATA[sorted[1]].name,
+    elapsed_seconds: state.timerElapsed || 0,
+    elapsed_label: (() => { const e=state.timerElapsed||0; const m=Math.floor(e/60),s=e%60; return `${m}m ${s}s`; })(),
+    answers: state.answers
+  };
+  document.getElementById('save-status').textContent = '⏳ Menyimpan data...';
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(r => r.json())
+  .then(() => { document.getElementById('save-status').textContent = '✅ Data berhasil disimpan ke Google Sheets!'; })
+  .catch(() => { document.getElementById('save-status').textContent = '⚠️ Gagal menyimpan. Periksa URL Google Apps Script Anda.'; });
+}
+
+function openConfig() { document.getElementById('configModal').classList.add('open'); }
+function closeConfig() { document.getElementById('configModal').classList.remove('open'); }
+function saveConfig() {
+  const url = document.getElementById('sheetUrl').value.trim();
+  if (!url) { alert('Masukkan URL Google Apps Script terlebih dahulu.'); return; }
+  localStorage.setItem('yakkumSheetUrl', url);
+  closeConfig();
+  alert('✅ URL berhasil disimpan!');
+}
+
+function printResult() { window.print(); }
+
+function restartAll() {
+  stopTimer();
+  state = { mode: null, profile: {}, currentQ: 0, answers: {}, sheetUrl: localStorage.getItem('yakkumSheetUrl') || '' };
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  goTo('screen-welcome');
+}
+// ═══════════════════════════════════════════════════
+// EMAIL CONFIG & SEND TO HRD
+// ═══════════════════════════════════════════════════
+function openEmailConfig() {
+  document.getElementById('cfg_hrd1').value = localStorage.getItem('yakkumHRD1') || '';
+  document.getElementById('cfg_hrd2').value = localStorage.getItem('yakkumHRD2') || '';
+  document.getElementById('cfg_orgname').value = localStorage.getItem('yakkumOrgName') || 'YAKKUM Assessment System';
+  document.getElementById('emailConfigModal').classList.add('open');
+}
+function closeEmailConfig() { document.getElementById('emailConfigModal').classList.remove('open'); }
+
+function saveEmailConfig() {
+  const e1 = document.getElementById('cfg_hrd1').value.trim();
+  if (!e1) { alert('Email HRD utama wajib diisi.'); return; }
+  localStorage.setItem('yakkumHRD1', e1);
+  localStorage.setItem('yakkumHRD2', document.getElementById('cfg_hrd2').value.trim());
+  localStorage.setItem('yakkumOrgName', document.getElementById('cfg_orgname').value.trim() || 'YAKKUM Assessment System');
+  closeEmailConfig();
+  alert('✅ Pengaturan email HRD berhasil disimpan!');
+}
+
+function buildEmailBody() {
+  var pcts = state.results.pcts;
+  var sorted = ['F','S','E','C'].sort(function(a,b){return pcts[b]-pcts[a];});
+  var dom = sorted[0], sec = sorted[1];
+  var dc = COLOR_DATA[dom], sc = COLOR_DATA[sec];
+  var p = state.profile;
+  var elapsed = state.timerElapsed || 0;
+  var em = Math.floor(elapsed/60), es = elapsed%60;
+  var reco = RECO_BY_MODE[state.mode];
+  var dn = NARASI[dom];
+  var sep1 = '=======================================================';
+  var sep2 = '-------------------------------------------------------';
+
+  var coreVals = dn.core_values.map(function(v,i){ return '  '+(i+1)+'. '+v; }).join('\n');
+  var strengths = COLOR_DATA[dom].strengths.map(function(v,i){ return '  '+(i+1)+'. '+v; }).join('\n');
+  var challenges = COLOR_DATA[dom].challenges.map(function(v,i){ return '  '+(i+1)+'. '+v; }).join('\n');
+  var intDo = dn.interaction_do.map(function(v){ return '  \u2713 '+v; }).join('\n');
+  var intDont = dn.interaction_dont.map(function(v){ return '  \u2717 '+v; }).join('\n');
+  var recoTitle = reco.title.replace(/[\uD83C-\uDBFF\uDC00-\uDFFF\u2600-\u26FF\u2700-\u27BF]/g,'').trim().toUpperCase();
+  var elapsedLabel = (em > 0 ? em+' menit ' : '') + es + ' detik';
+  var now = new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  return [
+    'LAPORAN HASIL DISCOVERY INSIGHTS ASSESSMENT',
+    'YAKKUM \u2014 Yayasan Kristen Untuk Kesehatan Umum',
+    sep1,
+    '',
+    'TANGGAL ASSESSMENT : '+now,
+    'WAKTU PENGERJAAN   : '+elapsedLabel,
+    'TUJUAN ASSESSMENT  : '+getModeLabel(state.mode),
+    '',
+    'DATA PESERTA',
+    sep2,
+    'Nama              : '+p.nama,
+    'NIP / No. Peserta : '+(p.nip||'\u2014'),
+    'Direktorat        : '+p.direktorat,
+    'Unit Kerja        : '+p.unit,
+    'Level / Grade     : '+p.level,
+    'Jabatan           : '+(p.jabatan||'\u2014'),
+    'Email Peserta     : '+(p.email||'\u2014'),
+    '',
+    'HASIL DISTRIBUSI WARNA KEPRIBADIAN',
+    sep2,
+    '\uD83D\uDD34 Fiery Red       : '+pcts.F+'%  '+'\u2588'.repeat(Math.round(pcts.F/5)),
+    '\uD83D\uDFE1 Sunshine Yellow : '+pcts.S+'%  '+'\u2588'.repeat(Math.round(pcts.S/5)),
+    '\uD83D\uDFE2 Earth Green     : '+pcts.E+'%  '+'\u2588'.repeat(Math.round(pcts.E/5)),
+    '\uD83D\uDD35 Cool Blue       : '+pcts.C+'%  '+'\u2588'.repeat(Math.round(pcts.C/5)),
+    '',
+    'Warna DOMINAN    : '+dc.name+' ('+pcts[dom]+'%)',
+    'Warna SEKUNDER   : '+sc.name+' ('+pcts[sec]+'%)',
+    '',
+    'PROFIL KEPRIBADIAN: '+dc.title.toUpperCase(),
+    sep2,
+    dn.overview,
+    '',
+    'NILAI-NILAI INTI:',
+    coreVals,
+    '',
+    'KEKUATAN UTAMA:',
+    strengths,
+    '',
+    'AREA PENGEMBANGAN:',
+    challenges,
+    '',
+    'PERILAKU DI BAWAH TEKANAN:',
+    dn.under_pressure,
+    '',
+    'RELEVANSI DENGAN YAKKUM:',
+    COLOR_DATA[dom].yakkum,
+    '',
+    recoTitle,
+    sep2,
+    reco[dom],
+    '',
+    'REKOMENDASI PENGEMBANGAN:',
+    dn.development,
+    '',
+    'PANDUAN INTERAKSI',
+    sep2,
+    'Yang perlu dilakukan saat berinteraksi:',
+    intDo,
+    '',
+    'Yang perlu dihindari:',
+    intDont,
+    '',
+    sep1,
+    'Laporan ini dibuat secara otomatis oleh',
+    'YAKKUM Discovery Insights Assessment System',
+    (localStorage.getItem('yakkumOrgName')||'YAKKUM Assessment System'),
+    sep1
+  ].join('\n');
+}
+
+
+function sendToHRD() {
+  const hrd1 = localStorage.getItem('yakkumHRD1');
+  if (!hrd1) { 
+    openEmailConfig(); 
+    return; 
+  }
+  const statusEl = document.getElementById('save-status');
+  
+  // Try via Google Apps Script if URL configured
+  const sheetUrl = localStorage.getItem('yakkumSheetUrl');
+  if (sheetUrl) {
+    const { pcts } = state.results;
+    const sorted = ['F','S','E','C'].sort((a,b)=>pcts[b]-pcts[a]);
+    const payload = {
+      action: 'sendEmail',
+      to: hrd1,
+      cc: localStorage.getItem('yakkumHRD2') || '',
+      subject: `[YAKKUM Assessment] ${state.profile.nama} — ${COLOR_DATA[sorted[0]].name} ${pcts[sorted[0]]}% | ${getModeLabel(state.mode)}`,
+      body: buildEmailBody(),
+      nama: state.profile.nama,
+      unit: state.profile.unit,
+      level: state.profile.level,
+      mode: getModeLabel(state.mode),
+      fiery: pcts.F, sunny: pcts.S, earthy: pcts.E, cool: pcts.C,
+      dominant: COLOR_DATA[sorted[0]].name,
+      secondary: COLOR_DATA[sorted[1]].name,
+      elapsed_label: (() => { const e=state.timerElapsed||0; const m=Math.floor(e/60),s=e%60; return `${m}m ${s}s`; })()
+    };
+    statusEl.innerHTML = '⏳ Mengirim email ke HRD...';
+    fetch(sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.emailSent) {
+        statusEl.innerHTML = `✅ Email berhasil dikirim ke <strong>${hrd1}</strong>!`;
+      } else {
+        fallbackMailto(hrd1, statusEl);
+      }
+    })
+    .catch(() => fallbackMailto(hrd1, statusEl));
+  } else {
+    fallbackMailto(hrd1, statusEl);
+  }
+}
+
+function fallbackMailto(hrd1, statusEl) {
+  const { pcts } = state.results;
+  const sorted = ['F','S','E','C'].sort((a,b)=>pcts[b]-pcts[a]);
+  const subject = encodeURIComponent(`[YAKKUM Assessment] ${state.profile.nama} — ${COLOR_DATA[sorted[0]].name} ${pcts[sorted[0]]}% | ${getModeLabel(state.mode)}`);
+  const body = encodeURIComponent(buildEmailBody());
+  const hrd2 = localStorage.getItem('yakkumHRD2') || '';
+  const cc = hrd2 ? `&cc=${encodeURIComponent(hrd2)}` : '';
+  window.open(`mailto:${hrd1}${cc}?subject=${subject}&body=${body}`);
+  if (statusEl) statusEl.innerHTML = `📧 Email klien dibuka untuk <strong>${hrd1}</strong>. Silakan kirim dari aplikasi email Anda.`;
+}
+
+
+</script>
+
 </body>
 </html>
